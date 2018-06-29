@@ -1,6 +1,11 @@
 const removeDir = require('rimraf');
 const {spawn} = require('child_process');
+<<<<<<< HEAD
 const fs = require('fs');
+=======
+const uuidv4 = require('uuid/v4');
+const commandExists = require('command-exists').sync;
+>>>>>>> 92cc08f... Update to use commandExists instead of type -p
 
 const uuidv4 = require('uuid/v4');
 const commandExists = require('command-exists').sync;
