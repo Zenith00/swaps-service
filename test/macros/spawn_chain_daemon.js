@@ -1,8 +1,9 @@
 const removeDir = require('rimraf');
 const {spawn} = require('child_process');
+const fs = require('fs');
+
 const uuidv4 = require('uuid/v4');
 const commandExists = require('command-exists').sync;
-
 const chainServer = require('./../../chain/conf/chain_server_defaults');
 const credentialsForNetwork = require('./../../chain/credentials_for_network');
 const {ECPair} = require('./../../tokenslib');
@@ -71,6 +72,9 @@ module.exports = (args, cbk) => {
       ]);
       break;
     case "bitcoind":
+      if (!fs.existsSync(tmpDir)){
+        fs.mkdirSync(tmpDir);
+      }
       daemon = spawn(executable, [
         '-datadir', tmpDir,
         '-debuglogfile', tmpDir,
