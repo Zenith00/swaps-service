@@ -51,7 +51,7 @@ module.exports = (args, cbk) => {
   const tmpDir = `/tmp/${uuidv4()}`;
 
   let executable;
-  console.log("tmpDir= " + tmpDir);
+  console.log("tmpDir=" + tmpDir);
   console.log("Looking for chain server for" + chainServer);
   executable =  chainServer[args.network].executables.find( function(x){return commandExists(x);});
   console.log("Located executable: " + executable);
@@ -72,9 +72,8 @@ module.exports = (args, cbk) => {
       ]);
       break;
     case "bitcoind":
-      if (!fs.existsSync(tmpDir)){
-        fs.mkdirSync(tmpDir);
-      }
+      console.log("Exists?: " + fs.existsSync(tmpDir));
+      fs.mkdirSync(tmpDir);
       daemon = spawn(executable, [
         '-datadir', tmpDir,
         '-debuglogfile', tmpDir,
@@ -87,10 +86,12 @@ module.exports = (args, cbk) => {
         '-rpcuser', credentials.user,
         '-txindex',
       ]);
+
   }
 
 
   daemon.stderr.on('data', data => console.log(`p1p:${data}`));
+
 
   daemon.stdout.on('data', data => {
     if (unableToStartServer.test(`${data}`)) {
