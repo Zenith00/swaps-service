@@ -47,8 +47,15 @@ module.exports = (args, cbk) => {
   const miningKey = Buffer.from(args.mining_public_key, 'hex');
   const network = networks[args.network];
   const tmpDir = `/tmp/${uuidv4()}`;
-
-  const daemon = spawn(chainServer[args.network].executable, [
+  let executable;
+  console.log(chainServer);
+  executable =  _.find(chainServer[args.network].executables, function (x) { return require('child_process').exec('type -p ' + x, function (err, stdout) {
+    console.log(x);
+    console.log(stdout);
+    console.log(stdout !== x + " not found");
+    return stdout !== x + " not found";
+  }); });
+  const daemon = spawn(executable, [
     '--datadir', tmpDir,
     '--logdir', tmpDir,
     '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
