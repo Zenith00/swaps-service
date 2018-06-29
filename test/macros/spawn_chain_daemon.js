@@ -48,13 +48,14 @@ module.exports = (args, cbk) => {
   const network = networks[args.network];
   const tmpDir = `/tmp/${uuidv4()}`;
   let executable;
-  console.log(chainServer);
+  // console.log(chainServer);
   executable =  _.find(chainServer[args.network].executables, function (x) { return require('child_process').exec('type -p ' + x, function (err, stdout) {
     console.log(x);
     console.log(stdout);
     console.log(stdout !== x + " not found");
     return stdout !== x + " not found";
   }); });
+  console.log("executable: " + executable);
   const daemon = spawn(executable, [
     '--datadir', tmpDir,
     '--logdir', tmpDir,
