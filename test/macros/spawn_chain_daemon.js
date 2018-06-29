@@ -48,24 +48,45 @@ module.exports = (args, cbk) => {
   const miningKey = Buffer.from(args.mining_public_key, 'hex');
   const network = networks[args.network];
   const tmpDir = `/tmp/${uuidv4()}`;
-  let executable;
-  // console.log(chainServer);
-  executable =  _.find(chainServer[args.network].executables, function(x){return commandExists(x);});
-  console.log("executable: " + executable);
-  const daemon = spawn(executable, [
-    '--datadir', tmpDir,
-    '--logdir', tmpDir,
-    '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
-    '--notls',
-    '--regtest',
-    '--relaynonstd',
-    '--rpclisten', `${credentials.host}:${credentials.port}`,
-    '--rpcpass', credentials.pass,
-    '--rpcuser', credentials.user,
-    '--txindex',
-  ]);
 
-  daemon.stderr.on('data', data => console.log(`${data}`));
+  let executable;
+  console.log("tmpDir= " + tmpDir);
+  console.log("Looking for chain server for" + chainServer);
+  executable =  chainServer[args.network].executables.find( function(x){return commandExists(x);});
+  console.log("Located executable: " + executable);
+  var daemon;
+  switch(executable){
+    case "btcd":
+      daemon = spawn(executable, [
+        '--datadir', tmpDir,
+        '--logdir', tmpDir,
+        '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
+        '--notls',
+        '--regtest',
+        '--relaynonstd',
+        '--rpclisten', `${credentials.host}:${credentials.port}`,
+        '--rpcpass', credentials.pass,
+        '--rpcuser', credentials.user,
+        '--txindex',
+      ]);
+      break;
+    case "bitcoind":
+      daemon = spawn(executable, [
+        '-datadir', tmpDir,
+        '-debuglogfile', tmpDir,
+        // '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
+        // '--notls',
+        '-regtest',
+        // '--relaynonstd',
+        '-bind', `${credentials.host}:${credentials.port}`,
+        '-rpcpassword', credentials.pass,
+        '-rpcuser', credentials.user,
+        '-txindex',
+      ]);
+  }
+
+
+  daemon.stderr.on('data', data => console.log(`p1p:${data}`));
 
   daemon.stdout.on('data', data => {
     if (unableToStartServer.test(`${data}`)) {
