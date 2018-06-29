@@ -57,6 +57,7 @@ module.exports = (args, cbk) => {
 
   let executable;
   console.log("tmpDir=" + tmpDir);
+
   console.log("Looking for chain server for" + chainServer);
   executable =  chainServer[args.network].executables.find( function(x){return commandExists(x);});
   console.log("Located executable: " + executable);
