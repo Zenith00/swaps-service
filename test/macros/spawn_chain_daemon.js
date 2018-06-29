@@ -80,6 +80,7 @@ module.exports = (args, cbk) => {
     case "bitcoind":
       console.log("Exists?: " + fs.existsSync(tmpDir));
       fs.mkdirSync(tmpDir);
+
       daemon = spawn(executable, [
         '-datadir', tmpDir,
         '-debuglogfile', tmpDir,
