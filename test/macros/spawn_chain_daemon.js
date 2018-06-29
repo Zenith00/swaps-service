@@ -1,6 +1,7 @@
 const removeDir = require('rimraf');
 const {spawn} = require('child_process');
 const uuidv4 = require('uuid/v4');
+const commandExists = require('command-exists').sync;
 
 const chainServer = require('./../../chain/conf/chain_server_defaults');
 const credentialsForNetwork = require('./../../chain/credentials_for_network');
@@ -49,12 +50,7 @@ module.exports = (args, cbk) => {
   const tmpDir = `/tmp/${uuidv4()}`;
   let executable;
   // console.log(chainServer);
-  executable =  _.find(chainServer[args.network].executables, function (x) { return require('child_process').exec('type -p ' + x, function (err, stdout) {
-    console.log(x);
-    console.log(stdout);
-    console.log(stdout !== x + " not found");
-    return stdout !== x + " not found";
-  }); });
+  executable =  _.find(chainServer[args.network].executables, function(x){return commandExists(x);});
   console.log("executable: " + executable);
   const daemon = spawn(executable, [
     '--datadir', tmpDir,
