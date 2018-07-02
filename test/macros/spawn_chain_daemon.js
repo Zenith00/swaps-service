@@ -88,8 +88,8 @@ module.exports = (args, cbk) => {
         `-rpcport=${credentials.port}`,
         `-rpcpassword=${credentials.pass}`,
         `-rpcuser=${credentials.user}`,
-        '-txindex=1',
-        '-server',
+        // '-txindex=1',
+        // '-server',
       ]);
       console.log("daemon spawned");
       break;
