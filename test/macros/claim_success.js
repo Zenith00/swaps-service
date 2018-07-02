@@ -50,6 +50,7 @@ module.exports = (args, cbk) => {
     // Bob will make a keypair that he will use if Alice doesn't do the swap
     generateBobKeyPair: cbk => {
       try {
+        console.log("generateBobKeyPair start");
         return cbk(null, generateKeyPair({network: args.network}));
       } catch (e) {
         return cbk([0, 'ExpectedGeneratedKeyPair', e]);
@@ -58,6 +59,7 @@ module.exports = (args, cbk) => {
 
     // Bob will make a Lightning invoice to pay
     generatePaymentPreimage: ['generateBobKeyPair', (res, cbk) => {
+      console.log("generatePaymentPreimage start");
       return generateInvoice({
         network: args.network,
         private_key: res.generateBobKeyPair.private_key,
@@ -67,7 +69,7 @@ module.exports = (args, cbk) => {
 
     // We'll bring up a fake chain for this test, with Bob getting the rewards
     spawnChainDaemon: ['generateBobKeyPair', ({generateBobKeyPair}, cbk) => {
-      console.log(70);
+      console.log("spawnChainDaemon start");
       return spawnChainDaemon({
         network: args.network,
         mining_public_key: generateBobKeyPair.public_key,
@@ -114,11 +116,13 @@ module.exports = (args, cbk) => {
 
     // Bob needs to go get a block to spend his block reward to the swap
     bobUtxo: ['generateToMaturity', ({generateToMaturity}, cbk) => {
+      console.log("generateToMaturity start");
       const [firstRewardBlock] = generateToMaturity.blocks;
 
       const [coinbaseTransaction] = firstRewardBlock.transactions;
 
       const [firstCoinbaseOutput] = coinbaseTransaction.outputs;
+      console.log("generateToMaturity end");
 
       return cbk(null, {
         tokens: firstCoinbaseOutput.tokens,
