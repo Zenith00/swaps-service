@@ -28,17 +28,20 @@ module.exports = ({id, network}, cbk) => {
     params: [id],
   },
   (err, transaction) => {
+    console.log("Ran gettrans");
     if (!!err) {
       return cbk(err);
     }
 
     if (!transaction){
+      console.log("init gettrans failed");
       return chainRpc({
           network,
           cmd: "decoderawtransaction",
           params: [id],
         },
         (err, transaction) => {
+        console.log("Backup: "  + transaction);
           if (!!err) {
             return cbk(err);
           }
