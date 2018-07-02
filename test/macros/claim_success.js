@@ -59,7 +59,7 @@ module.exports = (args, cbk) => {
 
     // Bob will make a Lightning invoice to pay
     generatePaymentPreimage: ['generateBobKeyPair', (res, cbk) => {
-      console.log("generatePaymentPreimage start");
+      debugger;
       return generateInvoice({
         network: args.network,
         private_key: res.generateBobKeyPair.private_key,
@@ -69,7 +69,7 @@ module.exports = (args, cbk) => {
 
     // We'll bring up a fake chain for this test, with Bob getting the rewards
     spawnChainDaemon: ['generateBobKeyPair', ({generateBobKeyPair}, cbk) => {
-      console.log("spawnChainDaemon start");
+      debugger;
       return spawnChainDaemon({
         network: args.network,
         mining_public_key: generateBobKeyPair.public_key,
@@ -79,7 +79,7 @@ module.exports = (args, cbk) => {
 
     // The chain needs to progress to maturity for Bob to spend his rewards
     generateToMaturity: ['spawnChainDaemon', ({}, cbk) => {
-      console.log(80);
+      debugger;
       return generateChainBlocks({
         network: args.network,
         count: maturityBlockCount,
@@ -94,7 +94,7 @@ module.exports = (args, cbk) => {
       'generatePaymentPreimage',
       (res, cbk) =>
     {
-      console.log("createChainSwapAddress begin");
+      debugger;
       const isPkHash = !!args.is_refund_to_public_key_hash;
 
       const refundPkHash = !isPkHash ? null : res.generateBobKeyPair.pk_hash;
@@ -116,7 +116,7 @@ module.exports = (args, cbk) => {
 
     // Bob needs to go get a block to spend his block reward to the swap
     bobUtxo: ['generateToMaturity', ({generateToMaturity}, cbk) => {
-      console.log("generateToMaturity start");
+      debugger;
       const [firstRewardBlock] = generateToMaturity.blocks;
 
       const [coinbaseTransaction] = firstRewardBlock.transactions;
@@ -133,7 +133,7 @@ module.exports = (args, cbk) => {
 
     // Bob makes a send transaction to fund the swap with his coins
     fundSwapAddress: ['bobUtxo', 'createChainSwapAddress', (res, cbk) => {
-      console.log("fundSwapAddress start");
+      debugger;
       return sendChainTokensTransaction({
         destination: res.createChainSwapAddress[`${args.swap_type}_address`],
         network: args.network,
@@ -147,7 +147,7 @@ module.exports = (args, cbk) => {
 
     // The chain progresses and confirms the swap funding
     mineFundingTx: ['fundSwapAddress', ({fundSwapAddress}, cbk) => {
-      console.log("mineFundingTx start");
+      debugger;
       return mineTransaction({
         network: args.network,
         transaction: fundSwapAddress.transaction,
@@ -164,7 +164,7 @@ module.exports = (args, cbk) => {
       'mineFundingTx',
       (res, cbk) =>
     {
-      console.log("findFundingTransaction start");
+      debugger;
       const isPkHash = !!args.is_refund_to_public_key_hash;
 
       const refundPkHash = !isPkHash ? null : res.generateBobKeyPair.pk_hash;
@@ -195,7 +195,7 @@ module.exports = (args, cbk) => {
       'findFundingTransaction',
       ({createChainSwapAddress, findFundingTransaction}, cbk) =>
     {
-      console.log("fundingTransactionUtxos start")
+      debugger;
       if (!findFundingTransaction.transaction) {
         return cbk([0, 'ExpectedFundedSwapTransaction']);
       }
@@ -231,7 +231,7 @@ module.exports = (args, cbk) => {
     // Test `claim_fail_preimage` where the claim is attempted with bad preimg
     claimWithBadPreimage: ['readyToClaim', ({readyToClaim}, cbk) => {
       try {
-        console.log("claimWithBadPreimage start");
+        debugger;
         return cbk(null, claimTransaction({
           current_block_height: readyToClaim.current_block_height,
           destination: readyToClaim.destination,
@@ -248,7 +248,7 @@ module.exports = (args, cbk) => {
 
     // Make sure that using a bad preimage fails the claim tx broadcast
     confirmFailWithBadPreimage: ['claimWithBadPreimage', (res, cbk) => {
-      console.log('confirmFailWithBadPreimage start');
+      debugger;
       return broadcastTransaction({
         network: args.network,
         transaction: res.claimWithBadPreimage.transaction,
@@ -264,7 +264,7 @@ module.exports = (args, cbk) => {
 
     // Test `claim_fail_sig` where the claim is attempted with a bad sig
     claimWithBobSig: ['generateBobKeyPair', 'readyToClaim', (res, cbk) => {
-      console.log("claimWithBobSig start");
+      debugger;
       try {
         return cbk(null, claimTransaction({
           current_block_height: res.readyToClaim.current_block_height,
@@ -282,7 +282,7 @@ module.exports = (args, cbk) => {
 
     // Make sure that using a bad claim signature fails the tx broadcast
     confirmFailWithBadSig: ['claimWithBobSig', ({claimWithBobSig}, cbk) => {
-      console.log("confirmFailWithBadSig start");
+      debugger;
       return broadcastTransaction({
         network: args.network,
         transaction: claimWithBobSig.transaction,
@@ -308,7 +308,7 @@ module.exports = (args, cbk) => {
 
     // Alice paid Bob's invoice so she now uses that preimage for the reward
     claimTransaction: ['readyToClaim', ({readyToClaim}, cbk) => {
-      console.log("claimTransaction star");
+      debugger;
       try {
         return cbk(null, claimTransaction({
           current_block_height: readyToClaim.current_block_height,
