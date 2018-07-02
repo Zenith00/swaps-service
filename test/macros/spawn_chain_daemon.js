@@ -93,7 +93,8 @@ module.exports = (args, cbk) => {
         `-rpcuser=${credentials.user}`,
         '-txindex=1',
         // '-printtoconsole=1',
-        '-debuglevel=trace'
+        '-debuglevel=trace',
+        '-debug=1'
         // '-server',
       ]);
       console.log("daemon spawned");
