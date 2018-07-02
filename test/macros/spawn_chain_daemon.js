@@ -60,6 +60,7 @@ module.exports = (args, cbk) => {
     case "ltcd":
     case "btcd":
       daemon = spawn(executable, [
+        '--configfile=""',
         '--datadir', tmpDir,
         '--logdir', tmpDir,
         '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
