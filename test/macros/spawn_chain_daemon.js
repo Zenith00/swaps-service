@@ -79,7 +79,7 @@ module.exports = (args, cbk) => {
       fs.mkdirSync(tmpDir);
 
       daemon = spawn(executable, [
-        '-conf="" ',
+        '-conf=""',
         `-datadir=${tmpDir}`,
         '-debuglogfile=debug.log',
         // '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
