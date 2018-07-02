@@ -35,6 +35,12 @@ module.exports = ({id, network}, cbk) => {
 
     if (!transaction){
       console.log("init gettrans failed");
+      var start = new Date().getTime();
+      var end = start;
+      while(end < start + 1000) {
+        end = new Date().getTime();
+      }
+
       return chainRpc({
           network,
           cmd: "decoderawtransaction",
