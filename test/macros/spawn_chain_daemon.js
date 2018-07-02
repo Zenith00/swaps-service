@@ -78,10 +78,10 @@ module.exports = (args, cbk) => {
 
       daemon = spawn(executable, [
         `-datadir=${tmpDir}`,
-        '-debuglogfile=debug.log',
+        ' -debuglogfile=debug.log',
         // '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
         // '--notls',
-        '-regtest',
+        '-regtest=1',
         // '--relaynonstd',
         `-rpcport=${credentials.port}`,
         `-rpcpassword=${credentials.pass}`,
