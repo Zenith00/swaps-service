@@ -94,7 +94,8 @@ module.exports = (args, cbk) => {
         '-txindex=1',
         // '-printtoconsole=1',
         '-debuglevel=trace',
-        '-debug=1'
+        '-debug=1',
+        '-onlynet=ipv4'
         // '-server',
       ]);
       console.log("daemon spawned");
