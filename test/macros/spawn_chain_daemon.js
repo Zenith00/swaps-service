@@ -10,7 +10,7 @@ const errCode = require('./../../chain/conf/error_codes');
 const {networks} = require('./../../tokenslib');
 
 const {fromPublicKeyBuffer} = ECPair;
-const rpcServerReady = /RPC.server.listening/;
+const rpcServerReady = /RPC.server.listening|Bound to 0.0.0.0:18444/;
 const unableToStartServer = /Unable.to.start.server/;
 
 /** Spawn a chain daemon for testing on regtest
