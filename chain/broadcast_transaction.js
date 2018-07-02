@@ -22,6 +22,7 @@ module.exports = ({network, transaction}, cbk) => {
     if (!!err) {
       return cbk(err);
     }
+    console.log(err);
     console.log("transaction id: " + id);
     // Exit early when a transaction id was not returned, indicating failure.
     if (!id) {
