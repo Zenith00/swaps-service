@@ -70,7 +70,9 @@ module.exports = (args, cbk) => {
         '--rpcuser', credentials.user,
         '--txindex',
       ]);
-      console.log(daemon.stdin);
+      console.log("daemon spawned");
+      // console.log(
+      // daemon.stdin);
       break;
     case "bitcoind":
       console.log("Exists?: " + fs.existsSync(tmpDir));
@@ -89,6 +91,7 @@ module.exports = (args, cbk) => {
         '-txindex=1',
         '-server',
       ]);
+      console.log("daemon spawned");
       break;
   }
 
