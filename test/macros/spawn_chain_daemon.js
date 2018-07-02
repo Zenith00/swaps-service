@@ -58,7 +58,6 @@ module.exports = (args, cbk) => {
   var daemon;
   switch(executable){
     case "btcd":
-      break;
       daemon = spawn(executable, [
         '--datadir', tmpDir,
         '--logdir', tmpDir,
@@ -96,22 +95,11 @@ module.exports = (args, cbk) => {
       break;
   }
 
-  daemon = spawn(executable, [
-    '--datadir', tmpDir,
-    '--logdir', tmpDir,
-    '--miningaddr', fromPublicKeyBuffer(miningKey, network).getAddress(),
-    '--notls',
-    '--regtest',
-    '--relaynonstd',
-    '--rpclisten', `${credentials.host}:${credentials.port}`,
-    '--rpcpass', credentials.pass,
-    '--rpcuser', credentials.user,
-    '--txindex',
-  ]);
+
   console.log("daemon spawned");
 
   console.log(daemon.connected);
-  console.log(daemon);
+  // console.log(daemon);
   console.log(daemon.pid);
 
   daemon.stderr.on('data', data => console.log(`p1p:${data}`));
