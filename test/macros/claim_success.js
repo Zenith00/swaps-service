@@ -133,6 +133,7 @@ module.exports = (args, cbk) => {
 
     // Bob makes a send transaction to fund the swap with his coins
     fundSwapAddress: ['bobUtxo', 'createChainSwapAddress', (res, cbk) => {
+      console.log("fundSwapAddress start");
       return sendChainTokensTransaction({
         destination: res.createChainSwapAddress[`${args.swap_type}_address`],
         network: args.network,
@@ -146,6 +147,7 @@ module.exports = (args, cbk) => {
 
     // The chain progresses and confirms the swap funding
     mineFundingTx: ['fundSwapAddress', ({fundSwapAddress}, cbk) => {
+      console.log("mineFundingTx start");
       return mineTransaction({
         network: args.network,
         transaction: fundSwapAddress.transaction,
@@ -192,6 +194,7 @@ module.exports = (args, cbk) => {
       'findFundingTransaction',
       ({createChainSwapAddress, findFundingTransaction}, cbk) =>
     {
+      console.log("fundingTransactionUtxos start")
       if (!findFundingTransaction.transaction) {
         return cbk([0, 'ExpectedFundedSwapTransaction']);
       }
