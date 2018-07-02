@@ -1,21 +1,8 @@
 const removeDir = require('rimraf');
 const {spawn} = require('child_process');
-<<<<<<< HEAD
-<<<<<<< HEAD
 const fs = require('fs');
-=======
 const uuidv4 = require('uuid/v4');
 const commandExists = require('command-exists').sync;
->>>>>>> 92cc08f... Update to use commandExists instead of type -p
-
-const uuidv4 = require('uuid/v4');
-const commandExists = require('command-exists').sync;
-=======
-const fs = require('fs');
-
-const uuidv4 = require('uuid/v4');
-const commandExists = require('command-exists').sync;
->>>>>>> cef2ca1... Add data folder creation for bitcoind
 const chainServer = require('./../../chain/conf/chain_server_defaults');
 const credentialsForNetwork = require('./../../chain/credentials_for_network');
 const {ECPair} = require('./../../tokenslib');
