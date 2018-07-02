@@ -32,6 +32,21 @@ module.exports = ({id, network}, cbk) => {
       return cbk(err);
     }
 
+    if (!transaction){
+      return chainRpc({
+          network,
+          cmd: "decoderawtransaction",
+          params: [id],
+        },
+        (err, transaction) => {
+          if (!!err) {
+            return cbk(err);
+          }
+
+          return cbk(null, {transaction});
+        });
+    }
+
     return cbk(null, {transaction});
   });
 };
