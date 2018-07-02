@@ -21,7 +21,7 @@ const blockSearchDepth = 9;
 const coinbaseIndex = chainConstants.coinbase_tx_index;
 const maturityBlockCount = chainConstants.maturity_block_count;
 const staticFeePerVirtualByte = 100;
-const swapTimeoutBlockCount = 200;
+const swapTimeoutBlockCount = 400;
 
 /** Test a claim success script against regtest
 
