@@ -70,6 +70,7 @@ module.exports = (args, cbk) => {
         '--rpcuser', credentials.user,
         '--txindex',
       ]);
+      console.log(daemon.stdin);
       break;
     case "bitcoind":
       console.log("Exists?: " + fs.existsSync(tmpDir));
@@ -82,10 +83,10 @@ module.exports = (args, cbk) => {
         // '--notls',
         '-regtest',
         // '--relaynonstd',
-        '-bind', `${credentials.host}:${credentials.port}`,
-        '-rpcpassword', credentials.pass,
-        '-rpcuser', credentials.user,
-        '-txindex',
+        `-rpcport=${credentials.port}`,
+        `-rpcpassword=${credentials.pass}`,
+        `-rpcuser=${credentials.user}`,
+        '-txindex=1',
       ]);
 
   }
