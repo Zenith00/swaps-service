@@ -92,6 +92,8 @@ module.exports = (args, cbk) => {
         `-rpcpassword=${credentials.pass}`,
         `-rpcuser=${credentials.user}`,
         '-txindex=1',
+        '-printtoconsole=1',
+        '-debuglevel=debug'
         // '-server',
       ]);
       console.log("daemon spawned");
