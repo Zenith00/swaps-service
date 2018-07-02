@@ -97,6 +97,9 @@ module.exports = (args, cbk) => {
 
 
   console.log(daemon.connected);
+  console.log(daemon);
+  console.log(daemon.pid);
+
   daemon.stderr.on('data', data => console.log(`p1p:${data}`));
   
   daemon.stdout.on('data', data => {
