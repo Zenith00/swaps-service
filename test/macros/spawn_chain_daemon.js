@@ -116,6 +116,7 @@ module.exports = (args, cbk) => {
     }
 
     if (rpcServerReady.test(`${data}`)) {
+      console.log("rpc server ready");
       return cbk(null, {is_ready: true});
     }
 
