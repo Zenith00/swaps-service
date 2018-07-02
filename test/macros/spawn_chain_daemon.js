@@ -57,6 +57,7 @@ module.exports = (args, cbk) => {
   console.log("Located executable: " + executable);
   var daemon;
   switch(executable){
+    case "ltcd":
     case "btcd":
       daemon = spawn(executable, [
         '--datadir', tmpDir,
@@ -75,6 +76,7 @@ module.exports = (args, cbk) => {
       // daemon.stdin);
       break;
     case "bitcoind":
+    case "litecoind":
       console.log("Exists?: " + fs.existsSync(tmpDir));
       fs.mkdirSync(tmpDir);
 
