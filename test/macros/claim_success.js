@@ -92,12 +92,12 @@ module.exports = (args, cbk) => {
       'generatePaymentPreimage',
       (res, cbk) =>
     {
-      console.log(95);
+      console.log("createChainSwapAddress begin");
       const isPkHash = !!args.is_refund_to_public_key_hash;
 
       const refundPkHash = !isPkHash ? null : res.generateBobKeyPair.pk_hash;
       const refundPk = !isPkHash ? res.generateBobKeyPair.public_key : null;
-
+      console.log("createChainSwapAddress end");
       try {
         return cbk(null, swapAddress({
           destination_public_key: res.generateAliceKeyPair.public_key,
