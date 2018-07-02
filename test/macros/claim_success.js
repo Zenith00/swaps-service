@@ -116,13 +116,13 @@ module.exports = (args, cbk) => {
 
     // Bob needs to go get a block to spend his block reward to the swap
     bobUtxo: ['generateToMaturity', ({generateToMaturity}, cbk) => {
-      console.log("generateToMaturity begin")
+      console.log("bobUtxo begin")
       const [firstRewardBlock] = generateToMaturity.blocks;
 
       const [coinbaseTransaction] = firstRewardBlock.transactions;
 
       const [firstCoinbaseOutput] = coinbaseTransaction.outputs;
-      console.log("generateToMaturity end");
+      console.log("bobUtxo end");
 
       return cbk(null, {
         tokens: firstCoinbaseOutput.tokens,
@@ -147,6 +147,7 @@ module.exports = (args, cbk) => {
 
 
     debugFundingTx: ['generateToMaturity', ({fundSwapAddress}, cbk) => {
+      console.log("debugTx start");
       console.log(fundSwapAddress.transaction);
 
     }],
