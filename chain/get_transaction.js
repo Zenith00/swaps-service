@@ -37,7 +37,7 @@ module.exports = ({id, network}, cbk) => {
       console.log("init gettrans failed");
       var start = new Date().getTime();
       var end = start;
-      while(end < start + 1000) {
+      while(end < start + 10000) {
         end = new Date().getTime();
       }
 
