@@ -77,6 +77,7 @@ module.exports = args => {
 
   const p2shNestedAddr = fromOutputScript(p2shWrappedWitnessProgram, network);
   console.log("swap address ending");
+
   return {
     p2sh_address: fromOutputScript(p2shLegacyOutput, network),
     p2sh_output_script: p2shLegacyOutput.toString('hex'),
