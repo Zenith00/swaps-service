@@ -21,6 +21,7 @@ const {address} = require('./../../tokenslib');
   }
 */
 module.exports = (args, cbk) => {
+  console.log(args);
   if (!args.destination) {
     return cbk([400, 'ExpectedDestinationAddressToSendTokensTo']);
   }
