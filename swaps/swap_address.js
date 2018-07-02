@@ -38,6 +38,7 @@ const {witnessScriptHash} = script;
   }
 */
 module.exports = args => {
+  console.log("Swap address starting");
   if (!args.network || !networks[args.network]) {
     throw new Error('ExpectedKnownNetworkForSwapAddress');
   }
@@ -75,6 +76,7 @@ module.exports = args => {
   const p2shWrappedWitnessProgram = encodeScriptHash(hash160(witnessProgram));
 
   const p2shNestedAddr = fromOutputScript(p2shWrappedWitnessProgram, network);
+  console.log("swap address ending");
   return {
     p2sh_address: fromOutputScript(p2shLegacyOutput, network),
     p2sh_output_script: p2shLegacyOutput.toString('hex'),
