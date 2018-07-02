@@ -18,7 +18,7 @@ const swapType = 'p2sh';
         console.log(testErr);
         throw new Error('FailedClaimSuccess');
       }
-
+      console.log(testErr);
       t.end();
 
       return;
@@ -27,4 +27,3 @@ const swapType = 'p2sh';
 
   return;
 });
-
