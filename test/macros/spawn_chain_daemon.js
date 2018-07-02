@@ -96,7 +96,7 @@ module.exports = (args, cbk) => {
   }
 
 
-
+  console.log(daemon.connected);
   daemon.stderr.on('data', data => console.log(`p1p:${data}`));
   
   daemon.stdout.on('data', data => {
