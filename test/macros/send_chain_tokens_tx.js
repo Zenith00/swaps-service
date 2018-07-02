@@ -56,7 +56,8 @@ module.exports = (args, cbk) => {
   } catch (e) {
     return cbk([400, 'ErrorAddingOutput', e]);
   }
-  console.log("KP: " + keyPair);
+  console.log("KP: ");
+  [keyPair].forEach((k, i) => console.log(k + " | " + i));
   [keyPair].forEach((k, i) => txBuilder.sign(i, k));
 
   return cbk(null, {transaction: txBuilder.build().toHex()});
