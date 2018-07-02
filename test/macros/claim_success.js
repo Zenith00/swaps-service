@@ -67,6 +67,7 @@ module.exports = (args, cbk) => {
 
     // We'll bring up a fake chain for this test, with Bob getting the rewards
     spawnChainDaemon: ['generateBobKeyPair', ({generateBobKeyPair}, cbk) => {
+      console.log(70);
       return spawnChainDaemon({
         network: args.network,
         mining_public_key: generateBobKeyPair.public_key,
@@ -76,7 +77,7 @@ module.exports = (args, cbk) => {
 
     // The chain needs to progress to maturity for Bob to spend his rewards
     generateToMaturity: ['spawnChainDaemon', ({}, cbk) => {
-      console.log(79);
+      console.log(80);
       return generateChainBlocks({
         network: args.network,
         count: maturityBlockCount,
@@ -91,7 +92,7 @@ module.exports = (args, cbk) => {
       'generatePaymentPreimage',
       (res, cbk) =>
     {
-      console.log(94);
+      console.log(95);
       const isPkHash = !!args.is_refund_to_public_key_hash;
 
       const refundPkHash = !isPkHash ? null : res.generateBobKeyPair.pk_hash;
