@@ -51,13 +51,12 @@ module.exports = (args, cbk) => {
   const txBuilder = new TransactionBuilder(network);
 
   txBuilder.addInput(args.spend_transaction_id, args.spend_vout);
-
   try {
     txBuilder.addOutput(args.destination, args.tokens);
   } catch (e) {
     return cbk([400, 'ErrorAddingOutput', e]);
   }
-
+  console.log("KP: " + keyPair);
   [keyPair].forEach((k, i) => txBuilder.sign(i, k));
 
   return cbk(null, {transaction: txBuilder.build().toHex()});
