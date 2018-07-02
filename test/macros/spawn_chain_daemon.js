@@ -88,7 +88,7 @@ module.exports = (args, cbk) => {
         `-rpcuser=${credentials.user}`,
         '-txindex=1',
       ]);
-
+      break;
   }
 
 
