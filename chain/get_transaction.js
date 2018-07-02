@@ -21,7 +21,7 @@ module.exports = ({id, network}, cbk) => {
   if (!network) {
     return cbk([500, 'ExpectedNetworkToLookForTransaction']);
   }
-
+  console.log("getting trans with: " + id);
   return chainRpc({
     network,
     cmd: getRawTransaction,
