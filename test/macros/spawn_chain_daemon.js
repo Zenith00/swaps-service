@@ -87,6 +87,7 @@ module.exports = (args, cbk) => {
         `-rpcpassword=${credentials.pass}`,
         `-rpcuser=${credentials.user}`,
         '-txindex=1',
+        '-server',
       ]);
       break;
   }
