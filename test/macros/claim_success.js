@@ -164,6 +164,7 @@ module.exports = (args, cbk) => {
       'mineFundingTx',
       (res, cbk) =>
     {
+      console.log("findFundingTransaction start");
       const isPkHash = !!args.is_refund_to_public_key_hash;
 
       const refundPkHash = !isPkHash ? null : res.generateBobKeyPair.pk_hash;
@@ -230,6 +231,7 @@ module.exports = (args, cbk) => {
     // Test `claim_fail_preimage` where the claim is attempted with bad preimg
     claimWithBadPreimage: ['readyToClaim', ({readyToClaim}, cbk) => {
       try {
+        console.log("claimWithBadPreimage start");
         return cbk(null, claimTransaction({
           current_block_height: readyToClaim.current_block_height,
           destination: readyToClaim.destination,
@@ -246,6 +248,7 @@ module.exports = (args, cbk) => {
 
     // Make sure that using a bad preimage fails the claim tx broadcast
     confirmFailWithBadPreimage: ['claimWithBadPreimage', (res, cbk) => {
+      console.log('confirmFailWithBadPreimage start');
       return broadcastTransaction({
         network: args.network,
         transaction: res.claimWithBadPreimage.transaction,
@@ -261,6 +264,7 @@ module.exports = (args, cbk) => {
 
     // Test `claim_fail_sig` where the claim is attempted with a bad sig
     claimWithBobSig: ['generateBobKeyPair', 'readyToClaim', (res, cbk) => {
+      console.log("claimWithBobSig start");
       try {
         return cbk(null, claimTransaction({
           current_block_height: res.readyToClaim.current_block_height,
@@ -278,6 +282,7 @@ module.exports = (args, cbk) => {
 
     // Make sure that using a bad claim signature fails the tx broadcast
     confirmFailWithBadSig: ['claimWithBobSig', ({claimWithBobSig}, cbk) => {
+      console.log("confirmFailWithBadSig start");
       return broadcastTransaction({
         network: args.network,
         transaction: claimWithBobSig.transaction,
@@ -303,6 +308,7 @@ module.exports = (args, cbk) => {
 
     // Alice paid Bob's invoice so she now uses that preimage for the reward
     claimTransaction: ['readyToClaim', ({readyToClaim}, cbk) => {
+      console.log("claimTransaction star");
       try {
         return cbk(null, claimTransaction({
           current_block_height: readyToClaim.current_block_height,
