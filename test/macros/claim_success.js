@@ -49,6 +49,7 @@ module.exports = (args, cbk) => {
 
     // Bob will make a keypair that he will use if Alice doesn't do the swap
     generateBobKeyPair: cbk => {
+      console.log("generateBobKeyPair start")
       try {
         console.log("generateBobKeyPair start");
         return cbk(null, generateKeyPair({network: args.network}));
@@ -59,7 +60,7 @@ module.exports = (args, cbk) => {
 
     // Bob will make a Lightning invoice to pay
     generatePaymentPreimage: ['generateBobKeyPair', (res, cbk) => {
-      debugger;
+      console.log("generatePaymentPreimage1");
       return generateInvoice({
         network: args.network,
         private_key: res.generateBobKeyPair.private_key,
@@ -69,7 +70,7 @@ module.exports = (args, cbk) => {
 
     // We'll bring up a fake chain for this test, with Bob getting the rewards
     spawnChainDaemon: ['generateBobKeyPair', ({generateBobKeyPair}, cbk) => {
-      debugger;
+      console.log("generateBobKeyPair");
       return spawnChainDaemon({
         network: args.network,
         mining_public_key: generateBobKeyPair.public_key,
@@ -79,7 +80,7 @@ module.exports = (args, cbk) => {
 
     // The chain needs to progress to maturity for Bob to spend his rewards
     generateToMaturity: ['spawnChainDaemon', ({}, cbk) => {
-      debugger;
+      console.log("generateToMaturity start");
       return generateChainBlocks({
         network: args.network,
         count: maturityBlockCount,
@@ -94,7 +95,7 @@ module.exports = (args, cbk) => {
       'generatePaymentPreimage',
       (res, cbk) =>
     {
-      debugger;
+      console.log("createChainSwapAddress start");
       const isPkHash = !!args.is_refund_to_public_key_hash;
 
       const refundPkHash = !isPkHash ? null : res.generateBobKeyPair.pk_hash;
@@ -186,6 +187,7 @@ module.exports = (args, cbk) => {
 
     // Alice gets the height of the chain for her claim tx
     getHeightForSweepTransaction: ['mineFundingTx', ({}, cbk) => {
+      console.log("getHeightForSweepTransaction start");
       return getCurrentHeight({network: args.network}, cbk);
     }],
 
