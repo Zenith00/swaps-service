@@ -16,6 +16,7 @@ const spawnChainDaemon = require('./spawn_chain_daemon');
 const {stopChainDaemon} = require('./../../chain');
 const {swapAddress} = require('./../../swaps');
 const {swapScriptInTransaction} = require('./../../swaps');
+const chainRpc = require('./call_chain_rpc');
 
 const blockSearchDepth = 9;
 const coinbaseIndex = chainConstants.coinbase_tx_index;
@@ -150,9 +151,10 @@ module.exports = (args, cbk) => {
       console.log("debugTx start");
       // return asyncAuto({
       //   log: function() {
+        console.log(network);
           return chainRpc({
               network,
-              cmd: "gettxosut",
+              cmd: "gettxout",
               params: [fundSwapAddress.txid],
             },
             (err, details) => {
