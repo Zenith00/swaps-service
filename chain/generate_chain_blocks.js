@@ -37,14 +37,14 @@ module.exports = ({count, delay, network}, cbk) => {
         return cbk([400, 'ExpectedNetworkForGeneration']);
       }
       let command;
-      let paramaters;
+      let parameters;
       switch (imp.implementation) {
         case "btcd":
           command = generate;
           parameters = [[delay].length];
           break;
         case "bitcoind":
-          console.log("Switching ti bitcoind v");
+          console.log("Generating to address...");
           command = "generatetoaddress";
           paramaters = [[delay].length, imp.walletaddr];
       }
@@ -53,8 +53,8 @@ module.exports = ({count, delay, network}, cbk) => {
       return asyncTimesSeries(count, ({}, cbk) => {
         return chainRpc({
           network,
-          cmd: generate,
-          params: [[delay].length],
+          cmd: command,
+          params: parameters,
         },
         (err, blockHashes) => {
           if (!!err) {
