@@ -1,6 +1,8 @@
 const asyncAuto = require('async/auto');
 
+const {feeForSwap} = require('./../swaps');
 const getExchangeRates = require('./get_exchange_rates');
+const {getRecentFeeRate} = require('./../blocks');
 const {returnResult} = require('./../async-util');
 
 /** Given swap information, determine the number of tokens needed for a fee
@@ -8,6 +10,7 @@ const {returnResult} = require('./../async-util');
   {
     cache: <Cache Type for Rate Data>
     network: <Chain Network Name String>
+    to: <Lightning Network Name String>
     tokens: <Lightning Tokens To Send Number>
   }
 
@@ -17,7 +20,7 @@ const {returnResult} = require('./../async-util');
     tokens: <Total Tokens With Fee Number>
   }
 */
-module.exports = ({cache, network, tokens}, cbk) => {
+module.exports = ({cache, network, to, tokens}, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
@@ -29,6 +32,10 @@ module.exports = ({cache, network, tokens}, cbk) => {
         return cbk([400, 'ExpectedNetworkNameForSwapChainTokens']);
       }
 
+      if (!to) {
+        return cbk([400, 'ExpectedLightningNetworkToSendToName']);
+      }
+
       if (!tokens) {
         return cbk([400, 'ExpectedTokensForFeeCalculation']);
       }
@@ -36,11 +43,18 @@ module.exports = ({cache, network, tokens}, cbk) => {
       return cbk();
     },
 
-    // Get exchange rate information
-    getSwapRates: ['validate', ({}, cbk) => getExchangeRates({cache}, cbk)],
+    // Get swap fee rate information
+    getChainFee: ['validate', ({}, cbk) => {
+      return getRecentFeeRate({cache, network}, cbk);[]
+    }],
 
-    // Final fee tokens necessary to complete the swap
-    feeTokens: ['getSwapRates', ({getSwapRates}, cbk) => {
+    // Get exchange rate information
+    getSwapRates: ['validate', ({}, cbk) => {
+      return getExchangeRates({cache, networks: [network, to]}, cbk);
+    }],
+
+    // Mapped fee rates to networks
+    rates: ['getSwapRates', ({getSwapRates}, cbk) => {
       const rates = {};
 
       getSwapRates.rates.forEach(({cents, fees, network}) => {
@@ -51,23 +65,40 @@ module.exports = ({cache, network, tokens}, cbk) => {
         return cbk([400, 'UnexpectedNetworkForRatesQuery', network]);
       }
 
-      const swapFee = rates[network].fees.find(n => n.network === 'testnet');
+      if (!rates[to]) {
+        return cbk([400, 'UnexpectedLightningNetworkForRatesQuery']);
+      }
+
+      const swapFee = rates[network].fees.find(n => n.network === to);
 
       if (!swapFee) {
         return cbk([500, 'ExpectedBaseFeeRate', rates[network]]);
       }
 
-      const conversionRate = rates['testnet'].cents / rates[network].cents;
+      return cbk(null, {
+        base_rate: swapFee.base,
+        rate_destination: rates[to].cents,
+        rate_source: rates[network].cents,
+        swap_rate: swapFee.rate,
+      });
+    }],
 
-      const baseFee = swapFee.base;
-      const feePercentage = swapFee.rate / 1e6 * 100;
-      const convertedTokens = Math.round(tokens * conversionRate);
+    // Final fee tokens necessary to complete the swap
+    feeTokens: ['getChainFee', 'rates', ({getChainFee, rates}, cbk) => {
+      try {
+        const fees = feeForSwap({
+          base_rate: rates.base_rate,
+          fee_tokens_per_vbyte: getChainFee.fee_tokens_per_vbyte,
+          rate_destination: rates.rate_destination,
+          rate_source: rates.rate_source,
+          send_tokens: tokens,
+          swap_rate: rates.swap_rate,
+        });
 
-      const feeTokens = baseFee + (convertedTokens * feePercentage / 100);
-
-      const fee = Math.round(feeTokens);
-
-      return cbk(null, {fee, tokens: convertedTokens + fee});
+        return cbk(null, {fee: fees.fee, tokens: fees.tokens});
+      } catch (e) {
+        return cbk([500, 'FailedToCalculateFeeForSwap', e]);
+      }
     }],
   },
   returnResult({of: 'feeTokens'}, cbk));

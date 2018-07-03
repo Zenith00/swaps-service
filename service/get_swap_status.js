@@ -2,14 +2,15 @@ const asyncAuto = require('async/auto');
 const {parseInvoice} = require('ln-service');
 
 const completeSwapTransaction = require('./complete_swap_transaction');
-const confirmWaitTime = require('./confirm_wait_time');
 const findSwapTransaction = require('./find_swap_transaction');
 const getFeeForSwap = require('./get_fee_for_swap');
+const getInvoiceDetails = require('./get_invoice_details');
 const {getRecentChainTip} = require('./../blocks');
 const {getSwapKeyIndex} = require('./../scan');
 const {returnResult} = require('./../async-util');
 const serverSwapKeyPair = require('./server_swap_key_pair');
 const {swapOutput} = require('./../swaps');
+const swapParameters = require('./swap_parameters');
 const {swapScriptDetails} = require('./../swaps');
 const {Transaction} = require('./../tokenslib');
 
@@ -75,6 +76,11 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       return cbk();
     }],
 
+    // Get all the invoice details.
+    getInvoice: ['validate', ({}, cbk) => {
+      return getInvoiceDetails({cache, invoice, network}, cbk);
+    }],
+
     // Figure out what swap key index corresponds to this redeem script
     getSwapKeyIndex: ['validate', ({}, cbk) => {
       return getSwapKeyIndex({cache, network, script}, cbk);
@@ -132,9 +138,10 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // Get fee information
     getFeeTokens: ['invoiceDetails', ({invoiceDetails}, cbk) => {
+      const to = invoiceDetails.network;
       const {tokens} = invoiceDetails;
 
-      return getFeeForSwap({cache, network, tokens}, cbk);
+      return getFeeForSwap({cache, network, to, tokens}, cbk);
     }],
 
     // Search for the swap transaction
@@ -172,9 +179,13 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
     remainingConfs: ['checkTransactionDetected', (res, cbk) => {
       const confCount = res.findSwapTransaction.confirmation_count || 0;
 
-      const waitTime = confirmWaitTime({current_confirmations: confCount});
+      try {
+        const requiredFundingConfs = swapParameters({network}).funding_confs;
 
-      return cbk(null, waitTime.remaining_confirmations);
+        return cbk(null, Math.max(0, requiredFundingConfs - confCount));
+      } catch (e) {
+        return cbk([500, 'FailedToDetermineSwapParameters']);
+      }
     }],
 
     // Pending swap details
@@ -207,6 +218,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
     swapTransaction: [
       'checkTransactionDetected',
       'findSwapTransaction',
+      'getInvoice',
       'remainingConfs',
       'serverKeyPair',
       ({findSwapTransaction, remainingConfs, serverKeyPair}, cbk) =>
