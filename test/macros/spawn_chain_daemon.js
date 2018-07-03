@@ -95,9 +95,9 @@ module.exports = (args, cbk) => {
         `-rpcport=${credentials.port}`,
         `-rpcpassword=${credentials.pass}`,
         `-rpcuser=${credentials.user}`,
-        `-rpcport=18334`,
-        `-rpcpassword=pass`,
-        `-rpcuser=user`,
+        // `-rpcport=18334`,
+        // `-rpcpassword=pass`,
+        // `-rpcuser=user`,
         '-txindex=1',
         '-printtoconsole=1',
         // '-debuglevel=info',
@@ -110,7 +110,7 @@ module.exports = (args, cbk) => {
   }
 
   console.log("daemon spawned");
-
+console.log(credentials);
   console.log(daemon.connected);
   // console.log(daemon);
   console.log(daemon.pid);
