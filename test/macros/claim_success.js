@@ -18,6 +18,9 @@ const {swapAddress} = require('./../../swaps');
 const {swapScriptInTransaction} = require('./../../swaps');
 const chainRpc = require('./../../chain/call_chain_rpc');
 
+const imp = require('./../../test/macros/spawn_chain_daemon');
+
+
 const blockSearchDepth = 9;
 const coinbaseIndex = chainConstants.coinbase_tx_index;
 const maturityBlockCount = chainConstants.maturity_block_count;
@@ -88,6 +91,16 @@ module.exports = (args, cbk) => {
       cbk);
     }],
 
+    transferToWallet: ['generateToMaturity', ({}, cbk) => {
+      return chainRpc({
+          network: "regtest",
+          cmd: "sendtoaddress",
+          params: [imp.walletaddr, 500],
+        },
+        (err, details) => {
+          console.log(details);
+        });
+    }],
     // Bob creates a swap address that pays out to Alice or back to him on fail
     createChainSwapAddress: [
       'generateAliceKeyPair',
@@ -116,7 +129,7 @@ module.exports = (args, cbk) => {
     }],
 
     // Bob needs to go get a block to spend his block reward to the swap
-    bobUtxo: ['generateToMaturity', ({generateToMaturity}, cbk) => {
+    bobUtxo: ['generateToMaturity','transferToWallet', ({generateToMaturity}, cbk) => {
       console.log("bobUtxo begin");
       const [firstRewardBlock] = generateToMaturity.blocks;
 
