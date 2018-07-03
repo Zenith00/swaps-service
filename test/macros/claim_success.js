@@ -161,7 +161,7 @@ module.exports = (args, cbk) => {
               console.log("fundswapaddress:");
               console.log(fundSwapAddress);
               console.log("details: ");
-              console.log(details.toString());
+              console.log(details);
               return cbk(null, {});
             });
     }
