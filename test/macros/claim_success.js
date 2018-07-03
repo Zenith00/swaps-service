@@ -151,9 +151,10 @@ module.exports = (args, cbk) => {
       console.log("debugTx start");
       // return asyncAuto({
       //   log: function() {
-        console.log("network: " + network);
+      console.log("network: " + network);
+      console.log("nend");
           return chainRpc({
-              network,
+              network: "regtest",
               cmd: "gettxout",
               params: [fundSwapAddress.txid],
             },
