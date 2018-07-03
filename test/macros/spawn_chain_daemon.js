@@ -11,7 +11,7 @@ const {networks} = require('./../../tokenslib');
 const chainRpc = require('./../../chain/call_chain_rpc');
 
 const {fromPublicKeyBuffer} = ECPair;
-const rpcServerReady = /RPC.server.listening|Bound to 0.0.0.0:18444/;
+const rpcServerReady = /RPC.server.listening|init message: Done loading/;
 const unableToStartServer = /Unable.to.start.server/;
 
 /** Spawn a chain daemon for testing on regtest
