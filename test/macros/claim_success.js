@@ -158,8 +158,10 @@ module.exports = (args, cbk) => {
               if (!!err) {
                 return cbk(err);
               }
-              console.log("fundswapaddress: " + fundSwapAddress.toString());
-              console.log("details: " + details.toString());
+              console.log("fundswapaddress:");
+              console.log(fundSwapAddress);
+              console.log("details: ");
+              console.log(details.toString());
               return cbk(null, {});
             });
     }
