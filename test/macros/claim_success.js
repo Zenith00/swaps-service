@@ -146,14 +146,14 @@ module.exports = (args, cbk) => {
     }],
 
 
-    // debugFundingTx: ['generateToMaturity', ({fundSwapAddress}, cbk) => {
-    //   console.log("debugTx start");
-    //   console.log(fundSwapAddress.transaction);
-    //
-    // }],
+    debugFundingTx: ['generateToMaturity', ({fundSwapAddress}, cbk) => {
+      console.log("debugTx start");
+      console.log(fundSwapAddress.transaction);
+      cbk(null, fundSwapAddress.transaction.toString());
+    }],
 
     // The chain progresses and confirms the swap funding
-    mineFundingTx: ['fundSwapAddress',  ({fundSwapAddress}, cbk) => {
+    mineFundingTx: ['fundSwapAddress', 'debugFundingTx' , ({fundSwapAddress}, cbk) => {
       console.log("mineFundingTx");
       return mineTransaction({
         network: args.network,
