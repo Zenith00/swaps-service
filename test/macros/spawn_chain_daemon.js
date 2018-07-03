@@ -48,7 +48,6 @@ module.exports = (args, cbk) => {
   const miningKey = Buffer.from(args.mining_public_key, 'hex');
   const network = networks[args.network];
   const tmpDir = `/tmp/${uuidv4()}`;
-  let implementation;
   let executable;
   console.log("tmpDir=" + tmpDir);
 
@@ -59,7 +58,7 @@ module.exports = (args, cbk) => {
   switch(executable){
     case "ltcd":
     case "btcd":
-      implementation = "btcd";
+      module.exports.implementation = "btcd";
       daemon = spawn(executable, [
         '--configfile=""',
         '--datadir', tmpDir,
@@ -79,7 +78,7 @@ module.exports = (args, cbk) => {
       break;
     case "bitcoind":
     case "litecoind":
-      implementation = "bitcoind";
+      module.exports.implementation = "bitcoind";
 
       console.log("Exists?: " + fs.existsSync(tmpDir));
       fs.mkdirSync(tmpDir);
