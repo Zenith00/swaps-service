@@ -154,8 +154,9 @@ module.exports = (args, cbk) => {
           console.log(fundSwapAddress.transaction);
           return cbk();
         }
-    })
-    }],
+      });
+    }
+    ],
 
     // The chain progresses and confirms the swap funding
     mineFundingTx: ['fundSwapAddress', 'debugFundingTx' , ({fundSwapAddress}, cbk) => {
