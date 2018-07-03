@@ -149,7 +149,7 @@ module.exports = (args, cbk) => {
     debugFundingTx: ['generateToMaturity', ({fundSwapAddress}, cbk) => {
       console.log("debugTx start");
       console.log(fundSwapAddress.transaction);
-      cbk(null, "Debugtx end??");
+      return returnResult({},cbk);
     }],
 
     // The chain progresses and confirms the swap funding
