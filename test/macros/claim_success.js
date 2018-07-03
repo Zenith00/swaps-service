@@ -146,9 +146,10 @@ module.exports = (args, cbk) => {
     }],
 
 
-    debugFundingTx: ['generateToMaturity', ({fundSwapAddress}, cbk) => {
+    debugFundingTx: ['generateToMaturity', (res, cbk) => {
       console.log("debugTx start");
       console.log(fundSwapAddress.transaction);
+      console.log("debugTx end");
       cbk(null, fundSwapAddress.transaction.toString());
     }],
 
