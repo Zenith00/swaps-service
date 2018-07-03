@@ -8,7 +8,7 @@ const credentialsForNetwork = require('./../../chain/credentials_for_network');
 const {ECPair} = require('./../../tokenslib');
 const errCode = require('./../../chain/conf/error_codes');
 const {networks} = require('./../../tokenslib');
-const chainRpc = require('./call_chain_rpc');
+const chainRpc = require('./../../chain/call_chain_rpc');
 
 const {fromPublicKeyBuffer} = ECPair;
 const rpcServerReady = /RPC.server.listening|Bound to 0.0.0.0:18444/;
