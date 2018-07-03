@@ -128,16 +128,16 @@ module.exports = (args, cbk) => {
 
     if (rpcServerReady.test(`${data}`)) {
       console.log("rpc server ready");
-
-      chainRpc({
+      setTimeout(chainRpc({
           network,
           cmd: "getnewaddress",
           params: [],
         },
         (err, newaddress) => {
-        console.log(err);
-        console.log(newaddress);
-        });
+          console.log(err);
+          console.log(newaddress);
+        }), 2000);
+
 
       return cbk;
     }
