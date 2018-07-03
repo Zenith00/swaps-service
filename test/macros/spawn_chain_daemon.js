@@ -100,6 +100,7 @@ module.exports = (args, cbk) => {
         // '-debuglevel=info',
         '-debug=1',
         // '-server',
+        '-minrelaytxfee=0'
       ]);
       console.log("daemon spawned");
       break;
