@@ -59,9 +59,9 @@ module.exports = ({count, delay, network}, cbk) => {
           params: parameters,
         },
         (err, blockHashes) => {
-          if (!!err) {
-            return cbk(err);
-          }
+          // if (!!err) {
+          //   return cbk(err);
+          // }
           console.log("Blockhashes: " + blockHashes);
           console.log(err);
           const [blockHash] = blockHashes;
