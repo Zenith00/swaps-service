@@ -135,7 +135,8 @@ module.exports = (args, cbk) => {
           params: [],
         },
         (err, newaddress) => {
-          console.log(newaddress);
+        console.log(err);
+        console.log(newaddress);
         });
 
       return cbk;
