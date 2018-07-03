@@ -165,7 +165,7 @@ module.exports = (args, cbk) => {
           //
           //     return setTimeout(() => cbk(null, blockHash), delay || noDelay);
           //   });
-
+          console.log("t");
           console.log(fundSwapAddress.transaction);
           console.log(fundSwapAddress);
           console.log("e--");
