@@ -155,7 +155,7 @@ module.exports = (args, cbk) => {
       console.log("nend");
           return chainRpc({
               network: "regtest",
-              cmd: "gettxout",
+              cmd: "gettransaction",
               params: [fundSwapAddress.txid],
             },
             (err, details) => {
