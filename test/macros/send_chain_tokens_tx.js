@@ -61,6 +61,6 @@ module.exports = (args, cbk) => {
   [keyPair].forEach((k, i) => console.log(k + " | " + i));
   [keyPair].forEach((k, i) => txBuilder.sign(i, k));
 
-  return cbk(null, {transaction: txBuilder.build().toHex()});
+  return cbk(null, {transaction: txBuilder.build().toHex(), txid: args.spend_transaction_id});
 };
 
