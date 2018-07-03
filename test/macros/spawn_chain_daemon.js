@@ -48,7 +48,7 @@ module.exports = (args, cbk) => {
   const miningKey = Buffer.from(args.mining_public_key, 'hex');
   const network = networks[args.network];
   const tmpDir = `/tmp/${uuidv4()}`;
-  var implementation;
+  let implementation;
   let executable;
   console.log("tmpDir=" + tmpDir);
 
@@ -110,7 +110,7 @@ module.exports = (args, cbk) => {
   }
 
   console.log("daemon spawned");
-console.log(credentials);
+  console.log(credentials);
   console.log(daemon.connected);
   // console.log(daemon);
   console.log(daemon.pid);

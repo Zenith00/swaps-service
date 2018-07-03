@@ -1,7 +1,7 @@
 const asyncAuto = require('async/auto');
 const asyncMapSeries = require('async/mapSeries');
 const asyncTimesSeries = require('async/timesSeries');
-
+const {implementation} = require('./../test/macros/spawn_chain_daemon');
 const chainRpc = require('./call_chain_rpc');
 const {generate} = require('./conf/rpc_commands');
 const getBlockDetails = require('./get_block_details');
@@ -36,6 +36,16 @@ module.exports = ({count, delay, network}, cbk) => {
       if (!network) {
         return cbk([400, 'ExpectedNetworkForGeneration']);
       }
+      console.log(implementation);
+      console.log(implementation);
+
+      console.log(implementation);
+
+      console.log(implementation);
+      console.log(implementation);
+      console.log(implementation);
+      console.log(implementation);
+      console.log(implementation);
 
       return asyncTimesSeries(count, ({}, cbk) => {
         return chainRpc({
