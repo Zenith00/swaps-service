@@ -138,8 +138,7 @@ module.exports = (args, cbk) => {
           console.log(newaddress);
         }), 2000);
 
-
-      return cbk;
+      return cbk(null, {is_ready: true});
     }
 
     return;
