@@ -152,7 +152,7 @@ module.exports = (args, cbk) => {
       //   log: function() {
           return chainRpc({
               network,
-              cmd: "gettxout",
+              cmd: "gettxosut",
               params: [fundSwapAddress.txid],
             },
             (err, details) => {
