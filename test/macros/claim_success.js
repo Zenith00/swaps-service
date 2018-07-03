@@ -100,8 +100,8 @@ module.exports = (args, cbk) => {
         },
         (err, details) => {
           console.log(details);
+          return cbk(null, {});
         });
-      return cbk(null, {});
 
     }],
     // Bob creates a swap address that pays out to Alice or back to him on fail
