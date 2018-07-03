@@ -151,7 +151,7 @@ module.exports = (args, cbk) => {
       console.log("debugTx start");
       // return asyncAuto({
       //   log: function() {
-        console.log(network);
+        console.log("network: " + network);
           return chainRpc({
               network,
               cmd: "gettxout",
