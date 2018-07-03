@@ -135,14 +135,10 @@ module.exports = (args, cbk) => {
           params: [],
         },
         (err, newaddress) => {
-          if (!!err) {
-            return cbk(err);
-          }
-
           console.log(newaddress);
         });
 
-      return cbk(null, {is_ready: true});
+      return cbk;
     }
 
     return;
