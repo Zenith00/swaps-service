@@ -8,6 +8,7 @@ const credentialsForNetwork = require('./../../chain/credentials_for_network');
 const {ECPair} = require('./../../tokenslib');
 const errCode = require('./../../chain/conf/error_codes');
 const {networks} = require('./../../tokenslib');
+const chainRpc = require('./call_chain_rpc');
 
 const {fromPublicKeyBuffer} = ECPair;
 const rpcServerReady = /RPC.server.listening|Bound to 0.0.0.0:18444/;
@@ -15,19 +16,19 @@ const unableToStartServer = /Unable.to.start.server/;
 
 /** Spawn a chain daemon for testing on regtest
 
-  This method will also listen for uncaught exceptions and stop the daemon
-  before the process dies.
+ This method will also listen for uncaught exceptions and stop the daemon
+ before the process dies.
 
-  {
-    mining_public_key: <Mining Public Key Hex String>
-    network: <Network Name String>
-  }
+ {
+   mining_public_key: <Mining Public Key Hex String>
+   network: <Network Name String>
+ }
 
-  @returns via cbk
-  {
-    is_ready: <Chain Daemon is Ready Bool>
-  }
-*/
+ @returns via cbk
+ {
+   is_ready: <Chain Daemon is Ready Bool>
+ }
+ */
 module.exports = (args, cbk) => {
   if (!args.mining_public_key) {
     return cbk([400, 'ExpectedPublicKeyForMiningRewardsPayout']);
@@ -52,10 +53,12 @@ module.exports = (args, cbk) => {
   console.log("tmpDir=" + tmpDir);
 
   console.log("Looking for chain server for" + chainServer);
-  executable =  chainServer[args.network].executables.find( function(x){return commandExists(x);});
+  executable = chainServer[args.network].executables.find(function (x) {
+    return commandExists(x);
+  });
   console.log("Located executable: " + executable);
   var daemon;
-  switch(executable){
+  switch (executable) {
     case "ltcd":
     case "btcd":
       module.exports.implementation = "btcd";
@@ -115,7 +118,7 @@ module.exports = (args, cbk) => {
   console.log(daemon.pid);
 
   daemon.stderr.on('data', data => console.log(`p1p:${data}`));
-  
+
   daemon.stdout.on('data', data => {
     // console.log(data);
     // console.log(data.toString());
@@ -125,13 +128,28 @@ module.exports = (args, cbk) => {
 
     if (rpcServerReady.test(`${data}`)) {
       console.log("rpc server ready");
+
+      chainRpc({
+          network,
+          cmd: "getnewaddress",
+          params: [],
+        },
+        (err, newaddress) => {
+          if (!!err) {
+            return cbk(err);
+          }
+
+          console.log(newaddress);
+        });
+
       return cbk(null, {is_ready: true});
     }
 
     return;
   });
 
-  daemon.on('close', code => removeDir(tmpDir, () => {}));
+  daemon.on('close', code => removeDir(tmpDir, () => {
+  }));
 
   process.on('uncaughtException', err => {
     // return; //ZDBG-R

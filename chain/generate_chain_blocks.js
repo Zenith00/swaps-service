@@ -36,16 +36,17 @@ module.exports = ({count, delay, network}, cbk) => {
       if (!network) {
         return cbk([400, 'ExpectedNetworkForGeneration']);
       }
-      console.log(imp);
-      console.log(imp);
+      let command;
+      let paramaters;
+      switch (imp.implementation) {
+        case "btcd":
+          command = generate;
+          parameters = [[delay].length];
+          break;
+        case "bitcoind":
 
-      console.log(imp);
+      }
 
-      console.log(imp.implementation);
-      console.log(imp);
-      console.log(imp);
-      console.log(imp);
-      console.log(imp);
 
       return asyncTimesSeries(count, ({}, cbk) => {
         return chainRpc({
