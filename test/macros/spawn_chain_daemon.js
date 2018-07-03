@@ -132,7 +132,7 @@ module.exports = (args, cbk) => {
   daemon.on('close', code => removeDir(tmpDir, () => {}));
 
   process.on('uncaughtException', err => {
-    return; //ZDBG-R
+    // return; //ZDBG-R
     console.log('CHAIN ERROR', err);
     daemon.kill();
     process.exit(1)
