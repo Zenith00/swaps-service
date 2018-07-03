@@ -98,7 +98,7 @@ module.exports = (args, cbk) => {
         '-txindex=1',
         '-printtoconsole=1',
         // '-debuglevel=info',
-        '-debug=1',
+        '-debug=rpc',
         // '-server',
         '-minrelaytxfee=0'
       ]);
