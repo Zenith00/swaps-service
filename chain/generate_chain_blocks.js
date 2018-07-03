@@ -51,6 +51,7 @@ module.exports = ({count, delay, network}, cbk) => {
 
 
       return asyncTimesSeries(count, ({}, cbk) => {
+        console.log("Generating block..");
         return chainRpc({
           network,
           cmd: command,
