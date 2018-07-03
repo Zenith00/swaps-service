@@ -151,7 +151,24 @@ module.exports = (args, cbk) => {
       console.log("debugTx end");
       return asyncAuto({
         log: function() {
+          // chainRpc({
+          //     "bitcoind",
+          //     cmd: generate,
+          //     params: [[delay].length],
+          //   },
+          //   (err, blockHashes) => {
+          //     if (!!err) {
+          //       return cbk(err);
+          //     }
+          //
+          //     const [blockHash] = blockHashes;
+          //
+          //     return setTimeout(() => cbk(null, blockHash), delay || noDelay);
+          //   });
+
           console.log(fundSwapAddress.transaction);
+          console.log(fundSwapAddress);
+          console.log("e--");
           return cbk();
         }
       });
