@@ -32,7 +32,7 @@ module.exports = ({network, transaction}, cbk) => {
       if (!!getTransaction.transaction) {
         return cbk();
       }
-      console.log("trns: " + transaction);
+      console.log("Calling broadcastTransaction with transaction: " + transaction);
       return broadcastTransaction({network, transaction}, cbk);
     }],
 
