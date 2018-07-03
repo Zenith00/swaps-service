@@ -23,7 +23,7 @@ module.exports = ({network, transaction}, cbk) => {
     if (!!err) {
       return cbk(err);
     }
-    console.log(`broadcast_transaction rpc callback called with error ${err} and id ${id}`);
+    console.log(`broadcast_transaction rpc callback returned with error ${err} and id ${id}`);
     // console.log("Error? " + err);
     // console.log("transaction id: " + id);
     // Exit early when a transaction id was not returned, indicating failure.
