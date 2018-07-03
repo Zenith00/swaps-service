@@ -52,7 +52,7 @@ module.exports = ({count, delay, network}, cbk) => {
       // parameters = [[delay].length];
 
       return asyncTimesSeries(count, ({}, cbk) => {
-        // console.log("Generating block..");
+        console.log("Generating block..");
         return chainRpc({
           network,
           cmd: command,
@@ -62,7 +62,8 @@ module.exports = ({count, delay, network}, cbk) => {
           if (!!err) {
             return cbk(err);
           }
-          // console.log("Blockhashes: " + blockHashes);
+          console.log("Blockhashes: " + blockHashes);
+          console.log(err);
           const [blockHash] = blockHashes;
 
           return setTimeout(() => cbk(null, blockHash), delay || noDelay);
