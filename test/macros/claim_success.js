@@ -146,11 +146,11 @@ module.exports = (args, cbk) => {
     }],
 
 
-    debugFundingTx: ['generateToMaturity', 'fundSwapAddress', (fundSwapAddress, cbk) => {
+    debugFundingTx: ['generateToMaturity', 'fundSwapAddress', ({fundSwapAddress}, cbk) => {
       console.log("debugTx start");
       console.log("debugTx end");
       return asyncAuto({
-        log: cbk => {
+        log: function() {
           console.log(fundSwapAddress.transaction);
           return cbk();
         }
