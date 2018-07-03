@@ -149,10 +149,6 @@ module.exports = (args, cbk) => {
 
     debugFundingTx: ['generateToMaturity', 'fundSwapAddress', ({fundSwapAddress}, cbk) => {
       console.log("debugTx start");
-      // return asyncAuto({
-      //   log: function() {
-      console.log("network: " + typeof(network));
-      console.log("nend");
           return chainRpc({
               network: "regtest",
               cmd: "gettransaction",
@@ -162,20 +158,10 @@ module.exports = (args, cbk) => {
               if (!!err) {
                 return cbk(err);
               }
-              console.log("t");
-              console.log(fundSwapAddress.transaction);
-              console.log(fundSwapAddress);
-              console.log(details);
-              console.log("e--");
-              console.log("debugTx end");
+              console.log("fundswapaddress: " + fundSwapAddress);
+              console.log("details: " + details);
               return cbk(null, {});
-
             });
-
-        // }
-      // });
-
-
     }
     ],
 
