@@ -53,7 +53,7 @@ module.exports = (args, cbk) => {
 
     // Bob will make a keypair that he will use if Alice doesn't do the swap
     generateBobKeyPair: cbk => {
-      console.log("generateBobKeyPair start")
+      console.log("generateBobKeyPair start");
       try {
         return cbk(null, generateKeyPair({network: args.network}));
       } catch (e) {
@@ -92,6 +92,7 @@ module.exports = (args, cbk) => {
     }],
 
     transferToWallet: ['generateToMaturity', ({}, cbk) => {
+      console.log(`Transferring to wallet ${imp.walletaddr}...`);
       return chainRpc({
           network: "regtest",
           cmd: "sendtoaddress",
@@ -100,6 +101,8 @@ module.exports = (args, cbk) => {
         (err, details) => {
           console.log(details);
         });
+      return cbk(null, {});
+
     }],
     // Bob creates a swap address that pays out to Alice or back to him on fail
     createChainSwapAddress: [
