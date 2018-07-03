@@ -60,7 +60,7 @@ module.exports = ({count, delay, network}, cbk) => {
           if (!!err) {
             return cbk(err);
           }
-
+          console.log(blockHashes);
           const [blockHash] = blockHashes;
 
           return setTimeout(() => cbk(null, blockHash), delay || noDelay);
