@@ -44,7 +44,9 @@ module.exports = ({count, delay, network}, cbk) => {
           parameters = [[delay].length];
           break;
         case "bitcoind":
-
+          console.log("Switching ti bitcoind v");
+          command = "generatetoaddress";
+          paramaters = [[delay].length, imp.walletaddr];
       }
 
 
