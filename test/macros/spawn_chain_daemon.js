@@ -121,7 +121,7 @@ module.exports = (args, cbk) => {
 
   daemon.stdout.on('data', data => {
     // console.log(data);
-    // console.log(data.toString());
+    console.log(data.toString());
     if (unableToStartServer.test(`${data}`)) {
       return cbk([errCode.local_err, 'SpawnDaemonFailure']);
     }
