@@ -16,7 +16,7 @@ const spawnChainDaemon = require('./spawn_chain_daemon');
 const {stopChainDaemon} = require('./../../chain');
 const {swapAddress} = require('./../../swaps');
 const {swapScriptInTransaction} = require('./../../swaps');
-const chainRpc = require('./call_chain_rpc');
+const chainRpc = require('./../../chain/call_chain_rpc');
 
 const blockSearchDepth = 9;
 const coinbaseIndex = chainConstants.coinbase_tx_index;
