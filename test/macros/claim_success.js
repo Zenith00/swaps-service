@@ -148,9 +148,8 @@ module.exports = (args, cbk) => {
 
     debugFundingTx: ['generateToMaturity', 'fundSwapAddress', ({fundSwapAddress}, cbk) => {
       console.log("debugTx start");
-      console.log("debugTx end");
-      return asyncAuto({
-        log: function() {
+      // return asyncAuto({
+      //   log: function() {
           return chainRpc({
               network,
               cmd: "gettxout",
@@ -165,12 +164,15 @@ module.exports = (args, cbk) => {
               console.log(fundSwapAddress);
               console.log(details);
               console.log("e--");
-              return cbk();
+              console.log("debugTx end");
+              return cbk(null, {});
 
             });
 
-        }
-      });
+        // }
+      // });
+
+
     }
     ],
 
