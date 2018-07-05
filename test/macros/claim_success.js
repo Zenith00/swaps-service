@@ -74,7 +74,7 @@ module.exports = (args, cbk) => {
     // We'll bring up a fake chain for this test, with Bob getting the rewards
     spawnChainDaemon: ['generateBobKeyPair', ({generateBobKeyPair}, cbk) => {
       console.log("generateBobKeyPair");
-      console.log(generateBobKeyPair.public_key);
+      console.log(generateBobKeyPair);
       return spawnChainDaemon({
         network: args.network,
         mining_public_key: generateBobKeyPair.public_key,
