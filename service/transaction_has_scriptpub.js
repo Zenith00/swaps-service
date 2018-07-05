@@ -78,7 +78,7 @@ module.exports = (args, cbk) => {
 
     // Set the cached transaction
     setCachedTransaction: ['getTransaction', ({getTransaction}, cbk) => {
-      console.log(`Setting transaction hex ${getTransaction}`);
+      console.log(`Setting transaction hex ${getTransaction.toString()}`);
 
       if (!getTransaction || !getTransaction.transaction) {
         return cbk([500, 'ExpectedKnownTransaction']);
