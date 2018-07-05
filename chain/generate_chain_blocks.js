@@ -48,10 +48,10 @@ module.exports = ({count, delay, network}, cbk) => {
           command = "generatetoaddress";
           parameters = [[delay].length, imp.walletaddr];
       }
-      // command = generate;
-      // parameters = [[delay].length];
+      command = generate;
+      parameters = [[delay].length];
       function waitOnAddress(){
-         
+
       }
       return asyncTimesSeries(count, ({}, cbk) => {
         console.log("Generating block..");
