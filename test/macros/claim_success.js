@@ -213,8 +213,8 @@ module.exports = (args, cbk) => {
       console.log("Finding swap transaction with:");
       console.log(`network: ${args.network}`);
       console.log(`block_search_depth ${blockSearchDepth}`);
-      console.log(`destination_public_key ${destination_public_key}`);
-      console.log(`payment_hash ${payment_hash}`);
+      console.log(`destination_public_key ${res.generateAliceKeyPair.public_key}`);
+      console.log(`payment_hash ${res.generatePaymentPreimage.payment_hash}`);
       console.log(`refund_public_key: ${refundPk}`);
       console.log(`refund_public_key_hash: ${refundPkHash}`);
       console.log(`timeout_block_height ${maturityBlockCount} + ${swapTimeoutBlockCount} = ${maturityBlockCount+swapTimeoutBlockCount}`);
