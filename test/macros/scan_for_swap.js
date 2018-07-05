@@ -176,6 +176,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'watchSwap',
       ({createSwapAddress, generateKeyPair, utxo}, cbk) =>
     {
+      console.log("fundingTransaction");
       return sendChainTokensTransaction({
         network,
         destination: createSwapAddress.p2sh_p2wsh_address,
@@ -194,6 +195,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'generateSwapInvoice',
       ({fundingTransaction, generateSwapInvoice}, cbk) =>
     {
+      console.log("waitForMempoolSwap");
       const {transaction} = fundingTransaction;
 
       return scanner.once('funding', swap => {
@@ -257,7 +259,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'waitForMempoolSwap',
       ({fundingTransaction}, cbk) =>
     {
-      console.log("Confirming funding...")
+      console.log("Confirming funding...");
       const {transaction} = fundingTransaction;
 
       return mineTransaction({network, transaction}, cbk);
@@ -269,7 +271,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'initializeScanner',
       ({generateSwapInvoice}, cbk) =>
     {
-      console.log("swapFunded ...")
+      console.log("swapFunded ...");
       return scanner.once('funding', swap => {
         if (swap.invoice !== generateSwapInvoice.invoice) {
           return cbk([0, 'ExpectedSwapInvoice']);
