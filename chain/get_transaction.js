@@ -32,7 +32,7 @@ module.exports = ({id, network}, cbk) => {
       if (!!err) {
         return cbk(err);
       }
-
+      console.log(`Got transaction id ${id} and received ${transaction} and error ${err}`);
       return cbk(null, {transaction});
     });
 };
