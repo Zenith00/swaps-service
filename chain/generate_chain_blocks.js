@@ -46,10 +46,10 @@ module.exports = ({count, delay, network}, cbk) => {
         case "bitcoind":
           console.log("Generating to address...");
           command = "generatetoaddress";
-          parameters = [[delay].length, imp.walletaddr];
+          parameters = [[delay].length, imp.miningaddr];
       }
-      command = generate;
-      parameters = [[delay].length];
+      // command = generate;
+      // parameters = [[delay].length];
       function waitOnAddress(){
 
       }
