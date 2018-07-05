@@ -27,8 +27,8 @@ module.exports = (args, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
-      // console.log("hasscriptpub args");
-      // console.log(args);
+      console.log("hasscriptpub args");
+      console.log(args);
       if (!args.cache) {
         return cbk([400, 'ExpectedCacheTypeToCheckCachedResult']);
       }

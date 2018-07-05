@@ -74,7 +74,7 @@ module.exports = (args, cbk) => {
     // Run through transaction ids and see if they have a matching output
     findTransaction: ['getMempool', ({getMempool}, cbk) => {
       console.log("finding transaction mempool...");
-      console.log(id);
+      // console.log(id);
       return asyncDetectLimit(
         getMempool.transaction_ids,
         checkFanOutLimit,
