@@ -398,6 +398,7 @@ module.exports = (args, cbk) => {
       console.log("Stopping chain daemon!!");
 
       return stopChainDaemon({network: args.network}, stopErr => {
+        console.log(stopErr);
         return cbk(stopErr || err);
       });
     }
