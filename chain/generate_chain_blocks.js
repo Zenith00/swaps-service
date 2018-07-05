@@ -33,7 +33,7 @@ module.exports = ({count, delay, network}, cbk) => {
   return asyncAuto({
     // Make blocks to maturity
     generateBlocks: cbk => {
-      // console.log("Generating blocks...");
+      console.log("Generating blocks..." + count);
       if (!network) {
         return cbk([400, 'ExpectedNetworkForGeneration']);
       }
