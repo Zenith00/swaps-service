@@ -159,7 +159,7 @@ module.exports = (args, cbk) => {
         private_key: res.generateBobKeyPair.private_key,
         spend_transaction_id: res.bobUtxo.transaction_id,
         spend_vout: res.bobUtxo.vout,
-        tokens: res.bobUtxo.tokens,
+        tokens: res.bobUtxo.tokens - 10000,
       },
       cbk);
     }],
