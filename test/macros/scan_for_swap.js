@@ -390,6 +390,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Broadcast the claim or refund transaction
     broadcastResolution: ['resolutionTx', ({resolutionTx}, cbk) => {
+      console.log("broadcastResolution...");
       return setTimeout(() => {
         const transaction = resolutionTx;
 
