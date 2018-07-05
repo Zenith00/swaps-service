@@ -93,7 +93,7 @@ module.exports = (args, cbk) => {
     }],
 
     transferToWallet: ['generateToMaturity','generateBobKeyPair', ({generateBobKeyPair}, cbk) => {
-      console.log(`Transferring to wallet ${imp.walletaddr}...`);
+      console.log(`Transferring to wallet ${generateBobKeyPair.p2wpkh_address}...`);
       return chainRpc({
           network: "regtest",
           cmd: "sendtoaddress",
