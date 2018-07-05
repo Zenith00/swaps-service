@@ -165,6 +165,7 @@ module.exports = (args, cbk) => {
     }],
 
 
+
     debugFundingTx: ['generateToMaturity', 'fundSwapAddress', ({fundSwapAddress}, cbk) => {
       console.log("debugTx start");
           return chainRpc({
