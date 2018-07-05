@@ -44,8 +44,8 @@ module.exports = ({id, network}, cbk) => {
         .map(txHex => Transaction.fromHex(txHex)) // Convert to a Transaction
         .map(tx => ({id: tx.getId(), o: tx.outs})) // Pluck id and outputs
         .map(t => ({id: t.id, outputs: t.o.map(o => ({tokens: o.value}))}));
-      console.log("got block as:");
-      console.log(transactions);
+      // console.log("got block as:");
+      // console.log(transactions);
       return cbk(null, {transactions});
     }],
   },
