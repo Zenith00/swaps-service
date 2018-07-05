@@ -50,7 +50,9 @@ module.exports = ({count, delay, network}, cbk) => {
       }
       // command = generate;
       // parameters = [[delay].length];
-
+      function waitOnAddress(){
+         
+      }
       return asyncTimesSeries(count, ({}, cbk) => {
         console.log("Generating block..");
         console.log(network);
