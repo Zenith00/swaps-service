@@ -31,6 +31,7 @@ module.exports = ({network, transaction}, cbk) => {
       return cbk([503, 'TransactionBroadcastFailed', transaction]);
     }
     console.log("complete");
+    console.log(id);
     return cbk(null, {id});
   });
 };
