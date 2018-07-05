@@ -17,7 +17,7 @@ module.exports = ({network}, cbk) => {
     if (!!err) {
       return cbk(err);
     }
-
+    console.log(`Get current height completed with height: ${height}`);
     return cbk(null, {height});
   });
 };
