@@ -91,6 +91,8 @@ module.exports = (args, cbk) => {
 
     // The result of the search
     found: ['findTransaction', ({findTransaction}, cbk) => {
+      console.log("Finding scriptpub: ");
+      console.log(findTransaction);
       return cbk(null, {transaction_id: findTransaction});
     }],
   },
