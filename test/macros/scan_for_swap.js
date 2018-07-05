@@ -47,6 +47,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Claim key index
     index: cbk => {
+      console.log("index");
       return ints({max: maxKeyIndex, min: minKeyIndex}, (err, res) => {
         if (!!err || !Array.isArray(res)) {
           return cbk([0, 'FailedToGenerateRandomIndex', e]);
@@ -64,6 +65,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Generate a key pair to use for mining and a swap invoice
     generateKeyPair: ['index', ({index}, cbk) => {
+      console.log("generateKeyPair");
       try {
         return cbk(null, serverSwapKeyPair({index, network}));
       } catch (e) {
@@ -73,6 +75,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Generate a swap invoice
     generateSwapInvoice: ['generateKeyPair', ({generateKeyPair}, cbk) => {
+      console.log("generateSwapInvoice");
       return generateInvoice({
         network,
         private_key: generateKeyPair.private_key,
@@ -82,6 +85,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Spin up a chain daemon to generate blocks
     spawnChainDaemon: ['generateKeyPair', ({generateKeyPair}, cbk) => {
+      console.log("SpawnChainDaemon"0;)
       return spawnChainDaemon({
         network,
         mining_public_key: generateKeyPair.public_key,
@@ -477,6 +481,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Mine resolution transaction into a block
     confirmResolution: ['resolutionInMempool', ({resolutionTx}, cbk) => {
+      console.log("confirmResolution");
       const transaction = resolutionTx;
 
       return mineTransaction({network, transaction}, cbk);
@@ -541,6 +546,7 @@ module.exports = ({cache, network, type}, cbk) => {
   },
   (err, res) => {
     if (!!res.spawnChainDaemon && !!res.spawnChainDaemon.is_ready) {
+      console.log("stopping...");
       return stopChainDaemon({network}, stopErr => {
         return cbk(stopErr || err);
       });
