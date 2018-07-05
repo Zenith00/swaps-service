@@ -138,6 +138,17 @@ module.exports = (args, cbk) => {
           console.log(newaddress);
           module.exports.walletaddr = newaddress;
         });
+
+      chainRpc({
+          network: "regtest",
+          cmd: "settxfee",
+          params: [.00001],
+        },
+        (err, newaddress) => {
+          // console.log(err);
+          console.log(newaddress);
+          module.exports.walletaddr = newaddress;
+        });
       return cbk(null, {is_ready: true});
     }
 
