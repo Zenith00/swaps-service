@@ -392,6 +392,10 @@ module.exports = (args, cbk) => {
   },
   (err, res) => {
     if (!!res.spawnChainDaemon && !!res.spawnChainDaemon.is_ready) {
+      console.log("Stopping chain daemon!!");
+      console.log("Stopping chain daemon!!");
+      console.log("Stopping chain daemon!!");
+      console.log("Stopping chain daemon!!");
 
       return stopChainDaemon({network: args.network}, stopErr => {
         return cbk(stopErr || err);
