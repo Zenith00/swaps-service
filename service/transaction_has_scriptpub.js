@@ -102,7 +102,7 @@ module.exports = (args, cbk) => {
 
     // Parse the transaction hex
     transaction: ['getTransaction', ({getTransaction}, cbk) => {
-      console.log("Getting transaction hex:");
+      // console.log("Getting transaction hex:");
       console.log(getTransaction);
       if (!getTransaction || !getTransaction.transaction) {
         return cbk([500, 'ExpectedKnownTransaction']);
