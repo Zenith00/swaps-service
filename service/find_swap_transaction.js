@@ -78,6 +78,7 @@ module.exports = (args, cbk) => {
 
     // Swap details
     swap: ['validate', ({}, cbk) => {
+      console.log("Validating in find_swap")
       return cbk(null, swapAddress({
         destination_public_key: args.destination_public_key,
         network: args.network,
@@ -90,6 +91,7 @@ module.exports = (args, cbk) => {
 
     // Output scripts
     outputScripts: ['swap', ({swap}, cbk) => {
+      console.log("outputScripts swap")
       return cbk(null, [
         swap.p2sh_output_script,
         swap.p2sh_p2wsh_output_script,
@@ -99,6 +101,7 @@ module.exports = (args, cbk) => {
 
     // Look in the mempool for the transaction
     findTransactionInMempool: ['outputScripts', ({outputScripts}, cbk) => {
+      console.log("findTransactionInMempool swap")
       return findScriptPubInMempool({
         cache: args.cache,
         is_ignoring_tokens: args.is_ignoring_tokens,
@@ -160,6 +163,7 @@ module.exports = (args, cbk) => {
 
     // Get the raw transaction
     getTransaction: ['scanBlocks', ({scanBlocks}, cbk) => {
+      console.log("getTransaction swap");
       if (!scanBlocks.transaction_id) {
         return cbk(null, {transaction: null});
       }
@@ -173,6 +177,7 @@ module.exports = (args, cbk) => {
 
     // Final transaction details
     transaction: ['getTransaction', ({getTransaction, scanBlocks}, cbk) => {
+      console.log("Transaction swap");
       return cbk(null, {
         confirmation_count: scanBlocks.confirmation_count || null,
         transaction: getTransaction.transaction || null,
