@@ -91,6 +91,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Bring up the scanner
     initializeScanner: ['spawnChainDaemon', ({}, cbk) => {
+      console.log("initializescanner");
       try {
         scanner = swapScanner({cache, network});
 
@@ -108,6 +109,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'spawnChainDaemon',
       ({}, cbk) =>
     {
+      console.log("Generatetomaturity");
       return generateChainBlocks({
         network,
         count: maturityBlockCount,
@@ -121,6 +123,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'generateSwapInvoice',
       ({generateKeyPair, generateSwapInvoice}, cbk) =>
     {
+      console.log("Createswapaddress");
       try {
         return cbk(null, swapAddress({
           network,
@@ -136,6 +139,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Get a UTXO that can be spent to the swap
     utxo: ['generateToMaturity', ({generateToMaturity}, cbk) => {
+      console.log("utxo");
       const [firstRewardBlock] = generateToMaturity.blocks;
 
       const [coinbaseTransaction] = firstRewardBlock.transactions;
@@ -157,6 +161,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'utxo',
       ({createSwapAddress, generateSwapInvoice, index, utxo}, cbk) =>
     {
+      console.log("watchSwap");
       return watchSwapOutput({
         cache,
         index,
@@ -434,7 +439,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'resolutionInMempool',
       ({generateSwapInvoice, resolutionInMempool}, cbk) =>
     {
-      console.log("addresolutiontopool")
+      console.log("addresolutiontopool");
       const {id} = resolutionInMempool;
       const {invoice} = resolutionInMempool;
       const {network} = resolutionInMempool;
@@ -466,6 +471,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Make sure the resolution confirmation is announced
     resolutionConfirmed: [ 'broadcastResolution', ({}, cbk) => {
+      console.log("resolutionConfirmed");
       return scanner.once(type, swap => cbk(null, {swap}));
     }],
 
