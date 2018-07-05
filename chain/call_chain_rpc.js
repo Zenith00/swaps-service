@@ -12,6 +12,9 @@ const chainQueue = require('./chain_queue');
   <Result Object>
 */
 module.exports = ({cmd, network, params}, cbk) => {
-  return chainQueue({}).push({cmd, network, params}, cbk);
+  let cbk2 = function(){
+    setTimeout(function(){return cbk }, 100);
+  };
+  return chainQueue({}).push({cmd, network, params}, cbk2);
 };
 
