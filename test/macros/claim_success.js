@@ -97,7 +97,7 @@ module.exports = (args, cbk) => {
       return chainRpc({
           network: "regtest",
           cmd: "sendtoaddress",
-          params: [generateBobKeyPair.p2wpkh_address, 500],
+          params: [generateBobKeyPair.p2pkh_address, 500],
         },
         (err, details) => {
           console.log(details);
