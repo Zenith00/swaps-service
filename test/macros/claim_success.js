@@ -153,6 +153,7 @@ module.exports = (args, cbk) => {
     // Bob makes a send transaction to fund the swap with his coins
     fundSwapAddress: ['bobUtxo', 'createChainSwapAddress', (res, cbk) => {
       console.log("sendChainTokensTransactionStart");
+      res.bobUtxo = res.bobUtxo - 10000;
       return sendChainTokensTransaction({
         destination: res.createChainSwapAddress[`${args.swap_type}_address`],
         network: args.network,
