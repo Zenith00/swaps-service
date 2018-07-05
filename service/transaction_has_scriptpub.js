@@ -78,6 +78,8 @@ module.exports = (args, cbk) => {
 
     // Set the cached transaction
     setCachedTransaction: ['getTransaction', ({getTransaction}, cbk) => {
+      console.log(`Setting transaction hex ${getTransaction}`);
+
       if (!getTransaction || !getTransaction.transaction) {
         return cbk([500, 'ExpectedKnownTransaction']);
       }
@@ -99,6 +101,7 @@ module.exports = (args, cbk) => {
 
     // Parse the transaction hex
     transaction: ['getTransaction', ({getTransaction}, cbk) => {
+      console.log(`Parsing transaction hex ${getTransaction}`);
       if (!getTransaction || !getTransaction.transaction) {
         return cbk([500, 'ExpectedKnownTransaction']);
       }
