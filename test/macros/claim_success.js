@@ -21,7 +21,7 @@ const chainRpc = require('./../../chain/call_chain_rpc');
 const imp = require('./../../test/macros/spawn_chain_daemon');
 
 
-const blockSearchDepth = 900;
+const blockSearchDepth = 90;
 const coinbaseIndex = chainConstants.coinbase_tx_index;
 const maturityBlockCount = chainConstants.maturity_block_count;
 const staticFeePerVirtualByte = 100;
@@ -274,6 +274,7 @@ module.exports = (args, cbk) => {
       'getHeightForSweepTransaction', // Got a good locktime for the sweep tx
       (res, cbk) =>
     {
+      console.log("checking ready to claim");
       return cbk(null, {
         current_block_height: res.getHeightForSweepTransaction.height,
         destination: res.generateAliceKeyPair.p2wpkh_address,
