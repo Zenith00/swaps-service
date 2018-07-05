@@ -100,7 +100,7 @@ module.exports = (args, cbk) => {
         // `-rpcport=18334`,
         // `-rpcpassword=pass`,
         // `-rpcuser=user`,
-        '-rpcthreads=6'
+        '-rpcthreads=6',
         '-txindex=1',
         '-printtoconsole=1',
         // '-debuglevel=info',
