@@ -21,7 +21,7 @@ const chainRpc = require('./../../chain/call_chain_rpc');
 const imp = require('./../../test/macros/spawn_chain_daemon');
 
 
-const blockSearchDepth = 9;
+const blockSearchDepth = 900;
 const coinbaseIndex = chainConstants.coinbase_tx_index;
 const maturityBlockCount = chainConstants.maturity_block_count;
 const staticFeePerVirtualByte = 100;
