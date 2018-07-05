@@ -38,7 +38,7 @@ module.exports = ({network, transaction}, cbk) => {
 
     // Generate blocks to confirm the transaction into a block
     generateBlock: ['broadcastTransaction', ({}, cbk) => {
-      console.log("bloks generated");
+      console.log(`Generating ${txConfirmationCount} blocks to confirm`);
       return generateChainBlocks({
         network,
         count: txConfirmationCount,
