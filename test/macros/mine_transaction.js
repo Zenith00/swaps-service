@@ -19,6 +19,7 @@ module.exports = ({network, transaction}, cbk) => {
   return asyncAuto({
     // Check if the transaction is already broadcast
     getTransaction: cbk => {
+      console.log("getting transaction " + Transaction.fromHex(transaction).getId());
       return getTransaction({
         network,
         id: Transaction.fromHex(transaction).getId(),
