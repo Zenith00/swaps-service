@@ -53,7 +53,10 @@ module.exports = ({cmd, network, params}, cbk) => {
 
       called = true;
 
-      if (!response && cmd !== "stop") {
+      if (!response) {
+        if (cmd === "stop"){
+          return setTimeout(chainRpc({network, cmd: stop}, cbk), 250);
+        }
         return cbk([503, 'ExpectedNonEmptyChainResponse']);
       }
 
