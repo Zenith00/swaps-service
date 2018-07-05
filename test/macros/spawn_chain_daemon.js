@@ -142,7 +142,7 @@ module.exports = (args, cbk) => {
       chainRpc({
           network: "regtest",
           cmd: "settxfee",
-          params: [.00001],
+          params: [10000],
         },
         (err, newaddress) => {
           // console.log(err);
