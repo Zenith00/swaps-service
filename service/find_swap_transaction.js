@@ -164,6 +164,7 @@ module.exports = (args, cbk) => {
     // Get the raw transaction
     getTransaction: ['scanBlocks', ({scanBlocks}, cbk) => {
       console.log("getTransaction swap");
+      console.log(scanBlocks);
       if (!scanBlocks.transaction_id) {
         return cbk(null, {transaction: null});
       }
