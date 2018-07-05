@@ -298,6 +298,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'getCurrentHeight',
       ({feeRate, generateKeyPair, getCurrentHeight}, cbk) =>
     {
+      console.log("resolutionChainDetails");
       return cbk(null, {
         current_block_height: getCurrentHeight.height,
         destination: generateKeyPair.p2wpkh_address,
@@ -311,6 +312,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'swapFunded',
       ({generateSwapInvoice, swapFunded}, cbk) =>
     {
+      console.log("swapdetails");
       return cbk(null, {
         preimage: generateSwapInvoice.payment_preimage,
         utxo_output_script: swapFunded.swap.output,
@@ -328,6 +330,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'swapDetails',
       ({generateKeyPair, resolutionChainDetails, swapDetails}, cbk) =>
     {
+      console.log("claimtransactions");
       try {
         return cbk(null, claimTransaction({
           network,
@@ -356,6 +359,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'swapDetails',
       ({generateKeyPair, resolutionChainDetails, swapDetails}, cbk) =>
     {
+      console.log("refundtransaction");
       try {
         return cbk(null, refundTransaction({
           network,
@@ -383,6 +387,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'refundTransaction',
       ({claimTransaction, refundTransaction}, cbk) =>
     {
+      console.log("resolutiontx");
       const isClaim = type === 'claim';
 
       const {transaction} = (isClaim ? claimTransaction : refundTransaction);
@@ -407,6 +412,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'resolutionTx',
       ({resolutionTx}, cbk) =>
     {
+      console.log("resolutioninmempool");
       const expectedId = Transaction.fromHex(resolutionTx).getId();
 
       return scanner.once(type, swap => {
@@ -428,6 +434,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'resolutionInMempool',
       ({generateSwapInvoice, resolutionInMempool}, cbk) =>
     {
+      console.log("addresolutiontopool")
       const {id} = resolutionInMempool;
       const {invoice} = resolutionInMempool;
       const {network} = resolutionInMempool;
@@ -477,6 +484,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'generateSwapInvoice',
       ({generateSwapInvoice}, cbk) =>
     {
+      console.log("getdetectedswaps");
       return getDetectedSwaps({
         cache,
         id: generateSwapInvoice.payment_hash,
@@ -486,6 +494,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Check that the detected swap elements in the pool are correct
     checkDetectedSwaps: ['getDetectedSwaps', ({getDetectedSwaps}, cbk) => {
+      console.log("checkdetectedswaps");
       const {claim} = getDetectedSwaps;
       const {funding} = getDetectedSwaps;
       const {refund} = getDetectedSwaps;
