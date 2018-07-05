@@ -238,6 +238,7 @@ module.exports = (args, cbk) => {
       ({createChainSwapAddress, findFundingTransaction}, cbk) =>
     {
       console.log("fundingTransactionUtxos start");
+      console.log(findFundingTransaction);
       if (!findFundingTransaction.transaction) {
         return cbk([0, 'ExpectedFundedSwapTransaction']);
       }
