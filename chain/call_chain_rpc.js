@@ -13,7 +13,11 @@ const chainQueue = require('./chain_queue');
 */
 module.exports = ({cmd, network, params}, cbk) => {
   let cbk2 = function(){
-    setTimeout(function(){return cbk }, 100);
+    console.log("starting rpc...");
+    let time = Date.now();
+    setTimeout(function(){
+      console.log(Date.now() - time);
+      return cbk }, 100);
   };
   return chainQueue({}).push({cmd, network, params}, cbk2);
 };
