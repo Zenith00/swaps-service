@@ -6,7 +6,7 @@ const {getTransaction} = require('./../../chain');
 const {returnResult} = require('./../../async-util');
 const {Transaction} = require('./../../tokenslib');
 
-const txConfirmationCount = 6*5;
+const txConfirmationCount = 6;
 
 /** Mine a transaction into a block
 
