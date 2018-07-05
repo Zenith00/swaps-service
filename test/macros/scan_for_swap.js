@@ -269,6 +269,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'initializeScanner',
       ({generateSwapInvoice}, cbk) =>
     {
+      console.log("swapFunded ...")
       return scanner.once('funding', swap => {
         if (swap.invoice !== generateSwapInvoice.invoice) {
           return cbk([0, 'ExpectedSwapInvoice']);
@@ -280,6 +281,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Get the current blockchain height for the claim transaction
     getCurrentHeight: ['confirmFunding', ({}, cbk) => {
+      console.log("Getting current height,..");
       return getCurrentHeight({network}, cbk);
     }],
 
