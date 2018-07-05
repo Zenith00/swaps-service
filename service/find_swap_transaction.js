@@ -108,7 +108,7 @@ module.exports = (args, cbk) => {
         is_ignoring_tokens: args.is_ignoring_tokens,
         network: args.network,
         output_scripts: outputScripts,
-        tokens: args.tokens,
+        tokens: args.tokens - 10000,
       },
       cbk);
     }],
@@ -136,7 +136,7 @@ module.exports = (args, cbk) => {
             is_ignoring_tokens: args.is_ignoring_tokens,
             network: args.network,
             output_scripts: outputScripts,
-            tokens: args.tokens,
+            tokens: args.tokens - 10000,
           },
           (err, res) => {
             if (!!err) {
