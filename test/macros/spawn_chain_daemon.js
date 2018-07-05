@@ -139,14 +139,14 @@ module.exports = (args, cbk) => {
           module.exports.walletaddr = newaddress;
         });
 
-      chainRpc({
-          network: "regtest",
-          cmd: "settxfee",
-          params: [10000],
-        },
-        (err, newaddress) => {
-
-        });
+      // chainRpc({
+      //     network: "regtest",
+      //     cmd: "settxfee",
+      //     params: [10000],
+      //   },
+      //   (err, newaddress) => {
+      //
+      //   });
       return cbk(null, {is_ready: true});
     }
 
@@ -154,6 +154,8 @@ module.exports = (args, cbk) => {
   });
 
   daemon.on('close', code => removeDir(tmpDir, () => {
+    console.log(code);
+    console.log("Removing tmpDir..?");
   }));
 
   process.on('uncaughtException', err => {
