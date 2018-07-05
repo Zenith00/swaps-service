@@ -14,7 +14,7 @@ const {getRawTransaction} = require('./conf/rpc_commands');
  }
  */
 module.exports = ({id, network}, cbk) => {
-  console.log(`Getting Transaction id: ${id} on network ${network}`);
+  // console.log(`Getting Transaction id: ${id} on network ${network}`);
   if (!id) {
     return cbk([500, 'ExpectedIdForTransaction']);
   }

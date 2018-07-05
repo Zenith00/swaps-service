@@ -78,7 +78,7 @@ module.exports = (args, cbk) => {
 
     // Swap details
     swap: ['validate', ({}, cbk) => {
-      console.log("Validating in find_swap")
+      console.log("Validating in find_swap");
       return cbk(null, swapAddress({
         destination_public_key: args.destination_public_key,
         network: args.network,
@@ -91,7 +91,8 @@ module.exports = (args, cbk) => {
 
     // Output scripts
     outputScripts: ['swap', ({swap}, cbk) => {
-      console.log("outputScripts swap")
+      console.log("outputScripts swap");
+
       return cbk(null, [
         swap.p2sh_output_script,
         swap.p2sh_p2wsh_output_script,
@@ -101,7 +102,7 @@ module.exports = (args, cbk) => {
 
     // Look in the mempool for the transaction
     findTransactionInMempool: ['outputScripts', ({outputScripts}, cbk) => {
-      console.log("findTransactionInMempool swap")
+      console.log("findTransactionInMempool swap");
       return findScriptPubInMempool({
         cache: args.cache,
         is_ignoring_tokens: args.is_ignoring_tokens,

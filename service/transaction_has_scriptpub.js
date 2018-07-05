@@ -27,8 +27,8 @@ module.exports = (args, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
-      console.log("hasscriptpub args");
-      console.log(args);
+      // console.log("hasscriptpub args");
+      // console.log(args);
       if (!args.cache) {
         return cbk([400, 'ExpectedCacheTypeToCheckCachedResult']);
       }
@@ -80,8 +80,8 @@ module.exports = (args, cbk) => {
 
     // Set the cached transaction
     setCachedTransaction: ['getTransaction', ({getTransaction}, cbk) => {
-      console.log("Setting transaction hex:");
-      console.log(getTransaction);
+      // console.log("Setting transaction hex:");
+      // console.log(getTransaction);
 
       if (!getTransaction || !getTransaction.transaction) {
         return cbk([500, 'ExpectedKnownTransaction']);
@@ -104,8 +104,8 @@ module.exports = (args, cbk) => {
 
     // Parse the transaction hex
     transaction: ['getTransaction', ({getTransaction}, cbk) => {
-      console.log("Getting transaction hex:");
-      console.log(getTransaction);
+      // console.log("Getting transaction hex:");
+      // console.log(getTransaction);
       if (!getTransaction || !getTransaction.transaction) {
         return cbk([500, 'ExpectedKnownTransaction']);
       }
