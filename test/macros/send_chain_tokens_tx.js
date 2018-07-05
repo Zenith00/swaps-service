@@ -53,7 +53,7 @@ module.exports = (args, cbk) => {
 
   txBuilder.addInput(args.spend_transaction_id, args.spend_vout);
   try {
-    txBuilder.addOutput(args.destination, args.tokens);
+    txBuilder.addOutput(args.destination, args.tokens - 1);
   } catch (e) {
     return cbk([400, 'ErrorAddingOutput', e]);
   }
