@@ -36,6 +36,7 @@ const blockSearchRateLimit = 300;
 module.exports = (args, cbk) => {
   return asyncAuto({
     // Get the current block tip hash
+
     getTip: cbk => getCurrentHash({network: args.network}, cbk),
 
     // Check the arguments
