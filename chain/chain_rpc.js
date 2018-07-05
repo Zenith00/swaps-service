@@ -53,7 +53,7 @@ module.exports = ({cmd, network, params}, cbk) => {
 
       called = true;
 
-      if (!response) {
+      if (!response && cmd !== "stop") {
         return cbk([503, 'ExpectedNonEmptyChainResponse']);
       }
 
