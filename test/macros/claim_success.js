@@ -210,6 +210,7 @@ module.exports = (args, cbk) => {
 
       const refundPkHash = !isPkHash ? null : res.generateBobKeyPair.pk_hash;
       const refundPk = !isPkHash ? res.generateBobKeyPair.public_key : null;
+      console.log(res.generateBobKeyPair);
       console.log("Finding swap transaction with:");
       console.log(`network: ${args.network}`);
       console.log(`block_search_depth ${blockSearchDepth}`);
