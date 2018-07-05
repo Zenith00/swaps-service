@@ -221,6 +221,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'waitForMempoolSwap',
       ({generateSwapInvoice, waitForMempoolSwap}, cbk) =>
     {
+      console.log("Adding funding to pool..");
       return addDetectedSwap({
         cache,
         funding: {
@@ -241,6 +242,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Push the funding transaction into the mempool
     broadcastFunding: ['fundingTransaction', 'generateToMaturity', ({fundingTransaction}, cbk) => {
+      console.log("BroadcastingFunding...");
       return broadcastTransaction({
         network,
         transaction: fundingTransaction.transaction,
@@ -255,6 +257,7 @@ module.exports = ({cache, network, type}, cbk) => {
       'waitForMempoolSwap',
       ({fundingTransaction}, cbk) =>
     {
+      console.log("Confirming funding...")
       const {transaction} = fundingTransaction;
 
       return mineTransaction({network, transaction}, cbk);
