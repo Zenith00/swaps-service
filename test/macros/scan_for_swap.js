@@ -85,7 +85,7 @@ module.exports = ({cache, network, type}, cbk) => {
 
     // Spin up a chain daemon to generate blocks
     spawnChainDaemon: ['generateKeyPair', ({generateKeyPair}, cbk) => {
-      console.log("SpawnChainDaemon"0;)
+      console.log("SpawnChainDaemon");
       return spawnChainDaemon({
         network,
         mining_public_key: generateKeyPair.public_key,
