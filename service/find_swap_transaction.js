@@ -119,7 +119,9 @@ module.exports = (args, cbk) => {
       'outputScripts',
       ({findTransactionInMempool, getTip, outputScripts}, cbk) =>
     {
+
       console.log("SCanning for blocks...");
+      console.log(findTransactionInMempool);
       let count = 0;
       let cursor = getTip.hash;
       let txId = findTransactionInMempool.transaction_id || null;
