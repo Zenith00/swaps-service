@@ -30,7 +30,7 @@ module.exports = ({network, transaction}, cbk) => {
     if (!id) {
       return cbk([503, 'TransactionBroadcastFailed', transaction]);
     }
-
+    console.log("complete");
     return cbk(null, {id});
   });
 };
