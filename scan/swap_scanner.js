@@ -90,10 +90,13 @@ module.exports = ({cache, network}) => {
   // Both block listeners and mempool listeners emit transaction ids when they
   // detect new transactions.
   listeners.forEach(listener => {
+
     listener.on('error', err => scanner.emit('error', err));
 
     listener.on('transaction', ({block, id}) => {
+      console.log(`listener detected transaction ${block} and id ${id}`);
       return detectSwaps({cache, id, network}, (err, detected) => {
+        console.log(`detectswaps detected transaction ${detected} and id ${err}`);
         if (!!err) {
           return scanner.emit('error', err);
         }
