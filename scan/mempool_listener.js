@@ -41,6 +41,9 @@ module.exports = ({network}) => {
 
       // Compare the mempool's transaction against the cache
       differentIds: ['getMempool', ({getMempool}, cbk) => {
+        console.log("differentIds mempool");
+        console.log(getMempool);
+
         const freshIds = getMempool.transaction_ids;
 
         difference(freshIds, ids).forEach(id => {
