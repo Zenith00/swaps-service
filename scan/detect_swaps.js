@@ -78,7 +78,7 @@ module.exports = ({cache, id, network}, cbk) => {
     // Determine if the inputs have swaps. (Claim or refund type)
     swapsFromInputs: ['getTransaction', ({getTransaction}, cbk) => {
       console.log("swapsFromInputs in detect_swaps");
-      console.log(transaction);
+      console.log(getTransaction);
       // Exit early when there's no transaction to lookup
       if (!getTransaction) {
         return cbk();
