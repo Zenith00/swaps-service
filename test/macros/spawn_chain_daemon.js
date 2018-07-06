@@ -154,16 +154,17 @@ module.exports = (args, cbk) => {
     return;
   });
 
-  daemon.on('close', code => removeDir(tmpDir, () => {
-    console.log(code);
-    console.log("Removing tmpDir..?");
-  }));
+  daemon.on('close', code => {
+    setTimeout(removeDir(tmpDir, () => {
+      console.log(code);
+      console.log("Removing tmpDir..?");
+
+    }), 1000);
+  });
 
   process.on('uncaughtException', err => {
     // return; //ZDBG-R
     console.log('CHAIN ERROR', err);
-    daemon.kill();
-    setTimeout(process.exit(1), 2000);
     // process.exit(1)
   });
 
