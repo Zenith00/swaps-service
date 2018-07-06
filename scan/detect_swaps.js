@@ -35,7 +35,10 @@ const cacheSwapsMs = 1000 * 60 * 60 * 2;
 module.exports = ({cache, id, network}, cbk) => {
   return asyncAuto({
     // Check arguments
+
     validate: cbk => {
+      console.log(`detectswaps called with cache ${cache} id ${id} network ${network}`);
+
       if (!cache) {
         return cbk([400, 'ExpectedCacheToCheck']);
       }
@@ -53,23 +56,28 @@ module.exports = ({cache, id, network}, cbk) => {
 
     // See if we already know swaps related to this transaction
     getCachedSwaps: ['validate', ({}, cbk) => {
+      console.log("getCachedSwaps");
       return getJsonFromCache({cache, key: id, type: 'swaps_for_tx'}, cbk);
     }],
 
     // Get the raw transaction to look for swaps
     getTransaction: ['getCachedSwaps', ({getCachedSwaps}, cbk) => {
+      console.log("getTransaction in detect_swaps");
       // Exit early when we already have swap details
       if (!!getCachedSwaps) {
+        console.log("already have swap details, early exit");
         return cbk();
       }
 
       // This will get the transaction from the chain. There's no need to cache
       // it because we are caching the end result of our analysis.
+      console.log("getting transaction in gettransaction in detect_swaps");
       return getTransaction({id, network}, cbk);
     }],
 
     // Determine if the inputs have swaps. (Claim or refund type)
     swapsFromInputs: ['getTransaction', ({getTransaction}, cbk) => {
+      console.log("swapsFromInputs in detect_swaps");
       // Exit early when there's no transaction to lookup
       if (!getTransaction) {
         return cbk();

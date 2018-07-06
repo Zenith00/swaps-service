@@ -100,9 +100,8 @@ module.exports = ({cache, network}) => {
       console.log(id);
 
       return detectSwaps({cache, id, network}, (err, detected) => {
-        console.log("detectswaps detected transaction");
-        console.log(detected);
-        console.log(`and id ${err}`);
+        console.log("detectswaps detecteding transactions");
+
         if (!!err) {
           return scanner.emit('error', err);
         }
