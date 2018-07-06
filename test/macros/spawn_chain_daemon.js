@@ -45,6 +45,10 @@ module.exports = (args, cbk) => {
   } catch (e) {
     return cbk([500, 'CredentialsLookupFailure', e]);
   }
+  console.log("slowing...");
+  var waitTill = new Date(new Date().getTime() + 1000);
+  while(waitTill > new Date()){}
+  console.log("finished");
 
   const miningKey = Buffer.from(args.mining_public_key, 'hex');
   const network = networks[args.network];
@@ -155,10 +159,7 @@ module.exports = (args, cbk) => {
   });
 
   daemon.on('close', code => {removeDir(tmpDir, () => {
-    console.log("superslow");
-    var waitTill = new Date(new Date().getTime() + 1000);
-    while(waitTill > new Date()){}
-console.log("finished");
+
 
     console.log(code);
     console.log("Removing tmpDir..?");
