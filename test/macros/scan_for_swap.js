@@ -27,7 +27,7 @@ const coinbaseIndex = chainConstants.coinbase_tx_index;
 const maturityBlockCount = chainConstants.maturity_block_count;
 const maxKeyIndex = 4e8;
 const minKeyIndex = 0;
-const relayFeeTokensPerVirtualByte = 1;
+const relayFeeTokensPerVirtualByte = 1000;
 const swapTimeoutBlockCount = 2;
 
 /** Test that the swap scanner sees swaps progress
@@ -172,7 +172,7 @@ module.exports = ({cache, network, type}, cbk) => {
         network,
         invoice: generateSwapInvoice.invoice,
         script: createSwapAddress.redeem_script,
-        tokens: utxo.tokens - 10000,
+        tokens: utxo.tokens ,
       },
       cbk);
     }],
@@ -192,7 +192,7 @@ module.exports = ({cache, network, type}, cbk) => {
         private_key: generateKeyPair.private_key,
         spend_transaction_id: utxo.transaction_id,
         spend_vout: utxo.vout,
-        tokens: utxo.tokens - 10000,
+        tokens: utxo.tokens ,
       },
       cbk);
     }],
