@@ -94,15 +94,23 @@ module.exports = ({cache, network}) => {
     listener.on('error', err => scanner.emit('error', err));
 
     listener.on('transaction', ({block, id}) => {
-      console.log(`listener detected transaction ${block} and id ${id}`);
+      console.log("listener detected transaction");
+      console.log(block);
+      console.log("and id");
+      console.log(id);
+
       return detectSwaps({cache, id, network}, (err, detected) => {
-        console.log(`detectswaps detected transaction ${detected} and id ${err}`);
+        console.log("detectswaps detected transaction");
+        console.log(detected);
+        console.log(`and id ${err}`);
         if (!!err) {
           return scanner.emit('error', err);
         }
 
         // Notify on all found swaps
         return detected.swaps.forEach(swap => {
+          console.log("notifying on found swap:");
+          console.log(swap);
           switch (swap.type) {
           case 'claim':
             scanner.emit(swap.type, {
