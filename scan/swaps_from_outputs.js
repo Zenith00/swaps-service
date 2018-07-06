@@ -109,6 +109,7 @@ module.exports = ({cache, network, transaction}, cbk) => {
       console.log(addresses);
       return asyncMap(addresses, ({address, index, output, tokens}, cbk) => {
         return getWatchedOutput({address, network, cache}, (err, res) => {
+          console.log(`Getting watched output on address ${address} and network ${network} and cache ${cache} on tokens ${tokens}`);
           if (!!err) {
             return cbk(err);
           }
