@@ -117,6 +117,8 @@ module.exports = ({cache, id, network}, cbk) => {
       },
       cbk) =>
     {
+      console.log("concatenating detected swaps");
+
       // Exit early when the swaps results were cached
       if (!!getCachedSwaps) {
         return cbk(null, getCachedSwaps);
@@ -124,12 +126,19 @@ module.exports = ({cache, id, network}, cbk) => {
 
       const fundingSwaps = !swapsFromOutputs ? [] : swapsFromOutputs.swaps;
       const resolutionSwaps = !swapsFromInputs ? [] : swapsFromInputs.swaps;
-
+      console.log("\n"*2);
+      console.log("fundingswaps:");
+      console.log(fundingSwaps);
+      console.log("resolutionswaps:");
+      console.log(resolutionSwaps);
+      console.log("\n");
       return cbk(null, [].concat(fundingSwaps).concat(resolutionSwaps));
     }],
 
     // Set cached swap status
     setCachedSwaps: ['getCachedSwaps', 'swaps', (res, cbk) => {
+      console.log("setting cached swaps");
+      console.log(res);
       // Exit early without caching when the swaps are a cached result
       if (!!res.getCachedSwaps) {
         return cbk();
