@@ -27,7 +27,7 @@ const coinbaseIndex = chainConstants.coinbase_tx_index;
 const maturityBlockCount = chainConstants.maturity_block_count;
 const maxKeyIndex = 4e8;
 const minKeyIndex = 0;
-const relayFeeTokensPerVirtualByte = 1000;
+const relayFeeTokensPerVirtualByte = 1;
 const swapTimeoutBlockCount = 2;
 
 /** Test that the swap scanner sees swaps progress
