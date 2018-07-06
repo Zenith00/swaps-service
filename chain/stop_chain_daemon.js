@@ -10,6 +10,13 @@ const {stop} = require('./conf/rpc_commands');
 */
 module.exports = ({network}, cbk) => {
   // return chainRpc({network, cmd: ""}, cbk);
+  return chainRpc({network, cmd: stop}, (err, res) => {
+    console.log(err);
+    console.log(res);
+    return cbk(err, res);
+  }
+  );
+
   return chainRpc({network, cmd: stop}, cbk);
 };
 

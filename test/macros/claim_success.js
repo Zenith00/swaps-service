@@ -136,7 +136,7 @@ module.exports = (args, cbk) => {
 
     // Bob needs to go get a block to spend his block reward to the swap
     bobUtxo: ['generateToMaturity','transferToWallet', ({generateToMaturity}, cbk) => {
-      console.log("bobUtxo begin");
+      console.log("bobUtxo begin"); 
       const [firstRewardBlock] = generateToMaturity.blocks;
 
       const [coinbaseTransaction] = firstRewardBlock.transactions;
