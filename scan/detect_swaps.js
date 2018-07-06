@@ -123,7 +123,14 @@ module.exports = ({cache, id, network}, cbk) => {
       if (!!getCachedSwaps) {
         return cbk(null, getCachedSwaps);
       }
-
+      console.log("getCachedSwaps");
+      console.log(getCachedSwaps);
+      console.log("getTransaction");
+      console.log(getTransaction);
+      console.log("swapsFromInputs");
+      console.log(swapsFromInputs);
+      console.log("swapsFromOutputs");
+      console.log(swapsFromOutputs);
       const fundingSwaps = !swapsFromOutputs ? [] : swapsFromOutputs.swaps;
       const resolutionSwaps = !swapsFromInputs ? [] : swapsFromInputs.swaps;
       console.log("\n"*2);
