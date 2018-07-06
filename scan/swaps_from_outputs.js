@@ -38,6 +38,7 @@ module.exports = ({cache, network, transaction}, cbk) => {
   return asyncAuto({
     // Validate arguments
     validate: cbk => {
+      console.log("!swaps_from_outputs called");
       if (!cache) {
         return cbk([400, 'ExpectedCacheTypeForSwapCaching']);
       }
@@ -49,7 +50,6 @@ module.exports = ({cache, network, transaction}, cbk) => {
       if (!transaction) {
         return cbk([400, 'ExpectedTransaction']);
       }
-
       return cbk();
     },
 
@@ -73,6 +73,9 @@ module.exports = ({cache, network, transaction}, cbk) => {
 
     // Addresses associated with outputs, if any
     addresses: ['outputs', ({outputs}, cbk) => {
+      console.log("addresses....?");
+      console.log(outputs);
+
       if (!networks[network]) {
         return cbk([400, 'InvalidNetworkForSwapOutput']);
       }
@@ -102,6 +105,8 @@ module.exports = ({cache, network, transaction}, cbk) => {
 
     // Addresses watched by the scanner
     watchedAddresses: ['addresses', 'id', ({addresses, id}, cbk) => {
+      console.log("watchedAddresses");
+      console.log(addresses);
       return asyncMap(addresses, ({address, index, output, tokens}, cbk) => {
         return getWatchedOutput({address, network, cache}, (err, res) => {
           if (!!err) {
