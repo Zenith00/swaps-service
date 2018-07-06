@@ -140,6 +140,9 @@ module.exports = ({cache, network, transaction}, cbk) => {
 
     // Final set of found swaps
     swaps: ['watchedAddresses', ({watchedAddresses}, cbk) => {
+      console.log('swaps found?');
+      console.log(watchedAddresses);
+      console.log("returning\n\n");
       return cbk(null, {swaps: watchedAddresses.filter(swap => !!swap)});
     }],
   },
