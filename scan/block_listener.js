@@ -53,11 +53,13 @@ module.exports = ({cache, network}) => {
   asyncForever(cbk => {
     return asyncAuto({
       // Get the current hash
-      getCurrentHash: cbk => getCurrentHash({network}, cbk),
+      getCurrentHash: cbk => {getCurrentHash({network}, cbk)},
 
       // When we discover a new current hash, pull transaction ids from blocks
       getPastBlocks: ['getCurrentHash', ({getCurrentHash}, cbk) => {
         const current = getCurrentHash.hash;
+        console.log("new hash discovered:");
+        console.log(current);
 
         // Exit early with nothing when the best block has not changed
         if (current === bestBlockHash) {
@@ -72,6 +74,8 @@ module.exports = ({cache, network}) => {
         const blockForTransaction = {};
         const {blocks} = res.getPastBlocks;
         const freshIds = [];
+        console.log("emitting transactions");
+        console.log(blocks);
 
         blocks.forEach(block => {
           return block.transaction_ids.forEach(id => {
