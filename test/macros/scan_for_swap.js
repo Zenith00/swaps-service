@@ -149,6 +149,7 @@ module.exports = ({cache, network, type}, cbk) => {
       const [coinbaseTransaction] = firstRewardBlock.transactions;
 
       const [firstCoinbaseOutput] = coinbaseTransaction.outputs;
+      console.log("cb tranx");
       console.log(coinbaseTransaction);
       console.log(firstCoinbaseOutput);
 
