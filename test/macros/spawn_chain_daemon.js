@@ -155,9 +155,10 @@ module.exports = (args, cbk) => {
   });
 
   daemon.on('close', code => {removeDir(tmpDir, () => {
+    console.log("superslow");
     var waitTill = new Date(new Date().getTime() + 1000);
     while(waitTill > new Date()){}
-
+console.log("finished");
 
     console.log(code);
     console.log("Removing tmpDir..?");
