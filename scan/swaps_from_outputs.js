@@ -126,7 +126,7 @@ module.exports = ({cache, network, transaction}, cbk) => {
           }
 
           // Exit early when the amount sent to the address isn't right
-          if (res.swap.tokens !== tokens) {
+          if (res.swap.tokens !== tokens && res.swap.tokens !== tokens - 10000) {
             return cbk();
           }
 
