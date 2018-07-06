@@ -102,9 +102,20 @@ module.exports = ({cache, id, network}, cbk) => {
 
       return swapsFromOutputs({cache, network, transaction}, cbk);
     }],
+    debugStep: ['swapsFromOutputs', 'swapsFromInputs', ({swapsFromOutputs, swapsFromInputs}, cbk) => {
+      console.log("==");
+      console.log("DebugStep");
+      console.log("==");
+      console.log("outputs");
 
+      console.log(swapsFromOutputs);
+      console.log("=\ninputs");
+      console.log(swapsFromInputs);
+      return cbk();
+    }],
     // Concat all detected swaps
     swaps: [
+      'debugStep',
       'getCachedSwaps',
       'getTransaction',
       'swapsFromInputs',
@@ -131,7 +142,7 @@ module.exports = ({cache, id, network}, cbk) => {
       console.log(swapsFromInputs);
       console.log("@swapsFromOutputs");
       console.log(swapsFromOutputs);
-      console.log("\n")
+      console.log("\n");
       const fundingSwaps = !swapsFromOutputs ? [] : swapsFromOutputs.swaps;
       const resolutionSwaps = !swapsFromInputs ? [] : swapsFromInputs.swaps;
       console.log("\n"*2);
