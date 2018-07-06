@@ -102,7 +102,7 @@ module.exports = (args, cbk) => {
         // `-rpcuser=user`,
         '-rpcthreads=6',
         '-txindex=1',
-        // '-printtoconsole=1',
+        '-printtoconsole=1',
         // '-debuglevel=info',
         '-debug=1',
         // '-server',
