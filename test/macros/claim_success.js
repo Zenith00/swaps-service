@@ -136,7 +136,7 @@ module.exports = (args, cbk) => {
 
     // Bob needs to go get a block to spend his block reward to the swap
     bobUtxo: ['generateToMaturity','transferToWallet', ({generateToMaturity}, cbk) => {
-      console.log("bobUtxo begin"); 
+      console.log("bobUtxo begin");
       const [firstRewardBlock] = generateToMaturity.blocks;
 
       const [coinbaseTransaction] = firstRewardBlock.transactions;
@@ -160,7 +160,7 @@ module.exports = (args, cbk) => {
         private_key: res.generateBobKeyPair.private_key,
         spend_transaction_id: res.bobUtxo.transaction_id,
         spend_vout: res.bobUtxo.vout,
-        tokens: res.bobUtxo.tokens - 1000,
+        tokens: res.bobUtxo.tokens,
       },
       cbk);
     }],
@@ -224,7 +224,7 @@ module.exports = (args, cbk) => {
       console.log(`refund_public_key: ${refundPk}`);
       console.log(`refund_public_key_hash: ${refundPkHash}`);
       console.log(`timeout_block_height ${maturityBlockCount} + ${swapTimeoutBlockCount} = ${maturityBlockCount+swapTimeoutBlockCount}`);
-      console.log(`tokens: ${res.bobUtxo.tokens - 1000}`);
+      console.log(`tokens: ${res.bobUtxo.tokens }`);
       return findSwapTransaction({
         cache: 'memory',
         network: args.network,
@@ -234,7 +234,7 @@ module.exports = (args, cbk) => {
         refund_public_key: refundPk,
         refund_public_key_hash: refundPkHash,
         timeout_block_height: maturityBlockCount + swapTimeoutBlockCount,
-        tokens: res.bobUtxo.tokens - 1000,
+        tokens: res.bobUtxo.tokens ,
       },
       cbk);
     }],
