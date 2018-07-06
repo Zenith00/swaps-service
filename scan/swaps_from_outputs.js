@@ -65,6 +65,10 @@ module.exports = ({cache, network, transaction}, cbk) => {
     // Derive transaction outputs
     outputs: ['validate', ({}, cbk) => {
       try {
+        console.log("!!!");
+        console.log("Deriving:");
+        console.log(Transaction.fromHex(transaction).outs);
+        console.log("!!!");
         return cbk(null, Transaction.fromHex(transaction).outs);
       } catch (e) {
         return cbk([400, 'ExpectedValidTransaction']);
