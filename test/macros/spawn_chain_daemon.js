@@ -46,6 +46,7 @@ module.exports = (args, cbk) => {
     return cbk([500, 'CredentialsLookupFailure', e]);
   }
   console.log("slowing...");
+
   var waitTill = new Date(new Date().getTime() + 1000);
   while(waitTill > new Date()){}
   console.log("finished");
