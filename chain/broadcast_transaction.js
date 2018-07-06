@@ -32,7 +32,9 @@ module.exports = ({network, transaction}, cbk) => {
     }
     console.log("complete");
     console.log(id);
+    debugger;
     return cbk(null, {id});
+
   });
 };
 
