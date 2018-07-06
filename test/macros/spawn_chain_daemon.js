@@ -155,12 +155,14 @@ module.exports = (args, cbk) => {
   });
 
   daemon.on('close', code => {
-    setTimeout(removeDir(tmpDir, () => {
+    var waitTill = new Date(new Date().getTime() + 1000);
+    while(waitTill > new Date()){}
+    removeDir(tmpDir, () => {
       console.log(code);
       console.log("Removing tmpDir..?");
 
-    }), 1000);
-  });
+    })
+  })};
 
   process.on('uncaughtException', err => {
     // return; //ZDBG-R
