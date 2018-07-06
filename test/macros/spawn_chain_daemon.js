@@ -163,7 +163,8 @@ module.exports = (args, cbk) => {
     // return; //ZDBG-R
     console.log('CHAIN ERROR', err);
     daemon.kill();
-    process.exit(1)
+    setTimeout(process.exit(1), 2000);
+    // process.exit(1)
   });
 
   return;

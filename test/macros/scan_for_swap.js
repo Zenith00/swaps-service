@@ -192,7 +192,7 @@ module.exports = ({cache, network, type}, cbk) => {
         private_key: generateKeyPair.private_key,
         spend_transaction_id: utxo.transaction_id,
         spend_vout: utxo.vout,
-        tokens: utxo.tokens ,
+        tokens: utxo.tokens,
       },
       cbk);
     }],
