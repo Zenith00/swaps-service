@@ -208,6 +208,7 @@ module.exports = ({cache, network, type}, cbk) => {
       const {transaction} = fundingTransaction;
 
       return scanner.once('funding', swap => {
+        console.log("Scanner found funding!");
         try {
           const fundTxId = Transaction.fromHex(transaction).getId();
 
