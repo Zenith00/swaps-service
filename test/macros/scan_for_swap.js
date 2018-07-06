@@ -151,7 +151,7 @@ module.exports = ({cache, network, type}, cbk) => {
       const [firstCoinbaseOutput] = coinbaseTransaction.outputs;
 
       return cbk(null, {
-        tokens: firstCoinbaseOutput.tokens,
+        tokens: firstCoinbaseOutput.tokens - 1000,
         transaction_id: coinbaseTransaction.id,
         vout: coinbaseIndex,
       });
