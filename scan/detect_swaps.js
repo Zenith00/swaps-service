@@ -131,6 +131,7 @@ module.exports = ({cache, id, network}, cbk) => {
       console.log(swapsFromInputs);
       console.log("@swapsFromOutputs");
       console.log(swapsFromOutputs);
+      console.log("\n")
       const fundingSwaps = !swapsFromOutputs ? [] : swapsFromOutputs.swaps;
       const resolutionSwaps = !swapsFromInputs ? [] : swapsFromInputs.swaps;
       console.log("\n"*2);
