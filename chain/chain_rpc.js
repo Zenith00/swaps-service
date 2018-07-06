@@ -57,8 +57,16 @@ module.exports = ({cmd, network, params}, cbk) => {
         if (cmd === "stop"){
           return setTimeout(chainRpc({network, cmd: stop}, cbk), 250);
         }
-        return cbk([503, 'ExpectedNonEmptyChainResponse']);
-      }
+        setTimeout( function(){
+        return chainRpc.call(cmd, niceParams, (err, response) => {
+          if (!response) {
+
+            return cbk([503, 'ExpectedNonEmptyChainResponse']);
+          }
+          return cbk(null, response.result);
+        });
+      }, 1000)
+      };
 
       return cbk(null, response.result);
     });
