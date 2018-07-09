@@ -2,19 +2,23 @@
   "// Default connection values for chain server connections": "",
 
   "ltcregtest": {
-    "executables": ["failtest","ltcdf","litecoind"],
+    "executables": "ltcd",
     "rpc_api": "user:pass@127.0.0.1:19332"
   },
   "ltctestnet": {
-    "executable": ["failtest","ltcdf","litecoind"],
+    "executable": "ltcd",
     "rpc_api": "user:pass@127.0.0.1:19333"
   },
   "regtest": {
-  "executables": ["failtest","btcdf","bitcoind"],
+  "executable": "btcd",
   "rpc_api": "user:pass@127.0.0.1:18335"
 },
+  "bitcoincoreregtest":{
+    "executables":"bitcoind",
+    "rpc_api": "user:pass@127.0.0.1:18334"
+  },
   "testnet": {
-    "executables": ["failtest","btcdf","bitcoind"],
+    "executables": "btcd",
     "rpc_api": "bitcoinrpc:pass@127.0.0.1:18334"
   }
 }
