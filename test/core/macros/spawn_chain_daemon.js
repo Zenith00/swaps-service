@@ -64,7 +64,7 @@ module.exports = (args, cbk) => {
     case "ltcd":
     case "btcd":
       module.exports.implementation = "btcd";
-      daemon = spawn(executable, [
+      daemon = spawn(chainServer[args.network].executable, [
         '--configfile=""',
         '--datadir', tmpDir,
         '--logdir', tmpDir,
@@ -89,7 +89,7 @@ module.exports = (args, cbk) => {
       console.log("Exists?: " + fs.existsSync(tmpDir));
       fs.mkdirSync(tmpDir);
 
-      daemon = spawn(executable, [
+      daemon = spawn(chainServer[args.network].executable, [
         '-conf=""',
         `-datadir=${tmpDir}`,
         '-debuglogfile=debug.log',

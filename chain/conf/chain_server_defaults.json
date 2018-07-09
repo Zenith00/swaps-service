@@ -2,7 +2,7 @@
   "// Default connection values for chain server connections": "",
 
   "ltcregtest": {
-    "executables": "ltcd",
+    "executable": "ltcd",
     "rpc_api": "user:pass@127.0.0.1:19332"
   },
   "ltctestnet": {
@@ -14,11 +14,11 @@
   "rpc_api": "user:pass@127.0.0.1:18335"
 },
   "bitcoincoreregtest":{
-    "executables":"bitcoind",
+    "executable":"bitcoind",
     "rpc_api": "user:pass@127.0.0.1:18334"
   },
   "testnet": {
-    "executables": "btcd",
+    "executable": "btcd",
     "rpc_api": "bitcoinrpc:pass@127.0.0.1:18334"
   }
 }
