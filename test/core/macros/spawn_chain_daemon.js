@@ -110,7 +110,7 @@ module.exports = (args, cbk) => {
         // '-server',
         '-minrelaytxfee=0'
       ]);
-      console.log("daemon spawned");
+      console.log("bitcoind daemon spawned");
       break;
   }
 
