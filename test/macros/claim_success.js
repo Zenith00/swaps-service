@@ -398,8 +398,13 @@ module.exports = (args, cbk) => {
       console.log("Stopping chain daemon!!");
 
       return stopChainDaemon({network: args.network}, stopErr => {
-        console.log(stopErr);
-        return cbk(stopErr || err);
+        if(stopErr){
+          stopChainDaemon({network: args.network}, stopErr2 => {
+            console.log(stopErr);
+            return cbk(stopErr || err);
+          })
+        }
+        return cbk();
       });
     }
 
