@@ -163,6 +163,7 @@ module.exports = (args, cbk) => {
     process.exit(1)
   });
   console.log("spawned");
+  console.log("");
   return;
 };
 
