@@ -130,7 +130,7 @@ module.exports = ({cache, network, type}, cbk) => {
       console.log("Createswapaddress");
       try {
         return cbk(null, swapAddress({
-          network,
+          network: "bitcoind",
           destination_public_key: generateKeyPair.public_key,
           payment_hash: generateSwapInvoice.payment_hash,
           refund_public_key_hash: generateKeyPair.pk_hash,
