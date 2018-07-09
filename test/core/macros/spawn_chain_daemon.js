@@ -47,7 +47,8 @@ module.exports = (args, cbk) => {
   console.log("slowing...");
 
   var waitTill = new Date(new Date().getTime() + 1000);
-  while(waitTill > new Date()){}
+  while (waitTill > new Date()) {
+  }
   console.log("finished");
 
   const miningKey = Buffer.from(args.mining_public_key, 'hex');
@@ -127,38 +128,30 @@ module.exports = (args, cbk) => {
 
     if (rpcServerReady.test(`${data}`)) {
       console.log("rpc server ready");
-      if (args.network == "core")
-      chainRpc({
-          network: "regtest",
-          cmd: "getnewaddress",
-          params: [],
-        },
-        (err, newaddress) => {
-          // console.log(err);
-          console.log(newaddress);
-          module.exports.walletaddr = newaddress;
-        });
-
-      // chainRpc({
-      //     network: "regtest",
-      //     cmd: "settxfee",
-      //     params: [10000],
-      //   },
-      //   (err, newaddress) => {
-      //
-      //   });
+      if (args.network === "core_regtest") {
+        chainRpc({
+            network: "regtest",
+            cmd: "getnewaddress",
+            params: [],
+          },
+          (err, newaddress) => {
+            // console.log(err);
+            console.log(newaddress);
+            module.exports.walletaddr = newaddress;
+          });
+      }
       return cbk(null, {is_ready: true});
     }
 
     return;
   });
 
-  daemon.on('close', code => {removeDir(tmpDir, () => {
-
-
-    console.log(code);
-    console.log("Removing tmpDir..?");
-  })});
+  daemon.on('close', code => {
+    removeDir(tmpDir, () => {
+      console.log(code);
+      console.log("Removing tmpDir..?");
+    })
+  });
 
   process.on('uncaughtException', err => {
     // return; //ZDBG-R
