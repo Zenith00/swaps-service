@@ -49,6 +49,7 @@ module.exports = (args, cbk) => {
 
   var waitTill = new Date(new Date().getTime() + 1000);
   while (waitTill > new Date()) {
+    console.log("waiting");
   }
   console.log("finished");
 
