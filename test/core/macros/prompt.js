@@ -1,5 +1,5 @@
-const {get} = require('test/core/macros/prompt');
-const {start} = require('test/core/macros/prompt');
+const {get} = require('prompt');
+const {start} = require('prompt');
 
 /** Prompt at the command line for a value
 
