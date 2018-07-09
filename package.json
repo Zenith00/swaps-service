@@ -50,7 +50,7 @@
   "scripts": {
     "btcd_regtest": "tap --timeout=90 test/btcd-ltcd/btcd_regtest/*.js",
     "ltcd_regtest": "tap --timeout=90 test/btcd-ltcd/ltcd_regtest/*.js",
-    "core_regtest": "tap --timeout=90 test/core/ltcd_regtest/*.js",
+    "core_regtest": "tap --timeout=90 test/core/btcd_regtest/*.js",
 
     "test": "tap test/*.js"
   },
