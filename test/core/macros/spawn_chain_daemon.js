@@ -112,11 +112,11 @@ module.exports = (args, cbk) => {
 
   console.log("daemon spawned");
   console.log(credentials);
-  console.log(daemon.connected);
+  // console.log(daemon.connected);
   // console.log(daemon);
-  console.log(daemon.pid);
+  // console.log(daemon.pid);
 
-  daemon.stderr.on('data', data => console.log(`p1p:${data}`));
+  // daemon.stderr.on('data', data => console.log(`p1p:${data}`));
 
   daemon.stdout.on('data', data => {
     // console.log(data);
@@ -127,6 +127,7 @@ module.exports = (args, cbk) => {
 
     if (rpcServerReady.test(`${data}`)) {
       console.log("rpc server ready");
+      if (args.network == "core")
       chainRpc({
           network: "regtest",
           cmd: "getnewaddress",

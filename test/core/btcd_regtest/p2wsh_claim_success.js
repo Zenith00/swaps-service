@@ -6,7 +6,7 @@ const {claimSuccess} = require('../macros/index');
   // Make sure that we can swap with a pkhash
   test(`perform swap: pkhash: ${isPkHash}, p2wsh swap address`, t => {
     return claimSuccess({
-      network: 'regtest',
+      network: 'core_regtest',
       is_refund_to_public_key_hash: isPkHash,
       swap_type: 'p2wsh',
     },

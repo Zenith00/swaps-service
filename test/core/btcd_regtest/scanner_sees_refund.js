@@ -5,7 +5,7 @@ const {scanForSwap} = require('../macros/index');
 test('the block scanner picks up a claimed swap', t => {
   return scanForSwap({
     cache: 'memory',
-    network: 'regtest',
+    network: 'core_regtest',
     type: 'refund',
   },
   err => {

@@ -6,7 +6,7 @@ const {refundSuccess} = require('../macros/index');
   test(`p2wsh refund test: is pkhash? ${isRefundToPublicKeyHash}`, t => {
     return refundSuccess({
       is_refund_to_public_key_hash: isRefundToPublicKeyHash,
-      network: 'regtest',
+      network: 'core_regtest',
       swap_type: 'p2wsh',
     },
     err => {

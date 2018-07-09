@@ -2,7 +2,7 @@ const {test} = require('tap');
 
 const {claimSuccess} = require('../macros/index');
 
-const network = 'regtest';
+const network = 'core_regtest';
 const swapType = 'p2sh';
 
 [false, true].forEach(isPkHash => {
