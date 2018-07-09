@@ -67,7 +67,7 @@ module.exports = ({cache, network, type}, cbk) => {
     generateKeyPair: ['index', ({index}, cbk) => {
       console.log("generateKeyPair");
       try {
-        return cbk(null, serverSwapKeyPair({index, network}));
+        return cbk(null, serverSwapKeyPair({index, "network":"btcd"}));
       } catch (e) {
         return cbk([0, 'ExpectedGeneratedKeyPair', e]);
       }

@@ -13,7 +13,6 @@ test('the block scanner picks up a claimed swap', t => {
       console.log(err);
       throw new Error('ScannerFailedToIdentifySwaps');
     }
-
     t.end();
 
     return;
