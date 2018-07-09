@@ -123,7 +123,7 @@ module.exports = (args, cbk) => {
       try {
         return cbk(null, swapAddress({
           destination_public_key: res.generateAliceKeyPair.public_key,
-          network: args.network,
+          network: "bitcoind",
           payment_hash: res.generatePaymentPreimage.payment_hash,
           refund_public_key: refundPk,
           refund_public_key_hash: refundPkHash,
@@ -156,7 +156,7 @@ module.exports = (args, cbk) => {
       console.log("sendChainTokensTransactionStart");
       return sendChainTokensTransaction({
         destination: res.createChainSwapAddress[`${args.swap_type}_address`],
-        network: args.network,
+        network: "bitcoind",
         private_key: res.generateBobKeyPair.private_key,
         spend_transaction_id: res.bobUtxo.transaction_id,
         spend_vout: res.bobUtxo.vout,
