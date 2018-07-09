@@ -38,6 +38,7 @@ module.exports = (args, cbk) => {
   }
 
   let credentials;
+  console.log(args);
 
   try {
     credentials = credentialsForNetwork({network: args.network});
