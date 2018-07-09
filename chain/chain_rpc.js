@@ -66,9 +66,10 @@ module.exports = ({cmd, network, params}, cbk) => {
           return cbk(null, response.result);
         });
       }, 1000)
-      };
+      } else {
 
       return cbk(null, response.result);
+      }
     });
   } catch (e) {
     return cbk([500, 'FailedToCallChainRpc', e]);
