@@ -83,7 +83,7 @@ module.exports = (args, cbk) => {
       break;
     case "bitcoind":
     case "litecoind":
-    case "bitcoinregtest":
+    case "bitcoincoreregtest":
       module.exports.implementation = "bitcoind";
       module.exports.miningaddr = fromPublicKeyBuffer(miningKey, network).getAddress();
       console.log("Exists?: " + fs.existsSync(tmpDir));
