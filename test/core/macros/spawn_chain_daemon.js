@@ -123,12 +123,14 @@ module.exports = (args, cbk) => {
     // console.log(data);
     // console.log(data.toString());
     if (unableToStartServer.test(`${data}`)) {
+      console.log("spawnfail");
       return cbk([errCode.local_err, 'SpawnDaemonFailure']);
     }
 
     if (rpcServerReady.test(`${data}`)) {
       console.log("rpc server ready");
       if (args.network === "core_regtest") {
+        console.log("gettingnewaddr");
         chainRpc({
             network: "regtest",
             cmd: "getnewaddress",
@@ -140,6 +142,7 @@ module.exports = (args, cbk) => {
             module.exports.walletaddr = newaddress;
           });
       }
+      console.log("ret145");
       return cbk(null, {is_ready: true});
     }
 
