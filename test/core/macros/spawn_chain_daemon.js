@@ -162,7 +162,7 @@ module.exports = (args, cbk) => {
     daemon.kill();
     process.exit(1)
   });
-
+  console.log("spawned");
   return;
 };
 
