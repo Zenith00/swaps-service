@@ -256,7 +256,7 @@ module.exports = args => {
     return;
   });
 
-  // Sign each input. We need the dummy to fail the preimage test
+  // Sign each input. We need the dummy to fail the preimage core
   args.utxos.forEach(({redeem, script, tokens}, i) => {
     const redeemScript = Buffer.from(redeem, 'hex');
 
