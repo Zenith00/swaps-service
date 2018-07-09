@@ -53,16 +53,10 @@ module.exports = (args, cbk) => {
   const miningKey = Buffer.from(args.mining_public_key, 'hex');
   const network = networks[args.network];
   const tmpDir = `/tmp/${uuidv4()}`;
-  let executable;
   console.log("tmpDir=" + tmpDir);
 
-  console.log("Looking for chain server for" + chainServer);
-  executable = chainServer[args.network].executables.find(function (x) {
-    return commandExists(x);
-  });
-  console.log("Located executable: " + executable);
   var daemon;
-  switch (executable) {
+  switch (args.network) {
     case "ltcd":
     case "btcd":
       module.exports.implementation = "btcd";
