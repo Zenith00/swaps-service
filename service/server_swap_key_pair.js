@@ -44,6 +44,8 @@ module.exports = ({index, network}) => {
   }
 
   if (!network || !networks[network]) {
+    console.log(networks);
+    console.log(network);
     throw new Error('ExpectedValidNetwork');
   }
 
