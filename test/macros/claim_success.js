@@ -234,7 +234,9 @@ module.exports = (args, cbk) => {
         refund_public_key: refundPk,
         refund_public_key_hash: refundPkHash,
         timeout_block_height: maturityBlockCount + swapTimeoutBlockCount,
-        tokens: res.bobUtxo.tokens - 1000,
+          tokens: res.bobUtxo.tokens,
+
+          // tokens: res.bobUtxo.tokens - 1000,
       },
       cbk);
     }],
