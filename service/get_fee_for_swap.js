@@ -58,6 +58,10 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
       const rates = {};
 
       getSwapRates.rates.forEach(({cents, fees, network}) => {
+        console.log("adadada");
+        console.log(cents);
+        console.log(fees);
+        console.log(network);
         return rates[network] = {cents, fees};
       });
 
