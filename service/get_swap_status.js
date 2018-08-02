@@ -160,7 +160,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
     getFeeTokens: ['invoiceDetails', ({invoiceDetails}, cbk) => {
       const to = invoiceDetails.network;
       const {tokens} = invoiceDetails;
-
+      console.log("GETTING FEE TOKENS")
       return getFeeForSwap({cache, network, to, tokens}, cbk);
     }],
 
