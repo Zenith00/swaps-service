@@ -94,6 +94,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
     getSwapFee: ['parsedInvoice', ({parsedInvoice}, cbk) => {
       console.log("yyyyyyy")
       const to = parsedInvoice.network;
+      console.log(parsedInvoice);
       const {tokens} = parsedInvoice;
 
       return getFeeForSwap({cache, network, to, tokens}, cbk);
