@@ -46,6 +46,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
+      console.log("zzzzzzz")
       if (!cache) {
         return cbk([400, 'ExpectedCacheForInvoiceDetails']);
       }
@@ -63,16 +64,19 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Determine where the chain tip is at
     getChainTip: ['validate', ({}, cbk) => {
+      console.log("zzzzz")
       return getRecentChainTip({cache, network}, cbk);
     }],
 
     // Get the current fee rate
     getFeeRate: ['validate', ({}, cbk) => {
+      console.log("zzz")
       return getRecentFeeRate({cache, network}, cbk);
     }],
 
     // Decode the supplied invoice
     parsedInvoice: ['validate', ({}, cbk) => {
+      console.log("zz")
       try {
         return cbk(null, parseInvoice({invoice}));
       } catch (e) {
@@ -82,11 +86,13 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Get the chain tip for the invoice's network
     getInvoiceChainTip: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      console.log("z")
       return getRecentChainTip({cache, network: parsedInvoice.network}, cbk);
     }],
 
     // Figure out what it will cost to do this swap
     getSwapFee: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      console.log("yyyyyyy")
       const to = parsedInvoice.network;
       const {tokens} = parsedInvoice;
 
@@ -95,6 +101,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // LND connection
     lnd: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      console.log("yyyyy")
       try {
         return cbk(null, lightningDaemon({network: parsedInvoice.network}));
       } catch (e) {
@@ -105,6 +112,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Parameters for a swap with an invoice
     swapParams: ['validate', ({}, cbk) => {
+      console.log("yyy")
       try {
         return cbk(null, swapParameters({network}));
       } catch (e) {
