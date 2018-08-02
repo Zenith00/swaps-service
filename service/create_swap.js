@@ -125,6 +125,7 @@ module.exports = ({cache, invoice, network, refund}, cbk) => {
       (res, cbk) =>
     {
       try {
+        console.log("Creating swap address")
         return cbk(null, swapAddress({
           network,
           destination_public_key: res.serverDestinationKey.public_key,
@@ -139,6 +140,7 @@ module.exports = ({cache, invoice, network, refund}, cbk) => {
 
     // Swap fee component
     getSwapAmount: ['getInvoice', ({getInvoice}, cbk) => {
+      console.log("GETTING FEE FOR SWAP")
       return getFeeForSwap({
         cache,
         network,
@@ -155,6 +157,7 @@ module.exports = ({cache, invoice, network, refund}, cbk) => {
       'swapKeyIndex',
       ({getSwapAmount, swapAddress, swapKeyIndex}, cbk) =>
     {
+      console.log("Adding created swap to watch list")
       return watchSwapOutput({
         cache,
         invoice,
