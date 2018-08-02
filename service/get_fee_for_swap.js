@@ -45,16 +45,19 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
 
     // Get swap fee rate information
     getChainFee: ['validate', ({}, cbk) => {
+      console.log("getchainfee")
       return getRecentFeeRate({cache, network}, cbk);[]
     }],
 
     // Get exchange rate information
     getSwapRates: ['validate', ({}, cbk) => {
+      console.log("Getswaprates")
       return getExchangeRates({cache, networks: [network, to]}, cbk);
     }],
 
     // Mapped fee rates to networks
     rates: ['getSwapRates', ({getSwapRates}, cbk) => {
+      console.log("Rates")
       const rates = {};
 
       getSwapRates.rates.forEach(({cents, fees, network}) => {
@@ -91,6 +94,7 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
 
     // Final fee tokens necessary to complete the swap
     feeTokens: ['getChainFee', 'rates', ({getChainFee, rates}, cbk) => {
+      console.log("feetokens")
       try {
         const fees = feeForSwap({
           base_rate: rates.base_rate,
