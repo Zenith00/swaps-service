@@ -25,6 +25,7 @@ module.exports = ({cache}, cbk) => {
   return asyncAuto({
     // Configured networks
     configured: cbk => {
+      console.log(nets.filter(network => isConfigured({network})));
       return cbk(null, nets.filter(network => isConfigured({network})));
     },
 
