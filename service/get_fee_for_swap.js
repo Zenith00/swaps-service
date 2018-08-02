@@ -109,7 +109,7 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
           send_tokens: tokens,
           swap_rate: rates.swap_rate,
         });
-
+        console.log("returning successfully")
         return cbk(null, {fee: fees.fee, tokens: fees.tokens});
       } catch (e) {
         return cbk([500, 'FailedToCalculateFeeForSwap', e]);
