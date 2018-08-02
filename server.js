@@ -34,9 +34,12 @@ const app = express();
 const logOnErr = err => !!err ? log(err) : null;
 
 const scanners = Object.keys(networks).map(network => {
+  console.log(network);
   if (!isConfigured({network})) {
+    console.log("is not configured")
     return null;
   }
+  console.log("network");
 
   const scanner = swapScanner({cache, network});
 
