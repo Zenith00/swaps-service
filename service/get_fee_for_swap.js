@@ -26,18 +26,22 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
     validate: cbk => {
       console.log("Getting fee for swap...")
       if (!cache) {
+        console.log("nocache")
         return cbk([400, 'ExpectedCacheForSwapFeeCheck']);
       }
 
       if (!network) {
+        console.log("nonetwork")
         return cbk([400, 'ExpectedNetworkNameForSwapChainTokens']);
       }
 
       if (!to) {
+        console.log("noto")
         return cbk([400, 'ExpectedLightningNetworkToSendToName']);
       }
 
       if (!tokens) {
+        console.log("notokens")
         return cbk([400, 'ExpectedTokensForFeeCalculation']);
       }
 
