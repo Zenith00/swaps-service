@@ -96,13 +96,13 @@ module.exports = ({cache, invoice, network}, cbk) => {
       const to = parsedInvoice.network;
       console.log(parsedInvoice);
       const {tokens} = parsedInvoice;
-
+      console.log("GETTING FEE FOR SWAP");
       return getFeeForSwap({cache, network, to, tokens}, cbk);
     }],
 
     // LND connection
     lnd: ['parsedInvoice', ({parsedInvoice}, cbk) => {
-      console.log("yyyyy")
+      console.log("parsed invoice, making LND");
       try {
         return cbk(null, lightningDaemon({network: parsedInvoice.network}));
       } catch (e) {
@@ -113,7 +113,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Parameters for a swap with an invoice
     swapParams: ['validate', ({}, cbk) => {
-      console.log("yyy")
+      console.log("swapParams")
       try {
         return cbk(null, swapParameters({network}));
       } catch (e) {
