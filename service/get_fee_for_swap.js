@@ -61,6 +61,8 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
         return rates[network] = {cents, fees};
       });
 
+      console.log(rates);
+
       if (!rates[network]) {
         return cbk([400, 'UnexpectedNetworkForRatesQuery', network]);
       }
