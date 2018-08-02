@@ -98,6 +98,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
       try {
         return cbk(null, lightningDaemon({network: parsedInvoice.network}));
       } catch (e) {
+        console.log(e);
         return cbk([500, 'FailedToInstantiateLndConnection']);
       }
     }],
