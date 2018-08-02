@@ -24,6 +24,7 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
+      console.log("Getting fee for swap...")
       if (!cache) {
         return cbk([400, 'ExpectedCacheForSwapFeeCheck']);
       }
