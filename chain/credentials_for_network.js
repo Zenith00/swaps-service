@@ -23,8 +23,6 @@ const dummyScheme = 'http';
   }
 */
 module.exports = ({network}) => {
-  console.log("credentials_for_network open");
-  console.log(network);
   if (!network) {
     throw new Error('ExpectedNetworkForCredentials');
   }

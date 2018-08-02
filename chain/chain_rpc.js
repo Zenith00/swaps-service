@@ -35,6 +35,7 @@ module.exports = ({cmd, network, params}, cbk) => {
   const {port} = credentials;
   const {user} = credentials;
   console.log(credentials);
+  console.log(network);
   chainRpc.init(host, port, user, pass);
   chainRpc.setTimeout(chainTimeoutMs);
 
