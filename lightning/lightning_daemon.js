@@ -16,6 +16,8 @@ const daemons = {};
   <LND GRPC API Object>
 */
 module.exports = ({network}) => {
+  console.log("Initiating LND on network");
+  console.log(network);
   if (!network) {
     throw new Error('ExpectedNetworkForLightningDaemon');
   }
@@ -44,8 +46,10 @@ module.exports = ({network}) => {
   }
 
   try {
+    console.log(host);
     lnd = lightningDaemon({cert, host, macaroon});
   } catch (err) {
+    console.log(err)
     throw new Error('FailedToInstantiateDaemon');
   }
 
