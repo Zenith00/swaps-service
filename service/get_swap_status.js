@@ -59,6 +59,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Check arguments
     validate: ['invoiceDetails', ({invoiceDetails}, cbk) => {
+      console.log("validate in get_swap_status")
       if (!cache) {
         return cbk([400, 'ExpectedCacheForSwapDetails']);
       }
@@ -84,11 +85,13 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Get all the invoice details.
     getInvoice: ['validate', ({}, cbk) => {
+      console.log("getInvoice")
       return getInvoiceDetails({cache, invoice, network}, cbk);
     }],
 
     // Determine the confirmation count of a block
     getPlacement: ['validate', ({}, cbk) => {
+      console.log("getPlacement")
       if (!block) {
         return cbk(null, {current_confirmation_count: 0});
       }
@@ -98,16 +101,19 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Figure out what swap key index corresponds to this redeem script
     getSwapKeyIndex: ['validate', ({}, cbk) => {
+      console.log("getSwapKeyIndex")
       return getSwapKeyIndex({cache, network, script}, cbk);
     }],
 
     // Get the raw transaction
     getTransaction: ['validate', ({}, cbk) => {
+      console.log("getTransaction")
       return getTransaction({block, cache, id, network}, cbk);
     }],
 
     // Pull out the swap keypair from the HD seed
     serverKeyPair: ['getSwapKeyIndex', ({getSwapKeyIndex}, cbk) => {
+      console.log("ServerKeyPair")
       const {index} = getSwapKeyIndex;
 
       if (!index) {
@@ -123,6 +129,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Derive the swap info from the redeem script
     swapDetails: ['validate', ({}, cbk) => {
+      console.log("swapDetails")
       try {
         return cbk(null, swapScriptDetails({network, script}));
       } catch (e) {
@@ -144,6 +151,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Check that there is enough time left to swap
     checkTimelockHeight: ['swapDetails', 'getChainInfo', (res, cbk) => {
+      console.log("checkTimelockHeight")
       const currentHeight = res.getChainInfo.height;
       const refundHeight = res.swapDetails.timelock_block_height;
 
