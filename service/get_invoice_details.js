@@ -123,7 +123,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Pull the pending channels to see if we have a related pending channel
     getPending: ['lnd', ({lnd}, cbk) => {
-        console.log('get pending'); +
+        console.log('get pending');
             getPendingChannels({lnd}, cbk)}],
 
     // See if this invoice is payable
@@ -131,7 +131,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
       console.log("getRoutes")
       const {destination} = parsedInvoice;
       const {tokens} = parsedInvoice;
-
+      console.log("finished getroutes")
       return getRoutes({destination, lnd, tokens}, cbk);
     }],
 
@@ -158,7 +158,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
       cbk) =>
     {
       try {
-        console.log("checkPyaable")
+        console.log("checkPyaable");
         const check = checkInvoicePayable({
           network,
           claim_window: swapParams.claim_window,
@@ -175,7 +175,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
           sweep_fee: getFeeRate.fee_tokens_per_vbyte * estimatedTxVirtualSize,
           tokens: parsedInvoice.tokens,
         });
-
+         console.log("end checkpayable")
         return cbk();
       } catch (e) {
         return cbk([400, e.message]);

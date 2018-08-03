@@ -46,13 +46,17 @@ module.exports = ({network}) => {
   }
 
   try {
+    console.log("FINAL INIT LND")
     console.log(host);
+    console.log(cert);
+    console.log(macaroon)
     lnd = lightningDaemon({cert, host, macaroon});
   } catch (err) {
-    console.log(err)
+    console.log("LIGHTNING DAEMON FAILED TO INSTANTIATE")
+    console.log(err);
     throw new Error('FailedToInstantiateDaemon');
   }
-
+  console.log("So far so good LND!!!")
   const sub = subscribeToInvoices({lnd});
 
   daemons[network] = {lnd, sub};
