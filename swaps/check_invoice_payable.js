@@ -112,6 +112,7 @@ module.exports = args => {
     .find(n => n === args.destination);
 
   // Is there a route available that can send the tokens?
+    console.log(args.routes);
   if (!args.routes.length) {
     if (!!hasPendingChan) {
       console.log("CapacityForSwapIsPending")
