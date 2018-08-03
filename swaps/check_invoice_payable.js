@@ -114,8 +114,10 @@ module.exports = args => {
   // Is there a route available that can send the tokens?
   if (!args.routes.length) {
     if (!!hasPendingChan) {
+      console.log("CapacityForSwapIsPending")
       throw new Error('CapacityForSwapIsPending');
     } else {
+      console.log("InsufficientCapacityForSwap")
       throw new Error('InsufficientCapacityForSwap');
     }
   }
@@ -141,11 +143,13 @@ module.exports = args => {
 
   // Are there too few blocks remaining to safely execute a claim sweep?
   if (blocksUntilRefund < args.claim_window) {
+    console.log("RefundHeightTooClose")
     throw new Error('RefundHeightTooClose');
   }
 
   // Does the payment timeout happen too close to the refund height?
   if (relativeFinality - refundDistance < args.claim_window) {
+    console.log("RouteTimeoutHeightTooClose")
     throw new Error('RouteTimeoutHeightTooClose');
   }
 
@@ -156,11 +160,13 @@ module.exports = args => {
     const expectedConfirmationDate = new Date(now() + expectedWaitMs);
 
     if (expectedConfirmationDate.toISOString() > args.expires_at) {
+      console.log("InvoiceExpiresTooSoon")
       throw new Error('InvoiceExpiresTooSoon');
     }
   }
 
   if (args.swap_fee < args.sweep_fee + maxRoutingFee) {
+    console.log("InsufficientSwapFee")
     throw new Error('InsufficientSwapFee');
   }
 
