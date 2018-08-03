@@ -66,14 +66,16 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
       const rates = {};
 
       getSwapRates.rates.forEach(({cents, fees, network}) => {
-        console.log("adadada");
+        console.log("Getting each rate...");
+        console.log("Cents:")
         console.log(cents);
+        console.log("Fees:");
         console.log(fees);
+        console.log("Network:");
         console.log(network);
         return rates[network] = {cents, fees};
       });
 
-      console.log(rates.fees);
 
       if (!rates[network]) {
         return cbk([400, 'UnexpectedNetworkForRatesQuery', network]);
@@ -88,7 +90,7 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
       if (!swapFee) {
         return cbk([500, 'ExpectedBaseFeeRate', rates[network]]);
       }
-
+      console.log("Finished Rates")
       return cbk(null, {
         base_rate: swapFee.base,
         rate_destination: rates[to].cents,
