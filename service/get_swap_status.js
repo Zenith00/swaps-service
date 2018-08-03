@@ -160,12 +160,13 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
     getFeeTokens: ['invoiceDetails', ({invoiceDetails}, cbk) => {
       const to = invoiceDetails.network;
       const {tokens} = invoiceDetails;
-      console.log("GETTING FEE TOKENS")
+      console.log("GETTING FEE TOKENS");
       return getFeeForSwap({cache, network, to, tokens}, cbk);
     }],
 
     // Make sure that the transaction has been found
     checkTransactionDetected: ['getTransaction', ({getTransaction}, cbk) => {
+      console.log("checkTransactionDetected")
       if (!getTransaction.transaction) {
         return cbk([402, 'FundingTransactionNotFound']);
       }
@@ -179,6 +180,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       'getPlacement',
       ({getPlacement}, cbk) =>
     {
+      console.log("remainingConfs")
       const confCount = getPlacement.current_confirmation_count;
 
       try {
@@ -198,6 +200,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       ({getTransaction, remainingConfs, swapDetails}, cbk) =>
     {
       try {
+        console.log("pendingDetails")
         const swapUtxo = swapOutput({
           p2sh_output_script: swapDetails.p2sh_output_script,
           p2sh_p2wsh_output_script: swapDetails.p2sh_p2wsh_output_script,
@@ -227,6 +230,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       'serverKeyPair',
       ({getTransaction, remainingConfs, serverKeyPair}, cbk) =>
     {
+      console.log("swapTransaction")
       // Exit early and abort swap when there are remaining confirmations
       if (remainingConfs > 0) {
         return cbk();
@@ -257,6 +261,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Current swap status
     swapStatus: ['pendingDetails', 'swapTransaction', (res, cbk) => {
+      console.log("swapstatus")
       if (!!res.swapTransaction) {
         return cbk(null, {
           payment_secret: res.swapTransaction.payment_secret,

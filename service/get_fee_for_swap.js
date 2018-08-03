@@ -101,7 +101,7 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
 
     // Final fee tokens necessary to complete the swap
     feeTokens: ['getChainFee', 'rates', ({getChainFee, rates}, cbk) => {
-      console.log("feetokens")
+      console.log("feetokens");
       try {
         const fees = feeForSwap({
           base_rate: rates.base_rate,
