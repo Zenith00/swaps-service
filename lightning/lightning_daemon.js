@@ -46,7 +46,7 @@ module.exports = ({network}) => {
   }
 
   try {
-    console.log("FINAL INIT LND")
+    console.log("FINAL INIT LND");
     console.log(host);
     console.log(cert);
     console.log(macaroon)
