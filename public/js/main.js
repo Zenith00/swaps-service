@@ -666,6 +666,7 @@ App.getInvoiceDetails = ({invoice, network}, cbk) => {
   }
 */
 App.getSwap = (args, cbk) => {
+  console.log("GETTING SWAP!!")
   if (!args.invoice) {
     return cbk([0, 'ExpectedInvoice']);
   }
@@ -679,7 +680,8 @@ App.getSwap = (args, cbk) => {
     network: args.network,
     redeem_script: args.redeem_script,
   };
-  console.log("Making Post...")
+  console.log("Making Post...");
+
   App.makeRequest({post, api: `swaps/check`})
     .then(details => cbk(null, details))
     .catch(err => (err) => {console.log("Error found in making request!!");
