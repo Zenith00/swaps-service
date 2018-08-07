@@ -90,6 +90,8 @@ module.exports = ({log}) => {
 
   // POST a transaction to broadcast to the network
   router.post('/transactions/', ({body}, res) => {
+    console.log(body.network);
+    console.log(body.transaction);
     return broadcastTransaction({
       network: body.network,
       transaction: body.transaction,
