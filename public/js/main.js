@@ -222,6 +222,9 @@ App.checkSwap = ({button, id, quote}) => {
     swap_key_index: App.swaps[id].swap_key_index,
   },
   (err, res) => {
+    console.log("REPORTING TO MAIN")
+    console.log(err);
+    console.log(res);
     if (!!err && err.message === 'Gone') {
       quote.find('.failure').collapse('show');
 
@@ -288,6 +291,7 @@ App.checkSwap = ({button, id, quote}) => {
 
     // Exit early when the deposit is found but more confs are needed
     if (!res.payment_secret) {
+      console.log("Payment secret not found yet... waiting")
       // Display min 1 block waiting, since 0 blocks means swap is happening
       const confCount = res.conf_wait_count || 1;
 
@@ -309,7 +313,7 @@ App.checkSwap = ({button, id, quote}) => {
 
       return;
     }
-
+    console.log("Swap is now completed!")
     App.swaps[id].is_completed = true;
 
     return App.presentCompletedSwap({
@@ -834,6 +838,7 @@ App.makeRequest = ({api, post}) => {
   }
 */
 App.presentCompletedSwap = args => {
+  console.log("Presenting completed swap!!")
   if (!!App.check_for_swap) {
     clearInterval(App.check_for_swap);
   }
