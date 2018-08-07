@@ -89,7 +89,8 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
           return cbk();
         }
         console.log("Swap attempt found");
-        console.log(details)
+        console.log(details);
+        console.log("Enddetails")
         return cbk(null, details.expires_at);
       });
     }],
@@ -152,7 +153,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
       if (new Date().toISOString() > getSwapAttempt) {
         console.log("payment failing")
-        console.log(getSwapAttempt)
+        console.log(getSwapAttempt);
         return cbk([410, 'PaymentFailed']);
       }
 
