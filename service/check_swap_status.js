@@ -79,6 +79,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // Get swap attempt in progress
     getSwapAttempt: ['id', 'lnd', ({id, lnd}, cbk) => {
+      console.log("Getting swap attempt in progress")
       const swapId = Buffer.from(id, 'hex');
 
       const attemptId = createHash('sha256').update(swapId).digest('hex');
@@ -87,7 +88,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
         if (!!err) {
           return cbk();
         }
-
+        console.log("Swap attempt found");
         return cbk(null, details.expires_at);
       });
     }],
@@ -97,6 +98,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // See if we have a related swap element
     swapElement: ['getSwapFromPool', ({getSwapFromPool}, cbk) => {
+      console.log("Checking swap element)");
       const elements = getSwapFromPool;
 
       const [claim] = elements.claim;
@@ -104,6 +106,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       const [unconfirmed] = elements.funding.filter(({block}) => !block);
 
       if (!!claim) {
+        console.log("Swap element in claim")
         return cbk(null, {
           payment_secret: claim.preimage,
           transaction_id: claim.outpoint.split(':')[0],
@@ -111,6 +114,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       }
 
       if (!!funding) {
+        console.log("Swap element in funding")
         return cbk(null, {
           block: funding.block,
           output_index: funding.vout,
@@ -120,6 +124,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       }
 
       if (!!unconfirmed) {
+        console.log("Swap element in unconfirmed");
         return cbk(null, {
           output_index: unconfirmed.vout,
           output_tokens: unconfirmed.tokens,
@@ -166,10 +171,10 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
     // Determine wait time still necessary to confirm the swap
     remainingConfs: ['getBlockInfo', ({getBlockInfo}, cbk) => {
       const conf = !getBlockInfo ? 0 : getBlockInfo.current_confirmation_count;
-
+      console.log(getBlockInfo)
       try {
         const requiredFundingConfs = swapParameters({network}).funding_confs;
-
+        console.log("Remaining confs: " + Math.max(0, requiredFundingConfs - conf).toString());
         return cbk(null, Math.max(0, requiredFundingConfs - conf));
       } catch (e) {
         return cbk([500, 'FailedToDetermineWaitConfirmations', e]);
