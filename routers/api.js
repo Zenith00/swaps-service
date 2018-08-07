@@ -77,7 +77,7 @@ module.exports = ({log}) => {
     let body = ins.body;
     console.log(cache);
     console.log(body.invoice);
-    console.log(network);
+    console.log(body.network);
     console.log(body.redeem_script);
     return checkSwapStatus({
       cache,
