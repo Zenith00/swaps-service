@@ -5,7 +5,7 @@ const {getCurrentHash} = require('./../chain');
 const {networks} = require('./../tokenslib');
 const {returnResult} = require('./../async-util');
 
-const staleBlockVariance = 30;
+const staleBlockVariance = 75;
 
 /** Confirm that a chain backend is connected
 
