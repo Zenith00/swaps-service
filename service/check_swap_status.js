@@ -143,6 +143,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       'swapElement',
       ({getSwapAttempt, swapElement}, cbk) =>
     {
+      console.log("checkSwapAttempt executing")
       if (!getSwapAttempt) {
         return cbk();
       }
@@ -162,6 +163,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // Determine confirmation count
     getBlockInfo: ['swapElement', ({swapElement}, cbk) => {
+      console.log("getBlockInfo executing")
       // Exit early when there is no need to look up block details
       if (!swapElement || !swapElement.block) {
         return cbk();
@@ -174,7 +176,9 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // Determine wait time still necessary to confirm the swap
     remainingConfs: ['getBlockInfo', ({getBlockInfo}, cbk) => {
+      console.log("remainingConfs executing")
       const conf = !getBlockInfo ? 0 : getBlockInfo.current_confirmation_count;
+      console.log("getblockInfo:")
       console.log(getBlockInfo)
       try {
         const requiredFundingConfs = swapParameters({network}).funding_confs;
@@ -194,7 +198,8 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       if (!swapElement) {
         return cbk([402, 'FundingNotFound']);
       }
-
+      console.log("Swap status finishing!! returning");
+      console.log(swapElement);
       return cbk(null, {
         conf_wait_count: !!remainingConfs ? remainingConfs : null,
         output_index: swapElement.output_index,

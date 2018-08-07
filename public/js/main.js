@@ -11,8 +11,8 @@ const App = {
 };
 
 /** Changed the currency
-*/
-App.changedCurrencySelection = function({}) {
+ */
+App.changedCurrencySelection = function ({}) {
   let fiatCode;
   const swap = $(this).closest('.create-swap-quote');
 
@@ -31,20 +31,20 @@ App.changedCurrencySelection = function({}) {
   App.updateInvoiceDetails({swap});
 
   switch (network) {
-  case 'bch':
-  case 'bitcoin':
-  case 'litecoin':
-    fiatCode = 'USD';
-    break;
+    case 'bch':
+    case 'bitcoin':
+    case 'litecoin':
+      fiatCode = 'USD';
+      break;
 
-  case 'bchtestnet':
-  case 'ltctestnet':
-  case 'testnet':
-    fiatCode = 'tUSD';
-    break;
+    case 'bchtestnet':
+    case 'ltctestnet':
+    case 'testnet':
+      fiatCode = 'tUSD';
+      break;
 
-  default:
-    return console.log([400, 'UnexpectedNetworkSelected']);
+    default:
+      return console.log([400, 'UnexpectedNetworkSelected']);
   }
 
   swap.find('.chain-fiat-code').text(fiatCode);
@@ -54,9 +54,9 @@ App.changedCurrencySelection = function({}) {
 
 /** Change the invoice
 
-  Update the details of the payment based on the entered invoice.
-*/
-App.changedInvoice = function({}) {
+ Update the details of the payment based on the entered invoice.
+ */
+App.changedInvoice = function ({}) {
   const swap = $(this).closest('.create-swap-quote');
 
   App.updateInvoiceDetails({swap});
@@ -65,8 +65,8 @@ App.changedInvoice = function({}) {
 };
 
 /** Changed the refund address
-*/
-App.changedRefundAddress = function({}) {
+ */
+App.changedRefundAddress = function ({}) {
   const input = $(this);
 
   const address = input.val().trim();
@@ -114,8 +114,8 @@ App.changedRefundAddress = function({}) {
 };
 
 /** Changed refund key generation preference
-*/
-App.changedRefundPreference = function({}) {
+ */
+App.changedRefundPreference = function ({}) {
   const swap = $(this).closest('.create-swap-quote');
 
   const isPaperWallet = !!$(this).is(':checked');
@@ -135,8 +135,8 @@ App.changedRefundPreference = function({}) {
 };
 
 /** Changed the refund script
-*/
-App.changedRefundScript = function({}) {
+ */
+App.changedRefundScript = function ({}) {
   const script = $(this).val().trim();
 
   const network = $('.select-currency').val();
@@ -206,131 +206,131 @@ App.changedRefundScript = function({}) {
 
 /** Check on a swap
 
-  {
+ {
     [button]: <Checking Button Dom Object>
     id: <Payment Hash String>
     quote: <Quote Object>
   }
-*/
+ */
 App.checkSwap = ({button, id, quote}) => {
   const {network} = App.swaps[id];
 
   return App.getSwap({
-    network,
-    invoice: App.swaps[id].invoice,
-    redeem_script: App.swaps[id].redeem_script,
-    swap_key_index: App.swaps[id].swap_key_index,
-  },
-  (err, res) => {
-    console.log("REPORTING TO MAIN")
-    console.log(err);
-    console.log(res);
-    if (!!err && err.message === 'Gone') {
-      quote.find('.failure').collapse('show');
+      network,
+      invoice: App.swaps[id].invoice,
+      redeem_script: App.swaps[id].redeem_script,
+      swap_key_index: App.swaps[id].swap_key_index,
+    },
+    (err, res) => {
+      console.log("REPORTING TO MAIN")
+      console.log(err);
+      console.log(res);
+      if (!!err && err.message === 'Gone') {
+        quote.find('.failure').collapse('show');
 
-      return;
-    }
+        return;
+      }
 
-    if (!!App.swaps[id].is_completed) {
-      return;
-    }
+      if (!!App.swaps[id].is_completed) {
+        return;
+      }
 
-    // Reset the check swap button title to its normal state
-    if (!!button) {
-      $(button).text($(button).prop('title'));
-    }
+      // Reset the check swap button title to its normal state
+      if (!!button) {
+        $(button).text($(button).prop('title'));
+      }
 
-    if (!!err) {
-      return;
-    }
+      if (!!err) {
+        return;
+      }
 
-    quote.find('.chain-link').addClass('disabled');
+      quote.find('.chain-link').addClass('disabled');
 
-    const invoice = App.swaps[id].invoice;
-    const sentAmount = (res.output_tokens / 1e8).toFixed(8);
-    let txUrl = '#';
+      const invoice = App.swaps[id].invoice;
+      const sentAmount = (res.output_tokens / 1e8).toFixed(8);
+      let txUrl = '#';
 
-    quote.find('.delete-swap').prop('disabled', true).addClass('disabled');
-    quote.find('.download-file .label').text('Save Full Refund Details');
-    quote.find('.refund-output-index').val(res.output_index);
-    quote.find('.refund-tokens-total').val(sentAmount);
-    quote.find('.swap-transaction-id').val(res.transaction_id);
+      quote.find('.delete-swap').prop('disabled', true).addClass('disabled');
+      quote.find('.download-file .label').text('Save Full Refund Details');
+      quote.find('.refund-output-index').val(res.output_index);
+      quote.find('.refund-tokens-total').val(sentAmount);
+      quote.find('.swap-transaction-id').val(res.transaction_id);
 
-    App.swaps[id].transaction_id = res.transaction_id;
-    App.swaps[id].transaction_output_index = res.output_index;
+      App.swaps[id].transaction_id = res.transaction_id;
+      App.swaps[id].transaction_output_index = res.output_index;
 
-    switch (network) {
-    case 'bch':
-      txUrl = `https://www.blocktrail.com/BCC/tx/${res.transaction_id}`;
-      break;
+      switch (network) {
+        case 'bch':
+          txUrl = `https://www.blocktrail.com/BCC/tx/${res.transaction_id}`;
+          break;
 
-    case 'bchtestnet':
-      txUrl = `https://www.blocktrail.com/tBCC/tx/${res.transaction_id}`;
-      break;
+        case 'bchtestnet':
+          txUrl = `https://www.blocktrail.com/tBCC/tx/${res.transaction_id}`;
+          break;
 
-    case 'bitcoin':
-      txUrl = `https://smartbit.com.au/tx/${res.transaction_id}`;
-      break;
+        case 'bitcoin':
+          txUrl = `https://smartbit.com.au/tx/${res.transaction_id}`;
+          break;
 
-    case 'testnet':
-      txUrl = `https://testnet.smartbit.com.au/tx/${res.transaction_id}`;
-      break;
+        case 'testnet':
+          txUrl = `https://testnet.smartbit.com.au/tx/${res.transaction_id}`;
+          break;
 
-    case 'ltc':
-      txUrl = `https://chain.so/tx/LTC/${res.transaction_id}`;
-      break;
+        case 'ltc':
+          txUrl = `https://chain.so/tx/LTC/${res.transaction_id}`;
+          break;
 
-    case 'ltctestnet':
-      txUrl = `https://chain.so/tx/LTCTEST/${res.transaction_id}`;
-      break;
+        case 'ltctestnet':
+          txUrl = `https://chain.so/tx/LTCTEST/${res.transaction_id}`;
+          break;
 
-    default:
-      console.log([0, 'ExpectedTxUrl']);
-      break;
-    }
+        default:
+          console.log([0, 'ExpectedTxUrl']);
+          break;
+      }
 
-    // Exit early when the deposit is found but more confs are needed
-    if (!res.payment_secret) {
-      console.log("Payment secret not found yet... waiting")
-      // Display min 1 block waiting, since 0 blocks means swap is happening
-      const confCount = res.conf_wait_count || 1;
+      // Exit early when the deposit is found but more confs are needed
+      if (!res.payment_secret) {
+        console.log("Payment secret not found yet... waiting")
+        // Display min 1 block waiting, since 0 blocks means swap is happening
+        const confCount = res.conf_wait_count || 1;
 
-      const isPluralConfs = confCount !== 1;
+        const isPluralConfs = confCount !== 1;
 
-      quote.find('.found-waiting').collapse('show');
-      quote.find('.deposit-transaction-id').prop('href', txUrl);
-      quote.find('.needed-confirmations-count').text(confCount);
-      quote.find('.plural-confirmation').prop('hidden', !isPluralConfs);
-      quote.find('.tx-found').collapse('show');
-      quote.find('.waiting-label').collapse('hide');
-      quote.find('.qr-code').hide()
+        quote.find('.found-waiting').collapse('show');
+        quote.find('.deposit-transaction-id').prop('href', txUrl);
+        quote.find('.needed-confirmations-count').text(confCount);
+        quote.find('.plural-confirmation').prop('hidden', !isPluralConfs);
+        quote.find('.tx-found').collapse('show');
+        quote.find('.waiting-label').collapse('hide');
+        quote.find('.qr-code').hide()
 
-      quote.find('.waiting-notification')
-        .removeClass('alert-secondary')
-        .addClass('alert-primary');
+        quote.find('.waiting-notification')
+          .removeClass('alert-secondary')
+          .addClass('alert-primary');
 
-      quote.find('.swap-payment-details').hide();
+        quote.find('.swap-payment-details').hide();
 
-      return;
-    }
-    console.log("Swap is now completed!")
-    App.swaps[id].is_completed = true;
+        return;
+      }
+      console.log("Swap is now completed!")
+      App.swaps[id].is_completed = true;
 
-    return App.presentCompletedSwap({
-      invoice,
-      network: App.swaps[id].network,
-      payment_secret: res.payment_secret,
-      presented_quote: quote,
-      swap_amount: App.swaps[id].swap_amount,
-      swap_fee: App.swaps[id].swap_fee,
-      transaction_id: res.transaction_id,
+      return App.presentCompletedSwap({
+        invoice,
+        network: App.swaps[id].network,
+        payment_secret: res.payment_secret,
+        presented_quote: quote,
+        swap_amount: App.swaps[id].swap_amount,
+        swap_fee: App.swaps[id].swap_fee,
+        transaction_id: res.transaction_id,
+      });
     });
-  });
 };
 
 /** Clicked check swap button
-*/
-App.clickedCheckSwap = function(event) {
+ */
+App.clickedCheckSwap = function (event) {
   event.preventDefault();
 
   const button = $(this);
@@ -345,8 +345,8 @@ App.clickedCheckSwap = function(event) {
 };
 
 /** Clicked delete swap
-*/
-App.clickedDeleteSwap = function(event) {
+ */
+App.clickedDeleteSwap = function (event) {
   event.preventDefault();
 
   if (!!App.check_for_swap) {
@@ -363,8 +363,8 @@ App.clickedDeleteSwap = function(event) {
 };
 
 /** Clicked new swap button
-*/
-App.clickedNewSwap = function(event) {
+ */
+App.clickedNewSwap = function (event) {
   event.preventDefault();
 
   // Exit early when the swap button is not pressable
@@ -380,8 +380,8 @@ App.clickedNewSwap = function(event) {
 };
 
 /** Clicked show refund pane
-*/
-App.clickedShowRefund = function(event) {
+ */
+App.clickedShowRefund = function (event) {
   event.preventDefault();
 
   const swap = $(this).closest('.swap-quote');
@@ -395,8 +395,8 @@ App.clickedShowRefund = function(event) {
 };
 
 /** Clicked show swap
-*/
-App.clickedShowSwap = function(event) {
+ */
+App.clickedShowSwap = function (event) {
   event.preventDefault();
 
   const swap = $(this).closest('.swap-quote');
@@ -411,14 +411,14 @@ App.clickedShowSwap = function(event) {
 
 /** Create swap
 
-  {
+ {
     invoice: <Bolt 11 Invoice String>
     network: <Network Name String>
     refund: <Refund Address String>
   }
 
-  @returns via cbk
-  {
+ @returns via cbk
+ {
     destination_public_key: <Destination Public Key Hex String>
     fee_tokens_per_vbyte: <Fee Rate Tokens Per Virtual Byte Number>
     invoice: <Lightning Invoice String>
@@ -434,7 +434,7 @@ App.clickedShowSwap = function(event) {
     swap_p2wsh_address: <Swap Chain P2WSH Bech32 Address String>
     timeout_block_height: <Swap Expiration Date Number>
   }
-*/
+ */
 App.createSwap = ({invoice, network, refund}, cbk) => {
   if (!invoice) {
     return cbk([0, 'ExpectedInvoice']);
@@ -512,10 +512,10 @@ App.createSwap = ({invoice, network, refund}, cbk) => {
 
 /** Format tokens as a display string
 
-  {
+ {
     tokens: <Tokens Number>
   }
-*/
+ */
 App.format = ({tokens}) => {
   const bigUnitDivisibility = 8;
   const tokensPerBigUnit = 1e8;
@@ -525,15 +525,15 @@ App.format = ({tokens}) => {
 
 /** Get address details
 
-  {
+ {
     address: <Chain Address String>
   }
 
-  @returns via cbk
-  {
+ @returns via cbk
+ {
     type: <Address Type String>
   }
-*/
+ */
 App.getAddressDetails = ({address, network}, cbk) => {
   App.makeRequest({api: `address_details/${network}/${address}`})
     .then(details => {
@@ -551,13 +551,13 @@ App.getAddressDetails = ({address, network}, cbk) => {
 
 /** Get invoice details in the context of a swap
 
-  {
+ {
     invoice: <Bolt 11 Invoice String>
     network: <Swapping with Network Name String>
   }
 
-  @returns via cbk
-  {
+ @returns via cbk
+ {
     created_at: <Created At ISO 8601 Date String>
     description: <Payment Description String>
     destination_public_key: <Destination Public Key Hex String>
@@ -570,16 +570,16 @@ App.getAddressDetails = ({address, network}, cbk) => {
     network: <Network Name String>
     tokens: <Tokens to Send Number>
   }
-*/
+ */
 App.getInvoiceDetails = ({invoice, network}, cbk) => {
   return fetch(`/api/v0/invoice_details/${network}/${invoice}`)
     .then(r => {
       switch (r.status) {
-      case 200:
-        return Promise.resolve(r);
+        case 200:
+          return Promise.resolve(r);
 
-      default:
-        return Promise.reject(r);
+        default:
+          return Promise.reject(r);
       }
     })
     .then(r => r.json())
@@ -613,12 +613,12 @@ App.getInvoiceDetails = ({invoice, network}, cbk) => {
       }
 
       switch (details.network) {
-      case 'bitcoin':
-      case 'testnet':
-        break;
+        case 'bitcoin':
+        case 'testnet':
+          break;
 
-      default:
-        throw new Error('UnrecognizedDestinationNetwork');
+        default:
+          throw new Error('UnrecognizedDestinationNetwork');
       }
 
       if (!details.tokens) {
@@ -652,19 +652,19 @@ App.getInvoiceDetails = ({invoice, network}, cbk) => {
 
 /** Get the status of a swap
 
-  {
+ {
     invoice: <Invoice BOLT 11 String>
     network: <Network Name String>
     redeem_script: <Redeem Script String>
   }
 
-  @returns via cbk
-  {
+ @returns via cbk
+ {
     [conf_wait_count]: <Confirmations to Wait Number>
     [payment_secret]: <Payment Secret Hex String>
     [transaction_id]: <Transaction Id Hex String>
   }
-*/
+ */
 App.getSwap = (args, cbk) => {
   if (!args.invoice) {
     return cbk([0, 'ExpectedInvoice']);
@@ -679,16 +679,19 @@ App.getSwap = (args, cbk) => {
     network: args.network,
     redeem_script: args.redeem_script,
   };
-
+  console.log("Making Post...")
   App.makeRequest({post, api: `swaps/check`})
     .then(details => cbk(null, details))
-    .catch(err => cbk(err));
+    .catch(err =>  {
+      console.log("Error found in making request!!");
+      cbk(err);
+    });
 
   return;
 };
 
 /** Init App
-*/
+ */
 App.init = args => {
   $('.create-swap-quote').submit(App.submitCreateSwapQuote);
   $('.enter-refund-details').submit(App.submitRefundRecovery);
@@ -725,8 +728,8 @@ App.init = args => {
 
 /** Initialize active chains
 
-  {}
-*/
+ {}
+ */
 App.initActiveChains = ({}, cbk) => {
   App.makeRequest({api: 'networks/'})
     .then(res => {
@@ -745,16 +748,16 @@ App.initActiveChains = ({}, cbk) => {
 
 /** Initialize exchange rates
 
-  {}
+ {}
 
-  @returns via cbk
-  {
+ @returns via cbk
+ {
     rates: [{
       cents: <Cents Per Token Number>
       network: <Network Name String>
     }]
   }
-*/
+ */
 App.initExchangeRates = ({}, cbk) => {
   App.makeRequest({api: 'exchange_rates/'})
     .then(res => {
@@ -772,8 +775,8 @@ App.initExchangeRates = ({}, cbk) => {
 
 /** Init state using query parameters
 
-  {}
-*/
+ {}
+ */
 App.initFromQueryParams = ({}) => {
   let invoice;
   let network;
@@ -799,14 +802,14 @@ App.initFromQueryParams = ({}) => {
 
 /** Make a request
 
-  {
+ {
     api: <API Path String>
     [post]: <Post JSON Object>
   }
 
-  @returns
-  <Fetch Promise Object>
-*/
+ @returns
+   <Fetch Promise Object>
+ */
 App.makeRequest = ({api, post}) => {
   const body = !!post ? JSON.stringify(post) : null;
   const headers = {'content-type': 'application/json'};
@@ -815,19 +818,19 @@ App.makeRequest = ({api, post}) => {
   return fetch(`/api/v0/${api}`, {body, headers, method})
     .then(r => {
       switch (r.status) {
-      case 200:
-        return Promise.resolve(r);
+        case 200:
+          return Promise.resolve(r);
 
-      default:
-        return Promise.reject(new Error(r.statusText));
+        default:
+          return Promise.reject(new Error(r.statusText));
       }
     })
     .then(r => r.json());
-  };
+};
 
 /** Present completed swap
 
-  {
+ {
     invoice: <Bolt 11 Invoice String>
     network: <Chain Network Name String>
     payment_secret: <Payment Secret String>
@@ -836,7 +839,7 @@ App.makeRequest = ({api, post}) => {
     swap_fee: <Swap Fee Tokens Number>
     transaction_id: <Transaction Id String>
   }
-*/
+ */
 App.presentCompletedSwap = args => {
   console.log("Presenting completed swap!!")
   if (!!App.check_for_swap) {
@@ -852,39 +855,39 @@ App.presentCompletedSwap = args => {
   swap.addClass('presented').removeClass('template');
 
   switch (args.network) {
-  case 'bch':
-    href = `https://www.blocktrail.com/BCC/tx/${args.transaction_id}`;
-    onChainCurrency = 'BCH';
-    break;
+    case 'bch':
+      href = `https://www.blocktrail.com/BCC/tx/${args.transaction_id}`;
+      onChainCurrency = 'BCH';
+      break;
 
-  case 'bchtestnet':
-    href = `https://www.blocktrail.com/tBCC/tx/${args.transaction_id}`;
-    onChainCurrency = 'tBCH';
-    break;
+    case 'bchtestnet':
+      href = `https://www.blocktrail.com/tBCC/tx/${args.transaction_id}`;
+      onChainCurrency = 'tBCH';
+      break;
 
-  case 'bitcoin':
-    href = `https://smartbit.com.au/tx/${args.transaction_id}`;
-    onChainCurrency = 'BTC';
-    break;
+    case 'bitcoin':
+      href = `https://smartbit.com.au/tx/${args.transaction_id}`;
+      onChainCurrency = 'BTC';
+      break;
 
-  case 'testnet':
-    href = `https://testnet.smartbit.com.au/tx/${args.transaction_id}`;
-    onChainCurrency = 'tBTC';
-    break;
+    case 'testnet':
+      href = `https://testnet.smartbit.com.au/tx/${args.transaction_id}`;
+      onChainCurrency = 'tBTC';
+      break;
 
-  case 'ltc':
-    href = `https://chain.so/tx/LTC/${args.transaction_id}`;
-    onChainCurrency = 'LTC';
-    break;
+    case 'ltc':
+      href = `https://chain.so/tx/LTC/${args.transaction_id}`;
+      onChainCurrency = 'LTC';
+      break;
 
-  case 'ltctestnet':
-    href = `https://chain.so/tx/LTCTEST/${args.transaction_id}`;
-    onChainCurrency = 'tLTC';
-    break;
+    case 'ltctestnet':
+      href = `https://chain.so/tx/LTCTEST/${args.transaction_id}`;
+      onChainCurrency = 'tLTC';
+      break;
 
-  default:
-    console.log([0, 'UnexpectedNetworkForHref']);
-    break;
+    default:
+      console.log([0, 'UnexpectedNetworkForHref']);
+      break;
   }
 
   swap.find('.chain-amount').text(App.format({tokens: args.swap_amount}));
@@ -908,15 +911,15 @@ App.presentCompletedSwap = args => {
 
 /** Get qr code
 
-  {
+ {
     address: <Address String>
     amount: <Amount String>
     scheme: <Scheme String>
   }
 
-  @returns
-  <QR Code Img Object>
-*/
+ @returns
+   <QR Code Img Object>
+ */
 App.qrCode = ({address, amount, scheme}) => {
   const addressLink = `${scheme}:${address}?amount=${amount}`;
   const back = 'rgb(250, 250, 250)';
@@ -932,11 +935,11 @@ App.qrCode = ({address, amount, scheme}) => {
 
 /** Show invoice
 
-  {
+ {
     invoice: <Lightning Invoice String>
     swap: <Swap DOM Object>
   }
-*/
+ */
 App.showInvoice = args => {
   const cents = 100;
   const details = args.swap.find('.invoice-details');
@@ -954,24 +957,24 @@ App.showInvoice = args => {
   let symbolForNetwork;
 
   switch (invoice.network) {
-  case 'bitcoin':
-    symbolForFiat = 'USD';
-    symbolForNetwork = 'Lightning BTC';
-    break;
+    case 'bitcoin':
+      symbolForFiat = 'USD';
+      symbolForNetwork = 'Lightning BTC';
+      break;
 
-  case 'ltc':
-    symbolForFiat = 'USD';
-    symbolForNetwork = 'Lightning LTC';
+    case 'ltc':
+      symbolForFiat = 'USD';
+      symbolForNetwork = 'Lightning LTC';
 
-  case 'testnet':
-    symbolForFiat = 'tUSD';
-    symbolForNetwork = 'Lightning tBTC';
-    break;
+    case 'testnet':
+      symbolForFiat = 'tUSD';
+      symbolForNetwork = 'Lightning tBTC';
+      break;
 
-  default:
-    symbolForNetwork = '';
-    symbolForNetwork = '';
-    break;
+    default:
+      symbolForNetwork = '';
+      symbolForNetwork = '';
+      break;
   }
 
   details.find('.destination-url').prop('href', invoice.destination_url);
@@ -992,8 +995,8 @@ App.showInvoice = args => {
 };
 
 /** Submit the create swap quote form
-*/
-App.submitCreateSwapQuote = function(event) {
+ */
+App.submitCreateSwapQuote = function (event) {
   event.preventDefault();
 
   const swap = $(this).closest('.create-swap-quote');
@@ -1068,25 +1071,25 @@ App.submitCreateSwapQuote = function(event) {
     let scheme;
 
     switch (network) {
-    case 'bch':
-    case 'bchtestnet':
-      scheme = 'bitcoincash';
-      swapAddress = details.swap_p2sh_address;
-      break;
+      case 'bch':
+      case 'bchtestnet':
+        scheme = 'bitcoincash';
+        swapAddress = details.swap_p2sh_address;
+        break;
 
-    case 'bitcoin':
-    case 'testnet':
-      scheme = 'bitcoin';
-      break;
+      case 'bitcoin':
+      case 'testnet':
+        scheme = 'bitcoin';
+        break;
 
-    case 'ltc':
-    case 'ltctestnet':
-      scheme = 'litecoin';
-      swapAddress = details.swap_p2sh_address;
-      break;
+      case 'ltc':
+      case 'ltctestnet':
+        scheme = 'litecoin';
+        swapAddress = details.swap_p2sh_address;
+        break;
 
-    default:
-      console.log([0, 'UnexpectedNetworkForScheme']);
+      default:
+        console.log([0, 'UnexpectedNetworkForScheme']);
     }
 
     const addr = `${scheme}:${swapAddress}?${qs}`;
@@ -1158,17 +1161,17 @@ App.submitCreateSwapQuote = function(event) {
     quote.collapse('show');
 
     App.check_for_swap = setInterval(() => {
-      return App.checkSwap({quote, id: details.payment_hash});
-    },
-    App.check_for_swap_interval_ms);
+        return App.checkSwap({quote, id: details.payment_hash});
+      },
+      App.check_for_swap_interval_ms);
 
     return;
   });
 };
 
 /** Submit refund details derivation
-*/
-App.submitRefundRecovery = function(event) {
+ */
+App.submitRefundRecovery = function (event) {
   event.preventDefault();
 
   $('.claimed-balance').removeClass('show').addClass('hide');
@@ -1210,105 +1213,105 @@ App.submitRefundRecovery = function(event) {
     const address = details.swap_address;
 
     switch (details.network) {
-    case 'testnet':
-      fetch(`https://api.blockcypher.com/v1/btc/test3/addrs/${address}/full`)
-        .then(r => r.json())
-        .then(details => {
-          if (!details || !Array.isArray(details.txs) || !details.txs.length) {
-            return $('.no-balance').collapse('show');
-          }
+      case 'testnet':
+        fetch(`https://api.blockcypher.com/v1/btc/test3/addrs/${address}/full`)
+          .then(r => r.json())
+          .then(details => {
+            if (!details || !Array.isArray(details.txs) || !details.txs.length) {
+              return $('.no-balance').collapse('show');
+            }
 
-          if (!details.balance) {
-            return $('.claimed-balance').collapse('show');
-          }
+            if (!details.balance) {
+              return $('.claimed-balance').collapse('show');
+            }
 
-          let payouts = {};
+            let payouts = {};
 
-          details.txs.forEach(({hash, outputs}) => {
-            return outputs.forEach(({addresses}, vout) => {
-              return addresses.forEach(addr => payouts[addr] = {hash, vout});
+            details.txs.forEach(({hash, outputs}) => {
+              return outputs.forEach(({addresses}, vout) => {
+                return addresses.forEach(addr => payouts[addr] = {hash, vout});
+              });
             });
+
+            const tx = payouts[address];
+
+            if (!!tx && !!tx.hash && !$('.refund-transaction-id').val()) {
+              $('.refund-transaction-id').val(tx.hash);
+            }
+
+            if (!!tx && tx.vout !== undefined && !$('.refund-tx-vout').val()) {
+              $('.refund-tx-vout').val(tx.vout);
+            }
+
+            return;
+          })
+          .catch(err => {
+            console.log([503, 'FailedToFetchAddressDetails', err]);
+            return;
+          });
+        break;
+
+      case 'bchtestnet':
+        fetch(`https://test-bch-insight.bitpay.com/api/addrs/${address}/utxo`)
+          .then(r => r.json())
+          .then(transactions => {
+            if (!Array.isArray(transactions) || !transactions.length) {
+              return $('.no-balance').collapse('show');
+            }
+
+            const [tx] = transactions;
+
+            if (!!tx && !!tx.txid && !$('.refund-transaction-id').val()) {
+              $('.refund-transaction-id').val(tx.txid);
+            }
+
+            if (!!tx && tx.vout !== undefined && !$('.refund-tx-vout').val()) {
+              $('.refund-tx-vout').val(tx.vout);
+            }
+
+            return;
+          })
+          .catch(err => {
+            console.log([503, 'FailedToFetchAddressDetails']);
+            return;
+          });
+        break;
+
+      case 'ltctestnet':
+        fetch(`https://chain.so/api/v2/get_tx_received/LTCTEST/${address}`)
+          .then(r => r.json())
+          .then(details => {
+            if (!details || !details.data || !Array.isArray(details.data.txs)) {
+              return;
+            }
+
+            if (!details.data.txs.length) {
+              return;
+            }
+
+            const [tx] = details.data.txs;
+
+            if (!tx) {
+              return;
+            }
+
+            if (!!tx.txid && !$('.refund-transaction-id').val()) {
+              $('.refund-transaction-id').val(tx.txid);
+            }
+
+            if (tx.output_no !== undefined && !$('.refund-tx-vout').val()) {
+              $('.refund-tx-vout').val(tx.output_no);
+            }
+
+            return;
+          })
+          .catch(err => {
+            console.log([503, 'FailedToFetchAddressDetails']);
+            return;
           });
 
-          const tx = payouts[address];
-
-          if (!!tx && !!tx.hash && !$('.refund-transaction-id').val()) {
-            $('.refund-transaction-id').val(tx.hash);
-          }
-
-          if (!!tx && tx.vout !== undefined && !$('.refund-tx-vout').val()) {
-            $('.refund-tx-vout').val(tx.vout);
-          }
-
-          return;
-        })
-        .catch(err => {
-          console.log([503, 'FailedToFetchAddressDetails', err]);
-          return;
-        });
-      break;
-
-    case 'bchtestnet':
-      fetch(`https://test-bch-insight.bitpay.com/api/addrs/${address}/utxo`)
-        .then(r => r.json())
-        .then(transactions => {
-          if (!Array.isArray(transactions) || !transactions.length) {
-            return $('.no-balance').collapse('show');
-          }
-
-          const [tx] = transactions;
-
-          if (!!tx && !!tx.txid && !$('.refund-transaction-id').val()) {
-            $('.refund-transaction-id').val(tx.txid);
-          }
-
-          if (!!tx && tx.vout !== undefined && !$('.refund-tx-vout').val()) {
-            $('.refund-tx-vout').val(tx.vout);
-          }
-
-          return;
-        })
-        .catch(err => {
-          console.log([503, 'FailedToFetchAddressDetails']);
-          return;
-        });
-      break;
-
-    case 'ltctestnet':
-      fetch(`https://chain.so/api/v2/get_tx_received/LTCTEST/${address}`)
-        .then(r => r.json())
-        .then(details => {
-          if (!details || !details.data || !Array.isArray(details.data.txs)) {
-            return;
-          }
-
-          if (!details.data.txs.length) {
-            return;
-          }
-
-          const [tx] = details.data.txs;
-
-          if (!tx) {
-            return;
-          }
-
-          if (!!tx.txid && !$('.refund-transaction-id').val()) {
-            $('.refund-transaction-id').val(tx.txid);
-          }
-
-          if (tx.output_no !== undefined && !$('.refund-tx-vout').val()) {
-            $('.refund-tx-vout').val(tx.output_no);
-          }
-
-          return;
-        })
-        .catch(err => {
-          console.log([503, 'FailedToFetchAddressDetails']);
-          return;
-        });
-
-    default:
-      break;
+      default:
+        break;
     }
   }
 
@@ -1347,8 +1350,8 @@ App.submitRefundRecovery = function(event) {
 };
 
 /** Submit sign refund transaction with details form
-*/
-App.submitSignWithRefundDetails = function(e) {
+ */
+App.submitSignWithRefundDetails = function (e) {
   e.preventDefault();
 
   const redeemScript = $(this).find('.refund-details-script').val().trim();
@@ -1413,13 +1416,13 @@ App.submitSignWithRefundDetails = function(e) {
     console.log([400, 'ERROR', err]);
 
     switch (e.message) {
-    case 'RefundValueTooSmall':
-      $('.output-too-small.refund-tx-failure').collapse('show');
-      break;
+      case 'RefundValueTooSmall':
+        $('.output-too-small.refund-tx-failure').collapse('show');
+        break;
 
-    default:
-      $('.generic.refund-tx-failure').collapse('show');
-      break;
+      default:
+        $('.generic.refund-tx-failure').collapse('show');
+        break;
     }
 
     return;
@@ -1433,61 +1436,61 @@ App.submitSignWithRefundDetails = function(e) {
     post: {network, transaction: refund.transaction},
     api: 'transactions/',
   })
-  .then(details => {
-    if (!details.id) {
+    .then(details => {
+      if (!details.id) {
+        return;
+      }
+
+      let txUrl;
+
+      switch (network) {
+        case 'bch':
+          txUrl = `https://www.blocktrail.com/BCC/tx/${details.id}`;
+          break;
+
+        case 'bchtestnet':
+          txUrl = `https://www.blocktrail.com/tBCC/tx/${details.id}`;
+          break;
+
+        case 'bitcoin':
+          txUrl = `https://smartbit.com.au/tx/${details.id}`;
+          break;
+
+        case 'testnet':
+          txUrl = `https://testnet.smartbit.com.au/tx/${details.id}`;
+          break;
+
+        case 'ltc':
+          txUrl = `https://chain.so/tx/LTC/${details.id}`;
+          break;
+
+        case 'ltctestnet':
+          txUrl = `https://chain.so/tx/LTCTEST/${details.id}`;
+          break;
+      }
+
+      $('.refund-tx-success').collapse('show');
+      $('.refund-tx-success .refund-address').text(refundAddress);
+      $('.refund-tx-success .link-to-refund').text(details.id);
+      $('.refund-tx-success .link-to-refund').prop('href', txUrl);
+
       return;
-    }
+    })
+    .catch(err => {
+      console.log([503, 'FailedToBroadcastTransaction', err]);
 
-    let txUrl;
-
-    switch (network) {
-    case 'bch':
-      txUrl = `https://www.blocktrail.com/BCC/tx/${details.id}`;
-      break;
-
-    case 'bchtestnet':
-      txUrl = `https://www.blocktrail.com/tBCC/tx/${details.id}`;
-      break;
-
-    case 'bitcoin':
-      txUrl = `https://smartbit.com.au/tx/${details.id}`;
-      break;
-
-    case 'testnet':
-      txUrl = `https://testnet.smartbit.com.au/tx/${details.id}`;
-      break;
-
-    case 'ltc':
-      txUrl = `https://chain.so/tx/LTC/${details.id}`;
-      break;
-
-    case 'ltctestnet':
-      txUrl = `https://chain.so/tx/LTCTEST/${details.id}`;
-      break;
-    }
-
-    $('.refund-tx-success').collapse('show');
-    $('.refund-tx-success .refund-address').text(refundAddress);
-    $('.refund-tx-success .link-to-refund').text(details.id);
-    $('.refund-tx-success .link-to-refund').prop('href', txUrl);
-
-    return;
-  })
-  .catch(err => {
-    console.log([503, 'FailedToBroadcastTransaction', err]);
-
-    return;
-  });
+      return;
+    });
 
   return;
 };
 
 /** Update the swap details
 
-  {
+ {
     swap: <Swap DOM Object>
   }
-*/
+ */
 App.updatedSwapDetails = ({swap}) => {
   if (!swap.find('.pay-to-lightning-invoice').length) {
     return;
@@ -1529,81 +1532,81 @@ App.updatedSwapDetails = ({swap}) => {
   let conversionRate = 1;
 
   switch (network) {
-  case 'bch':
-    if (!App.rates['bch']) {
+    case 'bch':
+      if (!App.rates['bch']) {
+        break;
+      }
+
+      baseFee = App.rates['bch'].fees[0].base;
+      conversionRate = App.rates['bitcoin'].cents / App.rates['bch'].cents;
+      feePercentage = App.rates['bch'].fees[0].rate / 1e6 * 100;
+      fiatPrice = (App.rates['bch'].cents) * 1e8 / 100;
+      networkAddressName = 'Bcash';
       break;
-    }
 
-    baseFee = App.rates['bch'].fees[0].base;
-    conversionRate = App.rates['bitcoin'].cents / App.rates['bch'].cents;
-    feePercentage = App.rates['bch'].fees[0].rate / 1e6 * 100;
-    fiatPrice = (App.rates['bch'].cents) * 1e8 / 100;
-    networkAddressName = 'Bcash';
-    break;
+    case 'bchtestnet':
+      if (!App.rates['bchtestnet']) {
+        break;
+      }
 
-  case 'bchtestnet':
-    if (!App.rates['bchtestnet']) {
+      baseFee = App.rates['bchtestnet'].fees[0].base;
+      conversionRate = App.rates['testnet'].cents / App.rates['bchtestnet'].cents;
+      feePercentage = App.rates['bchtestnet'].fees[0].rate / 1e6 * 100;
+      fiatPrice = (App.rates['bchtestnet'].cents) * 1e8 / 100;
+      networkAddressName = 'Bcash testnet';
       break;
-    }
 
-    baseFee = App.rates['bchtestnet'].fees[0].base;
-    conversionRate = App.rates['testnet'].cents / App.rates['bchtestnet'].cents;
-    feePercentage = App.rates['bchtestnet'].fees[0].rate / 1e6 * 100;
-    fiatPrice = (App.rates['bchtestnet'].cents) * 1e8 / 100;
-    networkAddressName = 'Bcash testnet';
-    break;
+    case 'bitcoin':
+      if (!App.rates['bitcoin']) {
+        break;
+      }
 
-  case 'bitcoin':
-    if (!App.rates['bitcoin']) {
+      baseFee = App.rates['bitcoin'].fees[0].base;
+      feePercentage = App.rates['bitcoin'].fees[0].rate / 1e6 * 100;
+      fiatPrice = (App.rates['bitcoin'].cents) * 1e8 / 100;
+      networkAddressName = 'Bitcoin';
       break;
-    }
 
-    baseFee = App.rates['bitcoin'].fees[0].base;
-    feePercentage = App.rates['bitcoin'].fees[0].rate / 1e6 * 100;
-    fiatPrice = (App.rates['bitcoin'].cents) * 1e8 / 100;
-    networkAddressName = 'Bitcoin';
-    break;
+    case 'ltc':
+      if (!App.rates['ltc']) {
+        break;
+      }
 
-  case 'ltc':
-    if (!App.rates['ltc']) {
+      baseFee = App.rates['ltc'].fees[0].base;
+      conversionRate = App.rates['bitcoin'].cents / App.rates['ltc'].cents;
+      feePercentage = App.rates['ltc'].fees[0].rate / 1e6 * 100;
+      fiatPrice = (App.rates['ltc'].cents) * 1e8 / 100;
+      networkAddressName = 'Litecoin';
+
       break;
-    }
 
-    baseFee = App.rates['ltc'].fees[0].base;
-    conversionRate = App.rates['bitcoin'].cents / App.rates['ltc'].cents;
-    feePercentage = App.rates['ltc'].fees[0].rate / 1e6 * 100;
-    fiatPrice = (App.rates['ltc'].cents) * 1e8 / 100;
-    networkAddressName = 'Litecoin';
+    case 'ltctestnet':
+      if (!App.rates['ltctestnet']) {
+        break;
+      }
 
-    break;
+      baseFee = App.rates['ltctestnet'].fees[0].base;
+      conversionRate = App.rates['testnet'].cents / App.rates['ltctestnet'].cents;
+      feePercentage = App.rates['ltctestnet'].fees[0].rate / 1e6 * 100;
+      fiatPrice = (App.rates['ltctestnet'].cents) * 1e8 / 100;
+      networkAddressName = 'Litecoin testnet';
 
-  case 'ltctestnet':
-    if (!App.rates['ltctestnet']) {
       break;
-    }
 
-    baseFee = App.rates['ltctestnet'].fees[0].base;
-    conversionRate = App.rates['testnet'].cents / App.rates['ltctestnet'].cents;
-    feePercentage = App.rates['ltctestnet'].fees[0].rate / 1e6 * 100;
-    fiatPrice = (App.rates['ltctestnet'].cents) * 1e8 / 100;
-    networkAddressName = 'Litecoin testnet';
+    case 'testnet':
+      if (!App.rates['testnet']) {
+        break;
+      }
 
-    break;
-
-  case 'testnet':
-    if (!App.rates['testnet']) {
+      baseFee = App.rates['testnet'].fees[0].base;
+      feePercentage = App.rates['testnet'].fees[0].rate / 1e6 * 100;
+      fiatPrice = (App.rates['testnet'].cents) * 1e8 / 100;
+      networkAddressName = 'Bitcoin testnet';
       break;
-    }
 
-    baseFee = App.rates['testnet'].fees[0].base;
-    feePercentage = App.rates['testnet'].fees[0].rate / 1e6 * 100;
-    fiatPrice = (App.rates['testnet'].cents) * 1e8 / 100;
-    networkAddressName = 'Bitcoin testnet';
-    break;
-
-  default:
-    return console.log([0, 'UnexpectedNetworkName']);
-    break;
+    default:
+      return console.log([0, 'UnexpectedNetworkName']);
+      break;
   }
 
   if (!!App.invoice_details[invoice]) {
@@ -1625,10 +1628,10 @@ App.updatedSwapDetails = ({swap}) => {
 
 /** Update invoice details
 
-  {
+ {
     swap: <Create Swap Quote Swap DOM Object>
   }
-*/
+ */
 App.updateInvoiceDetails = ({swap}) => {
   const input = swap.find('.pay-to-lightning-invoice');
 
@@ -1685,38 +1688,38 @@ App.updateInvoiceDetails = ({swap}) => {
       let text;
 
       switch (errMessage) {
-      case 'ChainFeesTooHighToSwap':
-        text = 'Value too low for a chain swap. Use a higher value invoice?';
-        break;
+        case 'ChainFeesTooHighToSwap':
+          text = 'Value too low for a chain swap. Use a higher value invoice?';
+          break;
 
-      case 'DecodeInvoiceFailure':
-        text = 'Couldn\'t read this invoice. Try a different one?';
-        break;
+        case 'DecodeInvoiceFailure':
+          text = 'Couldn\'t read this invoice. Try a different one?';
+          break;
 
-      case 'Failed to fetch':
-        text = `Couldn\'t connect to swap server. Try again?`;
-        break;
+        case 'Failed to fetch':
+          text = `Couldn\'t connect to swap server. Try again?`;
+          break;
 
-      case 'InsufficientCapacityForSwap':
-        text = 'Value is too high to swap. Use a lower value invoice?';
-        break;
+        case 'InsufficientCapacityForSwap':
+          text = 'Value is too high to swap. Use a lower value invoice?';
+          break;
 
-      case 'InvoiceExpiresTooSoon':
-        text = 'This invoice expires too soon, get a fresh invoice?';
-        break;
+        case 'InvoiceExpiresTooSoon':
+          text = 'This invoice expires too soon, get a fresh invoice?';
+          break;
 
-      case 'NoCapacityToDestination':
-        text = 'Can\'t send to this destination, establishing connectivity...';
-        break;
+        case 'NoCapacityToDestination':
+          text = 'Can\'t send to this destination, establishing connectivity...';
+          break;
 
-      case 'PendingChannelToDestination':
-        text = 'Channel to destination is still opening, try again later...';
-        break;
+        case 'PendingChannelToDestination':
+          text = 'Channel to destination is still opening, try again later...';
+          break;
 
-      default:
-        console.log('ERR', err);
-        text = 'Unexpected error :( try again or with a different invoice?';
-        break;
+        default:
+          console.log('ERR', err);
+          text = 'Unexpected error :( try again or with a different invoice?';
+          break;
       }
 
       swap.find('.invoice-issue').text(text);
