@@ -36,6 +36,7 @@ module.exports = ({network, transaction}, cbk) => {
 
     // Broadcast transaction
     broadcast: ['validate', ({}, cbk) => {
+      console.log("broadcast in broadcast_transaction")
       const cmd = sendRawTransaction;
       const params = transaction;
 
@@ -46,6 +47,8 @@ module.exports = ({network, transaction}, cbk) => {
 
         // Exit early when an id was not returned, indicating failure.
         if (!id) {
+          console.log("id not returned");
+          console.log(err);
           return cbk([503, 'TransactionBroadcastFailed', transaction]);
         }
 
@@ -65,6 +68,9 @@ module.exports = ({network, transaction}, cbk) => {
         }
 
         if (tx !== transaction) {
+          console.log("checkbroadcast failed");
+          console.log(err);
+          console.log(tx);
           return cbk([503, 'TransactionBroadcastFailed', tx, transaction]);
         }
 
