@@ -49,6 +49,8 @@ module.exports = ({network}, cbk) => {
 
       // Roughly how long has it been since this block was created?
       const delayMs = Date.now() - Date.parse(getHeaderInfo.median_created_at);
+      console.log(Date.now().toTimeString())
+      console.log(Date.parse(getHeaderInfo.median_created_at).toTimeString())
       console.log("time since block created...")
       console.log(delayMs);
       console.log( networks[network].ms_per_block * staleBlockVariance);
