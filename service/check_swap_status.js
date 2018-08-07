@@ -79,7 +79,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // Get swap attempt in progress
     getSwapAttempt: ['id', 'lnd', ({id, lnd}, cbk) => {
-      console.log("Getting swap attempt in progress")
+      // console.log("Getting swap attempt in progress")
       const swapId = Buffer.from(id, 'hex');
 
       const attemptId = createHash('sha256').update(swapId).digest('hex');
@@ -88,9 +88,9 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
         if (!!err) {
           return cbk();
         }
-        console.log("Swap attempt found");
+        // console.log("Swap attempt found");
         console.log(details);
-        console.log("Enddetails")
+        // // console.log("Enddetails")
         return cbk(null, details.expires_at);
       });
     }],
@@ -100,7 +100,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // See if we have a related swap element
     swapElement: ['getSwapFromPool', ({getSwapFromPool}, cbk) => {
-      console.log("Checking swap element)");
+      // console.log("Checking swap element)");
       const elements = getSwapFromPool;
 
       const [claim] = elements.claim;
@@ -108,7 +108,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       const [unconfirmed] = elements.funding.filter(({block}) => !block);
 
       if (!!claim) {
-        console.log("Swap element in claim");
+        // console.log("Swap element in claim");
         return cbk(null, {
           payment_secret: claim.preimage,
           transaction_id: claim.outpoint.split(':')[0],
@@ -116,7 +116,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       }
 
       if (!!funding) {
-        console.log("Swap element in funding");
+        // console.log("Swap element in funding");
         return cbk(null, {
           block: funding.block,
           output_index: funding.vout,
@@ -126,7 +126,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       }
 
       if (!!unconfirmed) {
-        console.log("Swap element in unconfirmed");
+        // console.log("Swap element in unconfirmed");
         return cbk(null, {
           output_index: unconfirmed.vout,
           output_tokens: unconfirmed.tokens,
@@ -143,7 +143,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       'swapElement',
       ({getSwapAttempt, swapElement}, cbk) =>
     {
-      console.log("checkSwapAttempt executing")
+      // console.log("checkSwapAttempt executing")
       if (!getSwapAttempt) {
         return cbk();
       }
@@ -153,7 +153,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       }
 
       if (new Date().toISOString() > getSwapAttempt) {
-        console.log("payment failing")
+        // console.log("payment failing")
         console.log(getSwapAttempt);
         return cbk([410, 'PaymentFailed']);
       }
@@ -163,7 +163,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // Determine confirmation count
     getBlockInfo: ['swapElement', ({swapElement}, cbk) => {
-      console.log("getBlockInfo executing")
+      // console.log("getBlockInfo executing")
       // Exit early when there is no need to look up block details
       if (!swapElement || !swapElement.block) {
         return cbk();
@@ -176,9 +176,9 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
 
     // Determine wait time still necessary to confirm the swap
     remainingConfs: ['getBlockInfo', ({getBlockInfo}, cbk) => {
-      console.log("remainingConfs executing")
+      // console.log("remainingConfs executing")
       const conf = !getBlockInfo ? 0 : getBlockInfo.current_confirmation_count;
-      console.log("getblockInfo:")
+      // console.log("getblockInfo:")
       console.log(getBlockInfo)
       try {
         const requiredFundingConfs = swapParameters({network}).funding_confs;
@@ -198,7 +198,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       if (!swapElement) {
         return cbk([402, 'FundingNotFound']);
       }
-      console.log("Swap status finishing!! returning");
+      // console.log("Swap status finishing!! returning");
       console.log(swapElement);
       return cbk(null, {
         conf_wait_count: !!remainingConfs ? remainingConfs : null,
