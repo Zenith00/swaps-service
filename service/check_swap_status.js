@@ -108,7 +108,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       const [unconfirmed] = elements.funding.filter(({block}) => !block);
 
       if (!!claim) {
-        console.log("Swap element in claim")
+        console.log("Swap element in claim");
         return cbk(null, {
           payment_secret: claim.preimage,
           transaction_id: claim.outpoint.split(':')[0],
@@ -116,7 +116,7 @@ module.exports = ({cache, invoice, network, script}, cbk) => {
       }
 
       if (!!funding) {
-        console.log("Swap element in funding")
+        console.log("Swap element in funding");
         return cbk(null, {
           block: funding.block,
           output_index: funding.vout,

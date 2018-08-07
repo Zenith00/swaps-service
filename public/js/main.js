@@ -683,7 +683,7 @@ App.getSwap = (args, cbk) => {
   console.log("Making Post...");
 
   App.makeRequest({post, api: `swaps/check`})
-    .then(details => cbk(null, details))
+    .then(details => {console.log(details); cbk(null, details);})
     .catch(err => (err) => {console.log("Error found in making request!!");
     cbk(err); });
 
