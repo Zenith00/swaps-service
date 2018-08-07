@@ -46,6 +46,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Parse the encoded invoice
     invoiceDetails: cbk => {
+      console.log("GETTING SWAP STATUS")
       if (!invoice) {
         return cbk([400, 'ExpectedInvoice']);
       }
@@ -241,6 +242,7 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       console.log("swapTransaction")
       // Exit early and abort swap when there are remaining confirmations
       if (remainingConfs > 0) {
+        console.log("=====ABORTING EARLY, REMAINING CONFIRMATIONS")
         return cbk();
       }
 

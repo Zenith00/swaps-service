@@ -44,6 +44,7 @@ module.exports = (args, cbk) => {
   return asyncAuto({
     // Check the current state of the blockchain to get a good locktime
     getChainTip: cbk => {
+      console.log("====COMPLETE SWAP TRANSACTIONS getChainTip")
       return getRecentChainTip({
         cache: args.cache,
         network: args.network
@@ -53,11 +54,13 @@ module.exports = (args, cbk) => {
 
     // Figure out what fee is needed to sweep the funds
     getFee: cbk => {
+      console.log("====COMPLETE SWAP TRANSACTIONS  GET FEE")
       return getRecentFeeRate({cache: args.cache, network: args.network}, cbk);
     },
 
     // Parse the given invoice
     invoice: cbk => {
+      console.log("====COMPLETE SWAP TRANSACTIONS PARSE INVOICE")
       try {
         return cbk(null, parseInvoice({invoice: args.invoice}));
       } catch (e) {
@@ -67,6 +70,7 @@ module.exports = (args, cbk) => {
 
     // Check completion arguments
     validate: cbk => {
+      console.log("====COMPLETE SWAP TRANSACTIONS VALIDATE")
       if (!args.cache) {
         return cbk([400, 'ExpectedCacheToStoreSwapSuccess']);
       }
@@ -117,6 +121,7 @@ module.exports = (args, cbk) => {
 
     // See if this invoice is payable
     getRoutes: ['invoice', 'lnd', ({invoice, lnd}, cbk) => {
+      console.log("====COMPLETE SWAP TRANSACTIONS GET ROUTES");
       const {destination} = invoice;
       const {tokens} = invoice;
 
@@ -140,6 +145,7 @@ module.exports = (args, cbk) => {
       'lnd',
       ({invoice, lnd}, cbk) =>
     {
+      console.log("====COMPLETE SWAP TRANSACTIONS CREATELOCKINGINVOICE");
       const {id} = invoice;
 
       return createInvoice({
@@ -177,6 +183,7 @@ module.exports = (args, cbk) => {
       'getSweepAddress',
       ({fundingUtxos, getChainTip, getFee, getSweepAddress}, cbk) =>
     {
+      console.log("====COMPLETE SWAP TRANSACTIONS CAN CLAIM");
       try {
         return cbk(null, claimTransaction({
           current_block_height: getChainTip.height,
@@ -194,6 +201,7 @@ module.exports = (args, cbk) => {
 
     // Pay the invoice
     payInvoice: ['canClaim', 'createLockingInvoice', 'lnd', ({lnd}, cbk) => {
+      console.log(console.log("====COMPLETE SWAP TRANSACTIONS PAY INVOICE");)
       return payInvoice({lnd, invoice: args.invoice}, cbk);
     }],
 
@@ -207,6 +215,7 @@ module.exports = (args, cbk) => {
       (res, cbk) =>
     {
       try {
+        console.log("===COMPLETE SWAP TRANSACTIONS CREATE CLAIM TRANSACTION");
         return cbk(null, claimTransaction({
           current_block_height: res.getChainTip.height,
           destination: res.getSweepAddress.address,
@@ -223,6 +232,7 @@ module.exports = (args, cbk) => {
 
     // Broadcast the claim transaction
     broadcastTransaction: ['claimTransaction', ({claimTransaction}, cbk) => {
+      console.log("====COMPLETE SWAP TRANSACTIONS BROADCAST TRANSACTIOn");
       const {transaction} = claimTransaction;
 
       return broadcastTransaction({transaction, network: args.network}, cbk);
@@ -236,6 +246,7 @@ module.exports = (args, cbk) => {
       'payInvoice',
       ({broadcastTransaction, fundingUtxos, invoice, payInvoice}, cbk) =>
     {
+      console.log("====COMPLETE SWAP TRANSACTIONS ADDING SWAP TO POOL");
       if (fundingUtxos.matching_outputs.length !== 1) {
         return cbk();
       }
@@ -259,6 +270,7 @@ module.exports = (args, cbk) => {
 
     // Return the details of the completed swap
     completedSwap: ['broadcastTransaction', 'payInvoice', (res, cbk) => {
+      console.log("====COMPLETE SWAP TRANSACTIONS SWAP COMPLETED< RETURNING!");
       return cbk(null, {
         invoice_id: res.invoice.id,
         payment_secret: res.payInvoice.payment_secret,
