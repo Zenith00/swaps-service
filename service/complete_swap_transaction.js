@@ -201,7 +201,7 @@ module.exports = (args, cbk) => {
 
     // Pay the invoice
     payInvoice: ['canClaim', 'createLockingInvoice', 'lnd', ({lnd}, cbk) => {
-      console.log(console.log("====COMPLETE SWAP TRANSACTIONS PAY INVOICE");)
+      console.log(console.log("====COMPLETE SWAP TRANSACTIONS PAY INVOICE");
       return payInvoice({lnd, invoice: args.invoice}, cbk);
     }],
 
