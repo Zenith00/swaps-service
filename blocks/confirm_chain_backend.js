@@ -49,7 +49,9 @@ module.exports = ({network}, cbk) => {
 
       // Roughly how long has it been since this block was created?
       const delayMs = Date.now() - Date.parse(getHeaderInfo.median_created_at);
-
+      console.log("time since block created...")
+      console.log(delayMs);
+      console.log( networks[network].ms_per_block * staleBlockVariance);
       if (delayMs > networks[network].ms_per_block * staleBlockVariance) {
         return cbk([503, 'StaleRemoteBlockTime', delayMs]);
       }
