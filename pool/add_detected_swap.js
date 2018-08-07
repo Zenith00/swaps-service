@@ -56,6 +56,7 @@ module.exports = ({cache, claim, id, funding, refund}, cbk) => {
   return asyncAuto({
     // Find the swap element
     element: cbk => {
+      console.log("Adding detected swap")
       if ([claim, funding, refund].filter(n => !!n).length !== elementCount) {
         return cbk([400, 'ExpectedSwapElement']);
       }
@@ -65,6 +66,7 @@ module.exports = ({cache, claim, id, funding, refund}, cbk) => {
 
     // Check arguments
     validate: ['element', ({element}, cbk) => {
+      console.log("Validating adding detected swap")
       if (!cache) {
         return cbk([400, 'ExpectedCacheType']);
       }

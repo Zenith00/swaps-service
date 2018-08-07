@@ -666,7 +666,7 @@ App.getInvoiceDetails = ({invoice, network}, cbk) => {
   }
 */
 App.getSwap = (args, cbk) => {
-  console.log("GETTING SWAP!!")
+  console.log("GETTING SWAP!!");
   if (!args.invoice) {
     return cbk([0, 'ExpectedInvoice']);
   }

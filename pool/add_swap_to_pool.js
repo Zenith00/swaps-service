@@ -30,6 +30,7 @@ module.exports = ({cache, swap}, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
+      console.log("Adding swap to pool!");
       if (!cache) {
         return cbk([400, 'ExpectedCacheForPoolAddition']);
       }
@@ -46,6 +47,7 @@ module.exports = ({cache, swap}, cbk) => {
       if (swap.type !== 'claim') {
         return cbk();
       }
+      console.log("astp claim")
 
       return cbk(null, {
         block: swap.block,
@@ -64,6 +66,8 @@ module.exports = ({cache, swap}, cbk) => {
       if (swap.type !== 'funding') {
         return cbk();
       }
+       console.log("astp funding");
+
 
       return cbk(null, {
         block: swap.block,
@@ -84,6 +88,7 @@ module.exports = ({cache, swap}, cbk) => {
       if (swap.type !== 'refund') {
         return cbk();
       }
+      console.log("astp refund)")
 
       return cbk(null, {
         block: swap.block,
@@ -148,13 +153,17 @@ module.exports = ({cache, swap}, cbk) => {
       'getDetectedSwaps',
       ({funding, getDetectedSwaps}, cbk) =>
     {
+      console.log("checkforfundingswapexecution entry")
       // Exit early when this is not a new funding update
       if (!funding) {
         return cbk();
       }
 
+      console.log("checkforswapexecution funding is found")
+
       // Exit early when the swap is already being claimed
       if (!!getDetectedSwaps.claim.length) {
+        console.log("Swap already being calimed")
         return cbk();
       }
 
@@ -163,7 +172,8 @@ module.exports = ({cache, swap}, cbk) => {
       const {invoice} = funding;
       const {network} = funding;
       const {script} = funding;
-
+      console.log("Funding GOT")
+      console.log(funding);
       return getSwapStatus({block, cache, id, invoice, network, script}, cbk);
     }],
   },
