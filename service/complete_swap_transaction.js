@@ -202,7 +202,10 @@ module.exports = (args, cbk) => {
     // Pay the invoice
     payInvoice: ['canClaim', 'createLockingInvoice', 'lnd', ({lnd}, cbk) => {
       console.log("====COMPLETE SWAP TRANSACTIONS PAY INVOICE");
-      return payInvoice({lnd, invoice: args.invoice}, cbk);
+      let res =  payInvoice({lnd, invoice: args.invoice}, cbk);
+      console.log(res);
+      console.log("!!!RESRETEND");
+      return res;
     }],
 
     // Create a claim transaction to sweep the swap to the destination address
