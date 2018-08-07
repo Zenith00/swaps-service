@@ -5,7 +5,7 @@ const blockListener = require('./block_listener');
 const detectSwaps = require('./detect_swaps');
 const mempoolListener = require('./mempool_listener');
 
-const maxChecksCount = 3;
+const maxChecksCount = 5;
 const {MIN_SAFE_INTEGER} = Number;
 
 /** The swap output scanner is an event emitter for swap outputs
@@ -101,6 +101,8 @@ module.exports = ({cache, network}) => {
       detected.swaps.forEach(swap => {
         switch (swap.type) {
         case 'claim':
+          console.log(`Claim detected: ${swap.invoice}`);
+          console.log(id)
           scanner.emit(swap.type, {
             block,
             id,
@@ -115,6 +117,8 @@ module.exports = ({cache, network}) => {
           break;
 
         case 'funding':
+          console.log(`Funding Detected: output: ${swap.output}`);
+          console.log(id)
           scanner.emit(swap.type, {
             block,
             id,
@@ -130,6 +134,8 @@ module.exports = ({cache, network}) => {
           break;
 
         case 'refund':
+          console.log(`Refund Detected: invoice: ${swap.invoice}`)
+          console.log(id)
           scanner.emit(swap.type, {
             block,
             id,

@@ -58,6 +58,8 @@ module.exports = ({cache, index, invoice, network, script, tokens}, cbk) => {
 
     // Derive the public key
     publicKey: ['validate', ({}, cbk) => {
+      console.log("Adding to watch swap output")
+      console.log(serverSwapKeyPair({index, network}).public_key);
       try {
         return cbk(null, serverSwapKeyPair({index, network}).public_key);
       } catch (e) {
@@ -90,6 +92,7 @@ module.exports = ({cache, index, invoice, network, script, tokens}, cbk) => {
       'scriptDetails',
       ({id, publicKey, scriptDetails}, cbk) =>
     {
+
       const cacheEntries = [
         // Cache the invoice related to the input
         {

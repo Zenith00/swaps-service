@@ -131,7 +131,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
       console.log("getRoutes")
       const {destination} = parsedInvoice;
       const {tokens} = parsedInvoice;
-      console.log("finished getroutes")
+      console.log("finished getroutes");
       return getRoutes({destination, lnd, tokens}, cbk);
     }],
 

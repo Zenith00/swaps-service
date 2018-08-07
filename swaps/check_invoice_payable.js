@@ -116,7 +116,7 @@ module.exports = args => {
   if (!args.routes.length) {
     if (!!hasPendingChan) {
       console.log("CapacityForSwapIsPending")
-      throw new Error('CapacityForSwapIsPending');
+      throw new Error(' CapacityForSwapIsPending');
     } else {
       console.log("InsufficientCapacityForSwap")
       throw new Error('InsufficientCapacityForSwap');

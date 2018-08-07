@@ -75,7 +75,7 @@ module.exports = ({log}) => {
   // POST a swap check request
   router.post('/swaps/check', (ins, res) => {
     let body = ins.body;
-    console.log(ins);
+    console.log(`${body.invoice} | ${body.network} `);
     return checkSwapStatus({
       cache,
       invoice: body.invoice,
