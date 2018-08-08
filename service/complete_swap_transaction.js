@@ -164,6 +164,7 @@ module.exports = (args, cbk) => {
       'lnd',
       ({lnd}, cbk) =>
     {
+      console.log("====CREATING NEW SWEEP ADDRESS");
       const net = args.network;
 
       const address = process.env[`SSS_CLAIM_${net.toUpperCase()}_ADDRESS`];
