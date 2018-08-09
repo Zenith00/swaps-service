@@ -101,6 +101,7 @@ module.exports = (args, cbk) => {
 
     // Initialize the LN daemon connection
     lnd: ['invoice', ({invoice}, cbk) => {
+      console.log("====INITIALIZING LN DAEMON")
       try {
         return cbk(null, lightningDaemon({network: invoice.network}));
       } catch (e) {
