@@ -148,14 +148,17 @@ module.exports = (args, cbk) => {
     {
       console.log("====COMPLETE SWAP TRANSACTIONS CREATELOCKINGINVOICE");
       const {id} = invoice;
-
-      return createInvoice({
-        lnd,
-        expires_at: new Date(Date.now() + paymentTimeoutMs).toISOString(),
-        payment_secret: id,
-        tokens: dummyLockingInvoiceValue,
-      },
-      cbk);
+      try {
+        return createInvoice({
+          lnd,
+          expires_at: new Date(Date.now() + paymentTimeoutMs).toISOString(),
+          payment_secret: id,
+          tokens: dummyLockingInvoiceValue,
+        },
+      cbk); }
+      catch (err) {
+        console.log(err);
+      }
     }],
 
     // Make a new address to sweep out the funds to
@@ -179,6 +182,7 @@ module.exports = (args, cbk) => {
 
     // Make sure that the sweep address is OK
     checkSweepAddress: ['getSweepAddress', ({getSweepAddress}, cbk) => {
+      console.log("====chECKING SWEEP ADDRESS")
       const {address} = getSweepAddress;
 
       try {
@@ -276,6 +280,7 @@ module.exports = (args, cbk) => {
       'payInvoice',
       ({broadcastTransaction, fundingUtxos, invoice, payInvoice}, cbk) =>
     {
+      console.log("====COMPELTED SWAP")
       return cbk(null, {
         invoice_id: invoice.id,
         funding_utxos: fundingUtxos.matching_outputs,
