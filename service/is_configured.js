@@ -8,6 +8,7 @@
   <Is Configured Bool>
 */
 module.exports = ({network}) => {
+  console.log("Checking " + network);
   return !!process.env[`SSS_CHAIN_${network.toUpperCase()}_RPC_API`];
 };
 
