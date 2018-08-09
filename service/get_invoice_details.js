@@ -7,6 +7,7 @@ const {parseInvoice} = require('ln-service');
 
 const {checkInvoicePayable} = require('./../swaps');
 const {getExchangeRate} = require('./../fiat');
+const getDetectedSwaps = require('./../pool/get_detected_swaps');
 const getFeeForSwap = require('./get_fee_for_swap');
 const {getRecentChainTip} = require('./../blocks');
 const {getRecentFeeRate} = require('./../blocks');
@@ -46,7 +47,6 @@ module.exports = ({cache, invoice, network}, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
-      // console.log("zzzzzzz")
       if (!cache) {
         return cbk([400, 'ExpectedCacheForInvoiceDetails']);
       }
@@ -64,74 +64,76 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Determine where the chain tip is at
     getChainTip: ['validate', ({}, cbk) => {
-      // console.log("zzzzz")
-      return getRecentChainTip({cache, network}, cbk);
+      return getRecentChainTip({network}, cbk);
     }],
 
     // Get the current fee rate
     getFeeRate: ['validate', ({}, cbk) => {
-      // console.log("zzz")
       return getRecentFeeRate({cache, network}, cbk);
     }],
 
     // Decode the supplied invoice
     parsedInvoice: ['validate', ({}, cbk) => {
-      console.log("parsedInvoice in getInvoiceChainTip")
       try {
         return cbk(null, parseInvoice({invoice}));
-      } catch (e) {
-        return cbk([400, 'DecodeInvoiceFailure', e]);
-      }
-    }],
-
-    // Get the chain tip for the invoice's network
-    getInvoiceChainTip: ['parsedInvoice', ({parsedInvoice}, cbk) => {
-      console.log("getInvoiceChainTip in get_invoice_details")
-      return getRecentChainTip({cache, network: parsedInvoice.network}, cbk);
-    }],
-
-    // Figure out what it will cost to do this swap
-    getSwapFee: ['parsedInvoice', ({parsedInvoice}, cbk) => {
-      console.log("getSwapFee in get_invoice_details")
-      const to = parsedInvoice.network;
-      console.log(parsedInvoice);
-      const {tokens} = parsedInvoice;
-      console.log("GETTING FEE FOR SWAP");
-      return getFeeForSwap({cache, network, to, tokens}, cbk);
-    }],
-
-    // LND connection
-    lnd: ['parsedInvoice', ({parsedInvoice}, cbk) => {
-      console.log("parsed invoice, making LND");
-      try {
-        return cbk(null, lightningDaemon({network: parsedInvoice.network}));
-      } catch (e) {
-        console.log(e);
-        return cbk([500, 'FailedToInstantiateLndConnection']);
+      } catch (err) {
+        return cbk([400, 'DecodeInvoiceFailure', err]);
       }
     }],
 
     // Parameters for a swap with an invoice
     swapParams: ['validate', ({}, cbk) => {
-      // console.log("swapParams")
       try {
         return cbk(null, swapParameters({network}));
-      } catch (e) {
-        return cbk([400, 'ExpectedSwapParameters', e]);
+      } catch (err) {
+        return cbk([400, 'ExpectedSwapParameters', err]);
       }
     }],
 
+    // See if there are any swaps already known for this invoice
+    getExistingSwaps: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      return getDetectedSwaps({cache, id: parsedInvoice.id}, cbk);
+    }],
+
+    // Get the chain tip for the invoice's network
+    getInvoiceChainTip: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      return getRecentChainTip({network: parsedInvoice.network}, cbk);
+    }],
+
+    // Figure out what it will cost to do this swap
+    getSwapFee: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      const to = parsedInvoice.network;
+      const {tokens} = parsedInvoice;
+
+      return getFeeForSwap({cache, network, to, tokens}, cbk);
+    }],
+
+    // LND connection
+    lnd: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      try {
+        return cbk(null, lightningDaemon({network: parsedInvoice.network}));
+      } catch (err) {
+        return cbk([500, 'FailedToInstantiateLndConnection', err, network]);
+      }
+    }],
+
+    // Check that no swap currently exists for this invoice
+    checkNoExistingSwap: ['getExistingSwaps', ({getExistingSwaps}, cbk) => {
+      if (!!getExistingSwaps.funding.length) {
+        return cbk([409, 'FoundExistingFundingForInvoice']);
+      }
+
+      return cbk();
+    }],
+
     // Pull the pending channels to see if we have a related pending channel
-    getPending: ['lnd', ({lnd}, cbk) => {
-        console.log('get pending');
-            getPendingChannels({lnd}, cbk)}],
+    getPending: ['lnd', ({lnd}, cbk) => getPendingChannels({lnd}, cbk)],
 
     // See if this invoice is payable
     getRoutes: ['lnd', 'parsedInvoice', ({lnd, parsedInvoice}, cbk) => {
-      // console.log("getRoutes")
       const {destination} = parsedInvoice;
       const {tokens} = parsedInvoice;
-      console.log("finished getroutes");
+
       return getRoutes({destination, lnd, tokens}, cbk);
     }],
 
@@ -158,7 +160,6 @@ module.exports = ({cache, invoice, network}, cbk) => {
       cbk) =>
     {
       try {
-        // console.log("checkPyaable");
         const check = checkInvoicePayable({
           network,
           claim_window: swapParams.claim_window,
@@ -175,7 +176,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
           sweep_fee: getFeeRate.fee_tokens_per_vbyte * estimatedTxVirtualSize,
           tokens: parsedInvoice.tokens,
         });
-         console.log("end checkpayable")
+
         return cbk();
       } catch (e) {
         return cbk([400, e.message]);
@@ -184,7 +185,6 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Get the exchange rate
     getFiatRate: ['checkPayable', 'parsedInvoice', ({parsedInvoice}, cbk) => {
-      // console.log("getFiatRate")
       const {network} = parsedInvoice;
 
       return getExchangeRate({cache, network}, cbk);
@@ -192,7 +192,6 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Get the exchange rate for the fee (may be on a different network)
     getFeeFiatRate: ['checkPayable', ({}, cbk) => {
-      // console.log("getFeeFiatRate")
       return getExchangeRate({cache, network}, cbk);
     }],
 
@@ -202,7 +201,6 @@ module.exports = ({cache, invoice, network}, cbk) => {
       'getSwapFee',
       ({getFeeFiatRate, getSwapFee}, cbk) =>
     {
-      // console.log("feeFiatValue");
       return cbk(null, getSwapFee.fee * getFeeFiatRate.cents);
     }],
 
@@ -212,7 +210,6 @@ module.exports = ({cache, invoice, network}, cbk) => {
       'parsedInvoice',
       ({getFiatRate, parsedInvoice}, cbk) =>
     {
-      // console.log("fiatValue")
       return cbk(null, parsedInvoice.tokens * getFiatRate.cents);
     }],
 
@@ -224,7 +221,6 @@ module.exports = ({cache, invoice, network}, cbk) => {
       'parsedInvoice',
       ({feeFiatValue, fiatValue, getSwapFee, parsedInvoice}, cbk) =>
     {
-      // console.log("invoiceDetails");
       return cbk(null, {
         created_at: parsedInvoice.created_at,
         description: parsedInvoice.description,

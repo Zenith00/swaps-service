@@ -55,7 +55,7 @@ module.exports = ({network}, cbk) => {
       console.log(delayMs);
       console.log( networks[network].ms_per_block * staleBlockVariance);
       if (delayMs > networks[network].ms_per_block * staleBlockVariance) {
-        return cbk([503, 'StaleRemoteBlockTime', delayMs]);
+        return cbk([503, 'StaleRemoteBlockTime', network, delayMs]);
       }
 
       return cbk();

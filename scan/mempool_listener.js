@@ -6,7 +6,9 @@ const difference = require('lodash/difference');
 
 const {getMempool} = require('./../chain');
 
-const pollingDelayMs = 1000;
+const event = 'transaction';
+const maxMempoolIdsCount = 30000;
+const pollingDelayMs = 3000;
 
 /** Poll the mempool for transactions. When we find a transaction in the
     mempool, emit an event.
@@ -31,7 +33,7 @@ module.exports = ({network}) => {
     throw new Error('ExpectedNetworkName');
   }
 
-  let ids;
+  let ids = [];
   const listener = new EventEmitter();
 
   asyncForever(cbk => {
@@ -41,18 +43,15 @@ module.exports = ({network}) => {
 
       // Compare the mempool's transaction against the cache
       differentIds: ['getMempool', ({getMempool}, cbk) => {
-        const freshIds = getMempool.transaction_ids;
-
-        // Exit early when this is the first mempool load
-        if (!ids) {
-          ids = freshIds;
-
-          return cbk();
+        // Clear ids if we get too many
+        if (ids.length > maxMempoolIdsCount) {
+          ids = [];
         }
 
-        difference(freshIds, ids).forEach(id => {
-          return listener.emit('transaction', {id});
-        });
+        const freshIds = getMempool.transaction_ids;
+
+        // Emit all transactions new to the mempool
+        difference(freshIds, ids).forEach(id => listener.emit(event, {id}));
 
         ids = freshIds;
 
@@ -60,9 +59,7 @@ module.exports = ({network}) => {
       }],
 
       // Delay for the next poll
-      delayForNextPoll: ['differentIds', ({}, cbk) => {
-        return setTimeout(cbk, pollingDelayMs);
-      }],
+      delay: ['differentIds', ({}, cbk) => setTimeout(cbk, pollingDelayMs)],
     },
     cbk);
   },

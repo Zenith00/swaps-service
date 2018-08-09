@@ -4,6 +4,8 @@ const {getJsonFromCache} = require('./../cache');
 const {returnResult} = require('./../async-util');
 const {swapScriptDetails} = require('./../swaps');
 
+const lastAddress = {};
+
 /** Get details about a watched output
 
   {
@@ -44,6 +46,11 @@ module.exports = ({address, cache, network}, cbk) => {
 
     // Find cached address
     getCachedAddress: ['validate', ({}, cbk) => {
+      // Exit early when the last address lookup is hit
+      if (!!lastAddress[network] && lastAddress[network].address === address) {
+        return cbk(null, lastAddress[network].swap);
+      }
+
       return getJsonFromCache({
         cache,
         key: address,
@@ -58,7 +65,11 @@ module.exports = ({address, cache, network}, cbk) => {
           return cbk();
         }
 
-        return cbk(null, {id: res.id, script: res.script, tokens: res.tokens});
+        const swap = {id: res.id, script: res.script, tokens: res.tokens};
+
+        lastAddress[network] = {address, swap};
+
+        return cbk(null, swap);
       });
     }],
 
@@ -74,7 +85,7 @@ module.exports = ({address, cache, network}, cbk) => {
         const scriptDetails = swapScriptDetails({network, script});
 
         return cbk(null, scriptDetails.destination_public_key);
-      } catch (e) {
+      } catch (err) {
         // Exit early and do not pass along errors.
         return cbk();
       }
@@ -147,7 +158,7 @@ module.exports = ({address, cache, network}, cbk) => {
           script: getCachedAddress.script,
           tokens: getCachedAddress.tokens,
           type: 'funding',
-        }
+        },
       });
     }],
   },

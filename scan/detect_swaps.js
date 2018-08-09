@@ -6,8 +6,10 @@ const {returnResult} = require('./../async-util');
 const {setJsonInCache} = require('./../cache');
 const swapsFromInputs = require('./swaps_from_inputs');
 const swapsFromOutputs = require('./swaps_from_outputs');
+const {Transaction} = require('./../tokenslib');
 
-const cacheSwapsMs = 1000 * 60 * 60 * 2;
+const cacheSwapsMs = 1000 * 60 * 10;
+const type = 'detect_swaps';
 
 /** Check a transaction to see if there are any associated swaps.
 
@@ -52,9 +54,12 @@ module.exports = ({block, cache, id, network}, cbk) => {
       return cbk();
     },
 
+    // Cache key
+    key: ['validate', ({}, cbk) => cbk(null, id)],
+
     // See if we already know swaps related to this transaction
-    getCachedSwaps: ['validate', ({}, cbk) => {
-      return getJsonFromCache({cache, key: id, type: 'swaps_for_tx'}, cbk);
+    getCachedSwaps: ['key', ({key}, cbk) => {
+      return getJsonFromCache({cache: 'memory', key, type}, cbk);
     }],
 
     // Get the raw transaction to look for swaps
@@ -75,28 +80,48 @@ module.exports = ({block, cache, id, network}, cbk) => {
       cbk);
     }],
 
-    // Determine if the inputs have swaps. (Claim or refund type)
-    swapsFromInputs: ['getTransaction', ({getTransaction}, cbk) => {
+    // Parsed transaction
+    tx: ['getTransaction', ({getTransaction}, cbk) => {
       // Exit early when there's no transaction to lookup
-      if (!getTransaction) {
+      if (!getTransaction || !getTransaction.transaction) {
         return cbk();
       }
 
       const {transaction} = getTransaction;
 
-      return swapsFromInputs({cache, network, transaction}, cbk);
+      try {
+        const tx = Transaction.fromHex(transaction);
+
+        return cbk(null, {id: tx.getId(), inputs: tx.ins, outputs: tx.outs});
+      } catch (err) {
+        return cbk([400, 'ExpectedValidTransactionHex', err]);
+      }
+    }],
+
+    // Determine if the inputs have swaps. (Claim or refund type)
+    swapsFromInputs: ['tx', ({tx}, cbk) => {
+      // Exit early when there's no transaction to lookup
+      if (!tx) {
+        return cbk();
+      }
+
+      const {id} = tx;
+      const {inputs} = tx;
+
+      return swapsFromInputs({cache, id, inputs, network}, cbk);
     }],
 
     // Determine if the outputs have swap output scripts (funding type)
-    swapsFromOutputs: ['getTransaction', ({getTransaction}, cbk) => {
+    swapsFromOutputs: ['tx', ({tx}, cbk) => {
       // Exit early when there's no transaction to lookup
-      if (!getTransaction) {
+      if (!tx) {
         return cbk();
       }
 
-      const {transaction} = getTransaction;
+      const {id} = tx;
+      const {outputs} = tx;
 
-      return swapsFromOutputs({cache, network, transaction}, cbk);
+      return swapsFromOutputs({cache, id, network, outputs}, cbk);
     }],
 
     // Concat all detected swaps
@@ -125,18 +150,23 @@ module.exports = ({block, cache, id, network}, cbk) => {
     }],
 
     // Set cached swap status
-    setCachedSwaps: ['getCachedSwaps', 'swaps', (res, cbk) => {
+    setCachedSwaps: [
+      'getCachedSwaps',
+      'key',
+      'swaps',
+      ({getCachedSwaps, key, swaps}, cbk) =>
+    {
       // Exit early without caching when the swaps are a cached result
-      if (!!res.getCachedSwaps) {
+      if (!!getCachedSwaps) {
         return cbk();
       }
 
       return setJsonInCache({
-        cache,
-        key: id,
+        key,
+        type,
+        cache: 'memory',
         ms: cacheSwapsMs,
-        type: 'swaps_for_tx',
-        value: res.swaps,
+        value: swaps,
       },
       cbk);
     }],

@@ -7,11 +7,11 @@ const {returnResult} = require('./../async-util');
 const {setJsonInCache} = require('./../cache');
 
 const cacheChainTipMs = 1000 * 5;
+const type = 'get_recent_chain_tip';
 
 /** Get recent-ish chain tip values
 
   {
-    cache: <Cache Type String>
     network: <Network Name String>
   }
 
@@ -21,14 +21,10 @@ const cacheChainTipMs = 1000 * 5;
     height: <Block Height Number>
   }
 */
-module.exports = ({cache, network}, cbk) => {
+module.exports = ({network}, cbk) => {
   return asyncAuto({
     // Check arguments
     validate: cbk => {
-      if (!cache) {
-        return cbk([400, 'ExpectedCacheForChainTip']);
-      }
-
       if (!network) {
         return cbk([400, 'ExpectedNetworkToFindChainTip']);
       }
@@ -38,7 +34,7 @@ module.exports = ({cache, network}, cbk) => {
 
     // Get the cached chain tip value
     getCached: ['validate', ({}, cbk) => {
-      return getJsonFromCache({cache, key: network, type: 'chain_tip'}, cbk);
+      return getJsonFromCache({type, cache: 'memory', key: network}, cbk);
     }],
 
     // Get the fresh chain tip hash value as necessary
@@ -47,7 +43,7 @@ module.exports = ({cache, network}, cbk) => {
         return cbk();
       }
 
-      return getCurrentHash({network}, cbk);
+      return getCurrentHash({network, priority: 0}, cbk);
     }],
 
     // Get the fresh chain tip height as necessary
@@ -56,20 +52,20 @@ module.exports = ({cache, network}, cbk) => {
         return cbk();
       }
 
-      return getCurrentHeight({network}, cbk);
+      return getCurrentHeight({network, priority: 0}, cbk);
     }],
 
     // Set the cached chain tip value
     setCached: ['chainTip', 'getCached', ({chainTip, getCached}, cbk) => {
       if (!!getCached) {
-        return cbk()
+        return cbk();
       }
 
       return setJsonInCache({
-        cache,
+        type,
+        cache: 'memory',
         key: network,
         ms: cacheChainTipMs,
-        type: 'chain_tip',
         value: {hash: chainTip.hash, height: chainTip.height},
       },
       cbk);

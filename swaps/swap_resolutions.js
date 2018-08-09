@@ -10,11 +10,14 @@ const preimageByteLength = 32;
   transaction.
 
   {
-    transaction: <Transaction Hex String>
+    inputs: [{
+      hash: <Internal Byte Order Transaction Id Buffer>
+      index: <Spending Outpoint Vin Number>
+      script: <Script Signature Buffer>
+      witness: [<Witness Stack Item Buffer>]
+    }]
+    network: <Network Type String>
   }
-
-  @throws
-  <Error> when transaction is invalid
 
   @returns
   {
@@ -26,16 +29,7 @@ const preimageByteLength = 32;
     }]
   }
 */
-module.exports = ({network, transaction}) => {
-  let inputs;
-
-  try {
-    // Decode the raw transaction
-    inputs = Transaction.fromHex(transaction).ins;
-  } catch (e) {
-    throw e;
-  }
-
+module.exports = ({inputs, network}) => {
   // Find inputs that appear to be swap spends.
   const resolutions = inputs
     .filter(({script, witness}) => !isPublicKeyHashSpend({script, witness}))
@@ -43,7 +37,7 @@ module.exports = ({network, transaction}) => {
     .map(({hash, index, script, witness}) => {
       const elements = scriptElements({script, witness});
 
-      const redeemScript = !witness.length ? elements[2] : elements[0];
+      const redeem = !!witness && !witness.length ? elements[2] : elements[0];
       const secret = elements[1];
 
       const isClaim = secret.length === preimageByteLength;
@@ -51,7 +45,7 @@ module.exports = ({network, transaction}) => {
       return {
         outpoint: `${hash.reverse().toString('hex')}:${index}`,
         preimage: isClaim ? secret.toString('hex') : null,
-        script: redeemScript.toString('hex'),
+        script: redeem.toString('hex'),
         type: isClaim ? 'claim' : 'refund',
       };
     });

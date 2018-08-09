@@ -7,8 +7,11 @@ const {getTransaction} = require('./../chain');
 const {returnResult} = require('./../async-util');
 const {setJsonInCache} = require('./../cache');
 
-const cacheResultMs = 1000 * 60 * 10;
+const cacheResultMs = 1000 * 60 * 5;
 const lastBlock = {};
+const typeBlock = 'get_transaction_block';
+const typeTx = 'get_transaction_tx';
+const txForBlock = {};
 
 /** Get a raw transaction, with an optional cached result
 
@@ -46,7 +49,7 @@ module.exports = ({block, cache, id, network}, cbk) => {
         return cbk();
       }
 
-      return getJsonFromCache({cache, key: id, type: 'tx'}, cbk);
+      return getJsonFromCache({cache, key: id, type: typeTx}, cbk);
     }],
 
     // Get the cached block
@@ -65,7 +68,10 @@ module.exports = ({block, cache, id, network}, cbk) => {
         return cbk(null, {block: lastBlock[network].block});
       }
 
-      return getJsonFromCache({cache, key: block, type: 'block'}, cbk);
+      // Last block doesn't match the block we're looking at, wipe "lastBlock"
+      lastBlock[network] = {};
+
+      return getJsonFromCache({cache, key: block, type: typeBlock}, cbk);
     }],
 
     // Get a fresh block
@@ -102,25 +108,23 @@ module.exports = ({block, cache, id, network}, cbk) => {
         return cbk();
       }
 
-      lastBlock[network].block = getFreshBlock.block;
-      lastBlock[network].id = block;
-
       return setJsonInCache({
         cache,
         key: block,
         ms: cacheResultMs,
-        type: 'block',
+        type: typeBlock,
         value: {block: getFreshBlock.block},
       },
       cbk);
     }],
 
-    // Set the fresh result into the cache
+    // Set the fresh transaction result into the cache
     setCachedTx: [
       'getCachedTx',
       'getFreshTx',
       ({getCachedTx, getFreshTx}, cbk) =>
     {
+      // Exit early when this is an in-block lookup or there's no cache set
       if (!!block || !cache) {
         return cbk();
       }
@@ -139,7 +143,7 @@ module.exports = ({block, cache, id, network}, cbk) => {
         cache,
         key: id,
         ms: cacheResultMs,
-        type: 'tx',
+        type: typeTx,
         value: {transaction: getFreshTx.transaction},
       },
       cbk);
@@ -151,29 +155,38 @@ module.exports = ({block, cache, id, network}, cbk) => {
       'getFreshBlock',
       ({getCachedBlock, getFreshBlock}, cbk) =>
     {
-      if (!block) {
-        return cbk();
-      }
-
       const result = getFreshBlock || getCachedBlock;
+      let transactions = {};
 
-      if (!result || !result.block) {
+      // Exit early when there's no block result to look for a tx in
+      if (!block || !result || !result.block) {
         return cbk();
       }
 
       const hexBlock = result.block;
 
-      try {
-        const tx = Block.fromHex(hexBlock).transactions.find(t => t.getId());
+      lastBlock[network] = {block: hexBlock, id: block};
 
-        if (!tx) {
-          return cbk([400, 'TransactionNotFoundInBlock']);
+      if (!!txForBlock[network] && txForBlock[network].block === block) {
+        transactions = txForBlock[network].transactions;
+      } else {
+        try {
+          Block.fromHex(hexBlock).transactions
+            .forEach(t => transactions[t.getId()] = t);
+        } catch (err) {
+          return cbk([503, 'FailedToParseHexBlock', err]);
         }
 
-        return cbk(null, tx.toHex());
-      } catch (err) {
-        return cbk([503, 'FailedToDeriveTransactionsFromBlock', err]);
+        txForBlock[network] = {block, transactions};
       }
+
+      const tx = transactions[id];
+
+      if (!tx) {
+        return cbk([400, 'TransactionNotFoundInBlock']);
+      }
+
+      return cbk(null, tx.toHex());
     }],
 
     // Final result
@@ -185,11 +198,11 @@ module.exports = ({block, cache, id, network}, cbk) => {
     {
       if (!!txInBlock) {
         return cbk(null, {transaction: txInBlock});
+      } else {
+        const {transaction} = getFreshTx || getCachedTx;
+
+        return cbk(null, {transaction});
       }
-
-      const {transaction} = getFreshTx || getCachedTx;
-
-      return cbk(null, {transaction});
     }],
   },
   returnResult({of: 'result'}, cbk));

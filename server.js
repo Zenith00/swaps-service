@@ -41,19 +41,29 @@ const scanners = Object.keys(networks).map(network => {
   }
   console.log("network");
 
-  const scanner = swapScanner({cache, network});
+  let scanner;
 
-  scanner.on('claim', swap => addSwapToPool({cache, swap}, logOnErr));
-  scanner.on('error', err => logOnErr);
-  scanner.on('funding', swap => addSwapToPool({cache, swap}, logOnErr));
-  scanner.on('refund', swap => addSwapToPool({cache, swap}, logOnErr));
+  const startScanner = () => {
+    scanner = swapScanner({cache, network});
+
+    scanner.on('claim', swap => addSwapToPool({cache, swap}, logOnErr));
+    scanner.on('error', err => {
+      console.log(err);
+
+      return setTimeout(startScanner, 1000);
+    });
+    scanner.on('funding', swap => addSwapToPool({cache, swap}, logOnErr));
+    scanner.on('refund', swap => addSwapToPool({cache, swap}, logOnErr));
+  };
+
+  startScanner();
 
   confirmChainBackend({network}, logOnErr);
 
   return scanner;
 });
 
-app.use(hidePoweredBy())
+app.use(hidePoweredBy());
 app.use(compression());
 app.use(cors());
 app.get('/js/blockchain.js', browserify(browserifyPath));
@@ -62,7 +72,7 @@ app.use(express.static('public'));
 app.use(morgan(morganLogLevel));
 app.set('view engine', 'pug')
 app.get('/', ({path}, res) => res.render('index', {path}));
-app.use('/api/v0', apiRouter({log}));
+app.use('/api/v0', apiRouter({cache, log}));
 app.get('/refund', ({path}, res) => res.render('refund', {path}));
 
 app.listen(port, () => log(`Server listening on port ${port}.`));

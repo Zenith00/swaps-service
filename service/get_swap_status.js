@@ -1,10 +1,10 @@
 const asyncAuto = require('async/auto');
 const {parseInvoice} = require('ln-service');
 
+const addDetectedSwap = require('./../pool/add_detected_swap');
 const completeSwapTransaction = require('./complete_swap_transaction');
 const {getBlockPlacement} = require('./../blocks');
 const getFeeForSwap = require('./get_fee_for_swap');
-const getInvoiceDetails = require('./get_invoice_details');
 const {getRecentChainTip} = require('./../blocks');
 const {getSwapKeyIndex} = require('./../scan');
 const {getTransaction} = require('./../blocks');
@@ -42,11 +42,10 @@ const minBlocksUntilRefundHeight = 70;
 module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
   return asyncAuto({
     // Get the current chain height
-    getChainInfo: cbk => getRecentChainTip({cache, network}, cbk),
+    getChainInfo: cbk => getRecentChainTip({network}, cbk),
 
     // Parse the encoded invoice
     invoiceDetails: cbk => {
-      console.log("GETTING SWAP STATUS")
       if (!invoice) {
         return cbk([400, 'ExpectedInvoice']);
       }
@@ -60,7 +59,6 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Check arguments
     validate: ['invoiceDetails', ({invoiceDetails}, cbk) => {
-      console.log("validate in get_swap_status")
       if (!cache) {
         return cbk([400, 'ExpectedCacheForSwapDetails']);
       }
@@ -84,15 +82,8 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       return cbk();
     }],
 
-    // Get all the invoice details.
-    getInvoice: ['validate', ({}, cbk) => {
-      console.log("getInvoice")
-      return getInvoiceDetails({cache, invoice, network}, cbk);
-    }],
-
     // Determine the confirmation count of a block
     getPlacement: ['validate', ({}, cbk) => {
-      console.log("getPlacement")
       if (!block) {
         return cbk(null, {current_confirmation_count: 0});
       }
@@ -102,19 +93,16 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Figure out what swap key index corresponds to this redeem script
     getSwapKeyIndex: ['validate', ({}, cbk) => {
-      console.log("getSwapKeyIndex")
       return getSwapKeyIndex({cache, network, script}, cbk);
     }],
 
     // Get the raw transaction
     getTransaction: ['validate', ({}, cbk) => {
-      console.log("getTransaction")
       return getTransaction({block, cache, id, network}, cbk);
     }],
 
     // Pull out the swap keypair from the HD seed
     serverKeyPair: ['getSwapKeyIndex', ({getSwapKeyIndex}, cbk) => {
-      console.log("ServerKeyPair")
       const {index} = getSwapKeyIndex;
 
       if (!index) {
@@ -130,7 +118,6 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Derive the swap info from the redeem script
     swapDetails: ['validate', ({}, cbk) => {
-      console.log("swapDetails")
       try {
         return cbk(null, swapScriptDetails({network, script}));
       } catch (e) {
@@ -152,7 +139,6 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
 
     // Check that there is enough time left to swap
     checkTimelockHeight: ['swapDetails', 'getChainInfo', (res, cbk) => {
-      console.log("checkTimelockHeight")
       const currentHeight = res.getChainInfo.height;
       const refundHeight = res.swapDetails.timelock_block_height;
 
@@ -169,13 +155,12 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
     getFeeTokens: ['invoiceDetails', ({invoiceDetails}, cbk) => {
       const to = invoiceDetails.network;
       const {tokens} = invoiceDetails;
-      console.log("GETTING FEE TOKENS");
+
       return getFeeForSwap({cache, network, to, tokens}, cbk);
     }],
 
     // Make sure that the transaction has been found
     checkTransactionDetected: ['getTransaction', ({getTransaction}, cbk) => {
-      console.log("checkTransactionDetected")
       if (!getTransaction.transaction) {
         return cbk([402, 'FundingTransactionNotFound']);
       }
@@ -189,15 +174,14 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       'getPlacement',
       ({getPlacement}, cbk) =>
     {
-      console.log("remainingConfs")
       const confCount = getPlacement.current_confirmation_count;
 
       try {
         const requiredFundingConfs = swapParameters({network}).funding_confs;
 
         return cbk(null, Math.max(0, requiredFundingConfs - confCount));
-      } catch (e) {
-        return cbk([500, 'FailedToDetermineSwapParameters']);
+      } catch (err) {
+        return cbk([500, 'FailedToDetermineSwapParameters', err]);
       }
     }],
 
@@ -209,7 +193,6 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       ({getTransaction, remainingConfs, swapDetails}, cbk) =>
     {
       try {
-        console.log("pendingDetails")
         const swapUtxo = swapOutput({
           p2sh_output_script: swapDetails.p2sh_output_script,
           p2sh_p2wsh_output_script: swapDetails.p2sh_p2wsh_output_script,
@@ -223,26 +206,23 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
           output_tokens: swapUtxo.output_tokens,
           transaction_id: swapUtxo.transaction_id,
         });
-      } catch (e) {
-        return cbk([500, 'ExpectedSwapUtxoDetails', e]);
+      } catch (err) {
+        return cbk([500, 'ExpectedSwapUtxoDetails', err]);
       }
     }],
 
     // Complete the swap transaction
-    swapTransaction: [
+    completeSwap: [
       'checkDestinationPublicKey',
       'checkTimelockHeight',
       'checkTransactionDetected',
-      'getInvoice',
       'getTransaction',
       'remainingConfs',
       'serverKeyPair',
       ({getTransaction, remainingConfs, serverKeyPair}, cbk) =>
     {
-      console.log("swapTransaction")
       // Exit early and abort swap when there are remaining confirmations
       if (remainingConfs > 0) {
-        console.log("=====ABORTING EARLY, REMAINING CONFIRMATIONS")
         return cbk();
       }
 
@@ -254,9 +234,13 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
         redeem_script: script,
         transaction: getTransaction.transaction,
       },
-      err => {
+      (err, res) => {
         if (!err) {
-          return cbk();
+          return cbk(null, {
+            funding_utxos: res.funding_utxos,
+            payment_secret: res.payment_secret,
+            transaction_id: res.transaction_id,
+          });
         }
 
         const [,error] = err;
@@ -269,20 +253,53 @@ module.exports = ({block, cache, id, invoice, network, script}, cbk) => {
       });
     }],
 
+    // Add swap to pool as necessary
+    addCompletedSwap: [
+      'completeSwap',
+      'getSwapKeyIndex',
+      'invoiceDetails',
+      ({completeSwap, getSwapKeyIndex, invoiceDetails}, cbk) =>
+    {
+      if (!completeSwap) {
+        return cbk();
+      }
+
+      const [utxo] = completeSwap.funding_utxos;
+
+      return addDetectedSwap({
+        cache,
+        claim: {
+          invoice,
+          network,
+          script,
+          id: completeSwap.transaction_id,
+          index: getSwapKeyIndex.index,
+          outpoint: `${utxo.transaction_id}:${utxo.vout}`,
+          preimage: completeSwap.payment_secret,
+          type: 'claim',
+        },
+        id: invoiceDetails.id,
+      },
+      cbk);
+    }],
+
     // Current swap status
-    swapStatus: ['pendingDetails', 'swapTransaction', (res, cbk) => {
-      console.log("swapstatus")
-      if (!!res.swapTransaction) {
+    swapStatus: [
+      'completeSwap',
+      'pendingDetails',
+      ({completeSwap, pendingDetails}, cbk) =>
+    {
+      if (!!completeSwap) {
         return cbk(null, {
-          payment_secret: res.swapTransaction.payment_secret,
-          transaction_id: res.swapTransaction.transaction_id,
+          payment_secret: completeSwap.payment_secret,
+          transaction_id: completeSwap.transaction_id,
         });
       } else {
         return cbk(null, {
-          conf_wait_count: res.pendingDetails.conf_wait_count,
-          output_index: res.pendingDetails.output_index,
-          output_tokens: res.pendingDetails.output_tokens,
-          transaction_id: res.pendingDetails.transaction_id,
+          conf_wait_count: pendingDetails.conf_wait_count,
+          output_index: pendingDetails.output_index,
+          output_tokens: pendingDetails.output_tokens,
+          transaction_id: pendingDetails.transaction_id,
         });
       }
     }],

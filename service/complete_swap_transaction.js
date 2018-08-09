@@ -5,7 +5,7 @@ const {getRoutes} = require('ln-service');
 const {parseInvoice} = require('ln-service');
 const {payInvoice} = require('ln-service');
 
-const addDetectedSwap = require('./../pool/add_detected_swap');
+const {addressDetails} = require('./../chain');
 const {broadcastTransaction} = require('./../chain');
 const {claimTransaction} = require('./../swaps');
 const {getFee} = require('./../chain');
@@ -36,6 +36,14 @@ const swapSuccessCacheMs = 1000 * 60 * 60;
 
   @returns via cbk
   {
+    funding_utxos: [{
+      redeem: <Redeem Script Hex String>
+      script: <ScriptPub Hex String>
+      tokens: <Tokens Number>
+      transaction_id: <Transaction Id Hex String>
+      vout: <Vout Number>
+    }]
+    invoice_id: <Invoice Id Hex String>
     payment_secret: <Payment Secret Hex String>
     transaction_id: <Transaction Id Hex String>
   }
@@ -43,14 +51,7 @@ const swapSuccessCacheMs = 1000 * 60 * 60;
 module.exports = (args, cbk) => {
   return asyncAuto({
     // Check the current state of the blockchain to get a good locktime
-    getChainTip: cbk => {
-      console.log("====COMPLETE SWAP TRANSACTIONS getChainTip")
-      return getRecentChainTip({
-        cache: args.cache,
-        network: args.network
-      },
-      cbk);
-    },
+    getChainTip: cbk => getRecentChainTip({network: args.network}, cbk),
 
     // Figure out what fee is needed to sweep the funds
     getFee: cbk => {
@@ -63,8 +64,8 @@ module.exports = (args, cbk) => {
       console.log("====COMPLETE SWAP TRANSACTIONS PARSE INVOICE")
       try {
         return cbk(null, parseInvoice({invoice: args.invoice}));
-      } catch (e) {
-        return cbk([400, 'DecodeInvoiceFailure', e]);
+      } catch (err) {
+        return cbk([400, 'DecodeInvoiceFailure', err]);
       }
     },
 
@@ -176,8 +177,31 @@ module.exports = (args, cbk) => {
       return createAddress({lnd}, cbk);
     }],
 
+    // Make sure that the sweep address is OK
+    checkSweepAddress: ['getSweepAddress', ({getSweepAddress}, cbk) => {
+      const {address} = getSweepAddress;
+
+      try {
+        const {type} = addressDetails({address, network: args.network});
+
+        switch (type) {
+        case 'p2wpkh':
+        case 'p2wsh':
+        case 'p2pkh':
+        case 'p2sh':
+          return cbk();
+
+        default:
+          return cbk([500, 'UnknownClaimAddressType', address, type]);
+        }
+      } catch (err) {
+        return cbk([500, 'InvalidClaimAddress', address]);
+      }
+    }],
+
     // Do a sanity check to see if the invoice can be claimed
     canClaim: [
+      'checkSweepAddress',
       'fundingUtxos',
       'getChainTip',
       'getFee',
@@ -231,8 +255,8 @@ module.exports = (args, cbk) => {
           private_key: args.private_key,
           utxos: res.fundingUtxos.matching_outputs,
         }));
-      } catch (e) {
-        return cbk([500, 'ExpectedClaimTransaction', e]);
+      } catch (err) {
+        return cbk([500, 'ExpectedClaimTransaction', err]);
       }
     }],
 
@@ -244,43 +268,19 @@ module.exports = (args, cbk) => {
       return broadcastTransaction({transaction, network: args.network}, cbk);
     }],
 
-    // Add the swap to the pool
-    addSwap: [
+    // Return the details of the completed swap
+    completedSwap: [
       'broadcastTransaction',
       'fundingUtxos',
       'invoice',
       'payInvoice',
       ({broadcastTransaction, fundingUtxos, invoice, payInvoice}, cbk) =>
     {
-      console.log("====COMPLETE SWAP TRANSACTIONS ADDING SWAP TO POOL");
-      if (fundingUtxos.matching_outputs.length !== 1) {
-        return cbk();
-      }
-
-      const [utxo] = fundingUtxos.matching_outputs;
-
-      return addDetectedSwap({
-        cache: args.cache,
-        claim: {
-          id: broadcastTransaction.id,
-          invoice: args.invoice,
-          network: args.network,
-          outpoint: `${utxo.transaction_id}:${utxo.vout}`,
-          preimage: payInvoice.payment_secret,
-          script: args.redeem_script,
-        },
-        id: invoice.id,
-      },
-      cbk);
-    }],
-
-    // Return the details of the completed swap
-    completedSwap: ['broadcastTransaction', 'payInvoice', (res, cbk) => {
-      console.log("====COMPLETE SWAP TRANSACTIONS SWAP COMPLETED< RETURNING!");
       return cbk(null, {
-        invoice_id: res.invoice.id,
-        payment_secret: res.payInvoice.payment_secret,
-        transaction_id: res.broadcastTransaction.id,
+        invoice_id: invoice.id,
+        funding_utxos: fundingUtxos.matching_outputs,
+        payment_secret: payInvoice.payment_secret,
+        transaction_id: broadcastTransaction.id,
       });
     }],
   },

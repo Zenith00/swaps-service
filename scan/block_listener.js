@@ -1,14 +1,22 @@
 const EventEmitter = require('events');
 
 const asyncAuto = require('async/auto');
+const asyncEach = require('async/each');
+const asyncFilter = require('async/filter');
+const asyncMap = require('async/map');
 const asyncForever = require('async/forever');
 const difference = require('lodash/difference');
 
-const {getCurrentHash} = require('./../chain');
+const {getJsonFromCache} = require('./../cache');
 const getPastBlocks = require('./get_past_blocks');
+const {getRecentChainTip} = require('./../blocks');
+const {setJsonInCache} = require('./../cache');
 
+const cacheBlockEmissionMs = 1000 * 60 * 10;
+const currentBlockHash = {};
 const notFound = -1;
-const pollingDelayMs = 1000;
+const pollingDelayMs = 3000;
+const type = 'emitted_block';
 
 /** Poll the chain for blocks. Transactions in blocks are emitted.
 
@@ -37,66 +45,136 @@ const pollingDelayMs = 1000;
     id: <Transaction Id Hex String>
   }
 */
-module.exports = ({cache, network}) => {
-  if (!cache || ['dynamodb', 'memory', 'redis'].indexOf(cache) === notFound) {
-    throw new Error('ExpectedCacheStrategy');
-  }
-
+module.exports = ({network}) => {
   if (!network) {
     throw new Error('ExpectedNetworkName');
   }
 
-  let bestBlockHash;
-  let ids = [];
   const listener = new EventEmitter();
 
   asyncForever(cbk => {
     return asyncAuto({
       // Get the current hash
-      getCurrentHash: cbk => getCurrentHash({network}, cbk),
+      getCurrentHash: cbk => getRecentChainTip({network}, cbk),
 
       // When we discover a new current hash, pull transaction ids from blocks
       getPastBlocks: ['getCurrentHash', ({getCurrentHash}, cbk) => {
-        const current = getCurrentHash.hash;
-
-        // Exit early with nothing when the best block has not changed
-        if (current === bestBlockHash) {
-          return cbk(null, []);
+        // Exit early when the current hash is the same as before
+        if (currentBlockHash[network] === getCurrentHash.hash) {
+          return cbk();
         }
 
-        return getPastBlocks({cache, current, network}, cbk);
+        currentBlockHash[network] = getCurrentHash.hash;
+
+        return getPastBlocks({network, current: getCurrentHash.hash}, cbk);
       }],
 
-      // Tell subscribers about the recent transaction ids
-      emitTransactions: ['getCurrentHash', 'getPastBlocks', (res, cbk) => {
-        const blockForTransaction = {};
-        const {blocks} = res.getPastBlocks;
-        const freshIds = [];
+      // Get blocks that were already emitted
+      getEmittedBlocks: ['getPastBlocks', ({getPastBlocks}, cbk) => {
+        if (!getPastBlocks) {
+          return cbk();
+        }
 
-        blocks.forEach(block => {
+        return asyncMap(getPastBlocks.blocks, ({id}, cbk) => {
+          return getJsonFromCache({
+            type,
+            cache: 'memory',
+            key: [id, network].join(),
+          },
+          cbk);
+        },
+        cbk);
+      }],
+
+      // Look in transaction ids to see if we have any special ones
+      getInterestingTx: ['getPastBlocks', ({getPastBlocks}, cbk) => {
+        if (!getPastBlocks) {
+          return cbk();
+        }
+
+        const txIds = [];
+
+        getPastBlocks.blocks.forEach(block => {
           return block.transaction_ids.forEach(id => {
-            blockForTransaction[id] = block;
-
-            return freshIds.push(id);
+            return txIds.push({block: block.id, id});
           });
         });
 
-        difference(freshIds, ids).forEach(id => {
-          const block = blockForTransaction[id].id;
+        return asyncFilter(txIds, (id, cbk) => {
+          return getJsonFromCache({
+            cache: 'memory',
+            key: [network, id].join(),
+            type: 'swap_transaction_id',
+          },
+          (err, res) => {
+            if (!!err) {
+              return cbk(err);
+            }
 
+            return cbk(null, !!res && !!res.id);
+          });
+        },
+        cbk);
+      }],
+
+      // Tell subscribers about recent transaction ids
+      emitTransactions: [
+        'getCurrentHash',
+        'getEmittedBlocks',
+        'getInterestingTx',
+        'getPastBlocks',
+        ({
+          emitTransactions,
+          getEmittedBlocks,
+          getInterestingTx,
+          getPastBlocks,
+        },
+        cbk) =>
+      {
+        if (!getPastBlocks) {
+          return cbk(null, []);
+        }
+
+        const emitted = {};
+
+        getEmittedBlocks.filter(n => !!n).forEach(({id}) => emitted[id] = id);
+
+        const newBlocks = getPastBlocks.blocks.filter(({id}) => !emitted[id]);
+
+        newBlocks.forEach(block => {
+          return block.transaction_ids.forEach(id => {
+            return listener.emit('transaction', {id, block: block.id});
+          });
+        });
+
+        getInterestingTx.forEach(({block, id}) => {
           return listener.emit('transaction', {block, id});
         });
 
-        ids = freshIds;
+        return cbk(null, newBlocks);
+      }],
 
-        // Set the current hash as fully published
-        bestBlockHash = res.getCurrentHash;
-
-        return cbk();
+      // Cache the fact that block transactions were already emitted
+      setBlocksAsEmitted: ['emitTransactions', ({emitTransactions}, cbk) => {
+        return asyncEach(emitTransactions, ({id}, cbk) => {
+          return setJsonInCache({
+            type,
+            cache: 'memory',
+            key: [id, network].join(),
+            ms: cacheBlockEmissionMs,
+            value: {id}
+          },
+          cbk);
+        },
+        cbk);
       }],
 
       // Wait a bit before triggering another poll
-      delayForNextPoll: ['emitTransactions', ({}, cbk) => {
+      delayForNextPoll: [
+        'getCurrentHash',
+        'setBlocksAsEmitted',
+        ({getCurrentHash}, cbk) =>
+      {
         return setTimeout(cbk, pollingDelayMs);
       }],
     },

@@ -441,7 +441,7 @@ App.createSwap = ({invoice, network, refund}, cbk) => {
   }
 
   if (!network) {
-    return cbk([0, 'ExpectedNetwork']);
+    return cbk([0, 'ExpectedNetworkForSwapCreation']);
   }
 
   if (!refund) {
@@ -646,7 +646,7 @@ App.getInvoiceDetails = ({invoice, network}, cbk) => {
         return err.text().then(text => cbk([err.status, text]));
       }
 
-      return cbk([500, err.message]);
+      return cbk([500, err.statusText]);
     });
 };
 
@@ -698,12 +698,10 @@ App.init = args => {
   $('.new-swap').click(App.clickedNewSwap);
   $('.pay-to-lightning-invoice').on(App.change_events, App.changedInvoice);
   $('.refund-address').on(App.change_events, App.changedRefundAddress);
-  $('.select-currency').prop('disabled', false);
   $('.sign-with-refund-details').submit(App.submitSignWithRefundDetails);
   $('.refund-details-script').on(App.change_events, App.changedRefundScript);
   $('.create-swap-quote .select-currency').change(App.changedCurrencySelection);
   $('#use-paper-wallet').change(App.changedRefundPreference);
-  $('.pay-to-lightning-invoice').prop('readonly', false);
 
   App.initActiveChains({}, err => console.log);
 
@@ -737,7 +735,17 @@ App.initActiveChains = ({}, cbk) => {
         throw new Error('ExpectedActiveNetworks');
       }
 
+      $('.pay-to-lightning-invoice').prop('readonly', false);
+      $('.select-currency').prop('disabled', false);
+
       res.networks.forEach(n => $(`.${n}-chain`).prop('hidden', false));
+
+      // Select a currency
+      if (!$('.select-currency').val()) {
+        ['testnet', 'bitcoin']
+          .filter(n => res.networks.indexOf(n) !== -1)
+          .forEach(n => $('.select-currency').val(n));
+      }
 
       return cbk();
     })
@@ -1017,6 +1025,10 @@ App.submitCreateSwapQuote = function(event) {
     return;
   }
 
+  if (!network) {
+    return console.log([500, 'ExpectedNetworkValue']);
+  }
+
   swap.collapse('hide');
 
   const quote = $('.swap-quote').clone();
@@ -1177,6 +1189,7 @@ App.submitRefundRecovery = function(event) {
   $('.claimed-balance').removeClass('show').addClass('hide');
   $('.no-balance').removeClass('show').addClass('hide');
   $('.refund-details-not-found').collapse('hide');
+  $('.refund-tx-failure').collapse('hide');
 
   const clearFields = [
     '.refund-key',
@@ -1213,46 +1226,11 @@ App.submitRefundRecovery = function(event) {
     const address = details.swap_address;
 
     switch (details.network) {
-    case 'testnet':
-      fetch(`https://api.blockcypher.com/v1/btc/test3/addrs/${address}/full`)
-        .then(r => r.json())
-        .then(details => {
-          if (!details || !Array.isArray(details.txs) || !details.txs.length) {
-            return $('.no-balance').collapse('show');
-          }
-
-          if (!details.balance) {
-            return $('.claimed-balance').collapse('show');
-          }
-
-          let payouts = {};
-
-          details.txs.forEach(({hash, outputs}) => {
-            return outputs.forEach(({addresses}, vout) => {
-              return addresses.forEach(addr => payouts[addr] = {hash, vout});
-            });
-          });
-
-          const tx = payouts[address];
-
-          if (!!tx && !!tx.hash && !$('.refund-transaction-id').val()) {
-            $('.refund-transaction-id').val(tx.hash);
-          }
-
-          if (!!tx && tx.vout !== undefined && !$('.refund-tx-vout').val()) {
-            $('.refund-tx-vout').val(tx.vout);
-          }
-
-          return;
-        })
-        .catch(err => {
-          console.log([503, 'FailedToFetchAddressDetails', err]);
-          return;
-        });
-      break;
-
+    case 'bch':
     case 'bchtestnet':
-      fetch(`https://test-bch-insight.bitpay.com/api/addrs/${address}/utxo`)
+      const bchNet = details.network === 'bch' ? 'bch' : 'test-bch';
+
+      fetch(`https://${bchNet}-insight.bitpay.com/api/addrs/${address}/utxo`)
         .then(r => r.json())
         .then(transactions => {
           if (!Array.isArray(transactions) || !transactions.length) {
@@ -1277,8 +1255,56 @@ App.submitRefundRecovery = function(event) {
         });
       break;
 
+    case 'bitcoin':
+    case 'testnet':
+      const bNet = details.network === 'bitcoin' ? 'main' : 'test3';
+
+      fetch(`https://api.blockcypher.com/v1/btc/${bNet}/addrs/${address}/full`)
+        .then(r => r.json())
+        .then(details => {
+          if (!details || !Array.isArray(details.txs) || !details.txs.length) {
+            return $('.no-balance').collapse('show');
+          }
+
+          if (!details.balance) {
+            return $('.claimed-balance').collapse('show');
+          }
+
+          let payouts = {};
+
+          details.txs.forEach(({hash, outputs}) => {
+            return outputs.forEach(({addresses}, vout) => {
+              if (!Array.isArray(addresses)) {
+                return;
+              }
+
+              return addresses.forEach(addr => payouts[addr] = {hash, vout});
+            });
+          });
+
+          const tx = payouts[address];
+
+          if (!!tx && !!tx.hash && !$('.refund-transaction-id').val()) {
+            $('.refund-transaction-id').val(tx.hash);
+          }
+
+          if (!!tx && tx.vout !== undefined && !$('.refund-tx-vout').val()) {
+            $('.refund-tx-vout').val(tx.vout);
+          }
+
+          return;
+        })
+        .catch(err => {
+          console.log([503, 'FailedToFetchAddressDetails', err]);
+          return;
+        });
+      break;
+
+    case 'ltc':
     case 'ltctestnet':
-      fetch(`https://chain.so/api/v2/get_tx_received/LTCTEST/${address}`)
+      const lNet = details.network === 'ltc' ? 'LTC' : 'LTCTEST';
+
+      fetch(`https://chain.so/api/v2/get_tx_received/${lNet}/${address}`)
         .then(r => r.json())
         .then(details => {
           if (!details || !details.data || !Array.isArray(details.data.txs)) {
@@ -1477,7 +1503,15 @@ App.submitSignWithRefundDetails = function(e) {
     return;
   })
   .catch(err => {
-    console.log([503, 'FailedToBroadcastTransaction', err]);
+    switch (err.message) {
+    case 'ChainHeightNotReached':
+      $('.height-not-reached.refund-tx-failure').collapse('show');
+      break;
+
+    default:
+      console.log([503, 'FailedToBroadcastTransaction', err]);
+      break;
+    }
 
     return;
   });
@@ -1492,13 +1526,14 @@ App.submitSignWithRefundDetails = function(e) {
   }
 */
 App.updatedSwapDetails = ({swap}) => {
-  if (!swap.find('.pay-to-lightning-invoice').length) {
+  const invoice = swap.find('.pay-to-lightning-invoice').val().trim();
+  const network = swap.find('.select-currency').val();
+
+  if (!invoice.length || !network) {
     return;
   }
 
   const address = swap.find('.refund-address').val().trim();
-  const invoice = swap.find('.pay-to-lightning-invoice').val().trim();
-  const network = swap.find('.select-currency').val();
 
   const hasAddress = !!App.address_details[address];
   const hasInvoiceDetails = !!App.invoice_details[invoice];
@@ -1616,12 +1651,14 @@ App.updatedSwapDetails = ({swap}) => {
   }
 
   swap.find('.address-currency-label').text(networkAddressName);
-  swap.find('.current-fiat-price').text(fiatPrice.toFixed(2));
   swap.find('.fee-percentage').text(feePercentage.toFixed(2));
   swap.find('.fiat-fee-total').text(totalFee.toFixed(2));
   swap.find('.final-fee').prop('hidden', !totalFee);
-
   swap.find('.make').toggleClass('disabled', !isReady);
+
+  if (!!fiatPrice) {
+    swap.find('.current-fiat-price').text(fiatPrice.toFixed(2));
+  }
 
   return;
 };
@@ -1698,6 +1735,10 @@ App.updateInvoiceDetails = ({swap}) => {
 
       case 'Failed to fetch':
         text = `Couldn\'t connect to swap server. Try again?`;
+        break;
+
+      case 'FoundExistingFundingForInvoice':
+        text = 'Existing swap found for this invoice. Try a new invoice?';
         break;
 
       case 'InsufficientCapacityForSwap':
