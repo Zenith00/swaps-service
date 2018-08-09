@@ -111,6 +111,7 @@ module.exports = (args, cbk) => {
 
     // Funding UTXOs from the transaction
     fundingUtxos: ['validate', ({}, cbk) => {
+      console.log("====FUNDING UTXOS FROM TRANSACTION")
       try {
         return cbk(null, swapScriptInTransaction({
           redeem_script: args.redeem_script,
