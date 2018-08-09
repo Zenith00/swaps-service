@@ -201,6 +201,7 @@ module.exports = (args, cbk) => {
           return cbk([500, 'UnknownClaimAddressType', address, type]);
         }
       } catch (err) {
+        console.log(err);
         return cbk([500, 'InvalidClaimAddress', address]);
       }
     }],

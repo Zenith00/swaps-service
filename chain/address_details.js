@@ -29,6 +29,7 @@ module.exports = (args) => {
   if (!args.address) {
     throw new Error('ExpectedAddress');
   }
+  console.log("====ADDRESS CHECKNG IS " + args.address);
 
   if (!args.network || !networks[args.network]) {
     throw new Error('ExpectedNetworkForAddress');
