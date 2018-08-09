@@ -7,7 +7,7 @@ const {setJsonInCache} = require('./../cache');
 const {returnResult} = require('./../async-util');
 
 const blockExpirationMs = 1000 * 60 * 60;
-const fetchBlocksCount = 2;
+const fetchBlocksCount = 5;
 
 /** Get past blocks
 
