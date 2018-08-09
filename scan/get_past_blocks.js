@@ -7,7 +7,7 @@ const {setJsonInCache} = require('./../cache');
 const {returnResult} = require('./../async-util');
 
 const blockExpirationMs = 1000 * 60 * 60;
-const fetchBlocksCount = 50;
+let fetchBlocksCount = 3;
 
 /** Get past blocks
 
@@ -41,6 +41,10 @@ module.exports = ({cache, current, network}, cbk) => {
 
   const blocks = [];
   let cursor = current;
+
+  if (network === "ltc"){
+    fetchBlocksCount = 50;
+  }
 
   return asyncWhilst(
     () => blocks.length < fetchBlocksCount && cursor,
