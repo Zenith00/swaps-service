@@ -614,6 +614,7 @@ App.getInvoiceDetails = ({invoice, network}, cbk) => {
 
       switch (details.network) {
       case 'bitcoin':
+      case 'ltc':
       case 'testnet':
         break;
 
@@ -973,6 +974,7 @@ App.showInvoice = args => {
   case 'ltc':
     symbolForFiat = 'USD';
     symbolForNetwork = 'Lightning LTC';
+    break;
 
   case 'testnet':
     symbolForFiat = 'tUSD';
