@@ -49,7 +49,7 @@ module.exports = ({current, network}, cbk) => {
   if (network === "ltc"){
     fetchBlocksCount = 50;
   }
-
+  console.log("Fetching past blocks...")
   return asyncWhilst(
     () => (blocks.length < fetchBlocksCount) && cursor,
     cbk => {
@@ -59,6 +59,8 @@ module.exports = ({current, network}, cbk) => {
 
         // Final blocks result
         blocks: ['getBlock', ({getBlock}, cbk) => {
+          console.log("Fetching block..." + cursor);
+
           getBlock.id = cursor;
 
           blocks.push(getBlock);
