@@ -167,6 +167,10 @@ module.exports = args => {
   }
 
   if (args.swap_fee < args.sweep_fee + maxRoutingFee) {
+    console.log(args.swap_fee);
+    console.log(args.sweep_fee);
+    console.log(maxRoutingFee);
+    console.log(args.sweep_fee+maxRoutingFee);
     console.log("InsufficientSwapFee")
     throw new Error('InsufficientSwapFee');
   }
