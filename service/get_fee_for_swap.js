@@ -107,6 +107,7 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
         console.log("returning successfully")
         return cbk(null, {fee: fees.fee, tokens: fees.tokens});
       } catch (err) {
+        console.log(err);
         return cbk([500, 'FailedToCalculateFeeForSwap', err]);
       }
     }],
