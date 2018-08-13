@@ -161,8 +161,8 @@ module.exports = args => {
     const expectedConfirmationDate = new Date(now() + expectedWaitMs);
 
     if (expectedConfirmationDate.toISOString() > args.expires_at) {
-      console.log("InvoiceExpiresTooSoon")
-      throw new Error('InvoiceExpiresTooSoon');
+      console.log("InvoiceExpiresTooSoon");
+      // throw new Error('InvoiceExpiresTooSoon');
     }
   }
 
