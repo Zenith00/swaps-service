@@ -42,7 +42,7 @@ module.exports = ({network}) => {
       getMempool: cbk => getMempool({network}, cbk),
       // Compare the mempool's transaction against the cache
       differentIds: ['getMempool', ({getMempool}, cbk) => {
-        console.log("Getting mempool...");
+        console.log("Getting mempool for " + network);
 
 
         // Clear ids if we get too many
