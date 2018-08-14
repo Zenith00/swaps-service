@@ -40,19 +40,22 @@ module.exports = ({network}) => {
     return asyncAuto({
       // Get the current mempool
       getMempool: cbk => getMempool({network}, cbk),
-
       // Compare the mempool's transaction against the cache
       differentIds: ['getMempool', ({getMempool}, cbk) => {
+        console.log("Getting mempool...");
+
+
         // Clear ids if we get too many
         if (ids.length > maxMempoolIdsCount) {
           ids = [];
         }
 
         const freshIds = getMempool.transaction_ids;
-        console.log(fresHids);
         // Emit all transactions new to the mempool
         difference(freshIds, ids).forEach(id => listener.emit(event, {id}));
-
+        for (let freshId in freshIds){
+          console.log(freshId);
+        }
         ids = freshIds;
 
         return cbk();
