@@ -104,12 +104,13 @@ module.exports = ({cache, invoice, network}, cbk) => {
     getSwapFee: ['parsedInvoice', ({parsedInvoice}, cbk) => {
       const to = parsedInvoice.network;
       const {tokens} = parsedInvoice;
-
+      console.log("GID getswapfee")
       return getFeeForSwap({cache, network, to, tokens}, cbk);
     }],
 
     // LND connection
     lnd: ['parsedInvoice', ({parsedInvoice}, cbk) => {
+      console.log("GID lnd")
       try {
         return cbk(null, lightningDaemon({network: parsedInvoice.network}));
       } catch (err) {
@@ -160,6 +161,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
       cbk) =>
     {
       try {
+        console.log("GID checkPayable")
         const check = checkInvoicePayable({
           network,
           claim_window: swapParams.claim_window,
@@ -185,6 +187,7 @@ module.exports = ({cache, invoice, network}, cbk) => {
 
     // Get the exchange rate
     getFiatRate: ['checkPayable', 'parsedInvoice', ({parsedInvoice}, cbk) => {
+      console.log("GID getfiatrate")
       const {network} = parsedInvoice;
 
       return getExchangeRate({cache, network}, cbk);
