@@ -30,6 +30,10 @@ module.exports = ({blocks, network, priority}, cbk) => {
     return cbk(null, {fee_tokens_per_vbyte: defaultFee});
   }
 
+  console.log(cmd);
+  console.log(network);
+  console.log(params);
+
   return chainRpc({cmd, network, params, priority}, (err, res) => {
     if (!!err) {
       return cbk(err);
@@ -42,12 +46,13 @@ module.exports = ({blocks, network, priority}, cbk) => {
     if (!!res && res.fee === -1) {
       return cbk(null, {fee_tokens_per_vbyte: defaultFee});
     }
-
     if (!!res && !!res.fee) {
       fee = res.fee;
     } else if (!!res && !!res.feerate) {
       fee = res.feerate;
     } else {
+      console.log(err);
+      console.log(res);
       return cbk([500, 'ExpectedFeeRate', res]);
     }
 
