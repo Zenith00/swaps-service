@@ -46,7 +46,8 @@ module.exports = ({cache, network}, cbk) => {
       if (!!getCached && !!getCached.fee_tokens_per_vbyte) {
         return cbk();
       }
-
+      console.log("Getting chain fee rate:");
+      console.log(network)
       return getChainFeeRate({network, priority: 0}, cbk);
     }],
 
