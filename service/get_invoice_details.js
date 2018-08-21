@@ -128,7 +128,9 @@ module.exports = ({cache, invoice, network}, cbk) => {
     }],
 
     // Pull the pending channels to see if we have a related pending channel
-    getPending: ['lnd', ({lnd}, cbk) => getPendingChannels({lnd}, cbk)],
+    getPending: ['lnd', ({lnd}, cbk) => {
+      return getPendingChannels({lnd}, cbk);
+    }],
 
     // See if this invoice is payable
     getRoutes: ['lnd', 'parsedInvoice', ({lnd, parsedInvoice}, cbk) => {
@@ -180,8 +182,8 @@ module.exports = ({cache, invoice, network}, cbk) => {
         });
 
         return cbk();
-      } catch (e) {
-        return cbk([400, e.message]);
+      } catch (err) {
+        return cbk([400, err.message]);
       }
     }],
 

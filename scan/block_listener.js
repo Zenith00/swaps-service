@@ -4,6 +4,7 @@ const asyncAuto = require('async/auto');
 const asyncEach = require('async/each');
 const asyncFilter = require('async/filter');
 const asyncMap = require('async/map');
+const asyncMapSeries = require('async/mapSeries');
 const asyncForever = require('async/forever');
 const difference = require('lodash/difference');
 
@@ -12,9 +13,11 @@ const getPastBlocks = require('./get_past_blocks');
 const {getRecentChainTip} = require('./../blocks');
 const {setJsonInCache} = require('./../cache');
 
-const cacheBlockEmissionMs = 1000 * 60 * 10;
+const blockAnnounceBufferMs = 1000 * 30;
+const cacheBlockEmissionMs = 1000 * 60 * 60;
 const currentBlockHash = {};
 const notFound = -1;
+const manyTxCount = 50;
 const pollingDelayMs = 3000;
 const type = 'emitted_block';
 
@@ -45,9 +48,13 @@ const type = 'emitted_block';
     id: <Transaction Id Hex String>
   }
 */
-module.exports = ({network}) => {
+module.exports = ({cache, network}) => {
+  if (!cache) {
+    throw new Error('ExpectedCacheForBlockListener');
+  }
+
   if (!network) {
-    throw new Error('ExpectedNetworkName');
+    throw new Error('ExpectedNetworkNameForBlockListener');
   }
 
   const listener = new EventEmitter();
@@ -77,8 +84,8 @@ module.exports = ({network}) => {
 
         return asyncMap(getPastBlocks.blocks, ({id}, cbk) => {
           return getJsonFromCache({
+            cache,
             type,
-            cache: 'memory',
             key: [id, network].join(),
           },
           cbk);
@@ -141,25 +148,30 @@ module.exports = ({network}) => {
 
         const newBlocks = getPastBlocks.blocks.filter(({id}) => !emitted[id]);
 
-        newBlocks.forEach(block => {
-          return block.transaction_ids.forEach(id => {
-            return listener.emit('transaction', {id, block: block.id});
-          });
-        });
-
         getInterestingTx.forEach(({block, id}) => {
           return listener.emit('transaction', {block, id});
         });
 
-        return cbk(null, newBlocks);
+        return asyncMapSeries(newBlocks, (block, cbk) => {
+          block.transaction_ids.forEach(id => {
+            return listener.emit('transaction', {id, block: block.id});
+          });
+
+          if (block.transaction_ids.length > manyTxCount) {
+            return setTimeout(() => cbk(null, block), blockAnnounceBufferMs);
+          } else {
+            return cbk(null, block);
+          }
+        },
+        cbk);
       }],
 
       // Cache the fact that block transactions were already emitted
       setBlocksAsEmitted: ['emitTransactions', ({emitTransactions}, cbk) => {
         return asyncEach(emitTransactions, ({id}, cbk) => {
           return setJsonInCache({
+            cache,
             type,
-            cache: 'memory',
             key: [id, network].join(),
             ms: cacheBlockEmissionMs,
             value: {id}
@@ -180,7 +192,11 @@ module.exports = ({network}) => {
     },
     cbk);
   },
-  err => listener.emit('error', err));
+  err => {
+    listener.emit('error', err);
+
+    return;
+  });
 
   return listener;
 };

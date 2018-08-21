@@ -9,7 +9,7 @@ const {returnResult} = require('./../async-util');
 
 const active = {};
 const nets = Object.keys(networks);
-const timeout = 1000 * 10;
+const timeout = 1000 * 3;
 
 /** Get networks that are currently active and available for swaps
 
@@ -35,27 +35,19 @@ module.exports = ({}, cbk) => {
       const hasCheckedActive = Object.keys(active).length;
 
       return asyncFilter(configured, (network, cbk) => {
-        if (!!hasCheckedActive && active[network]) {
-          return cbk(null, true);
-        }
-
-        const getChainTip = ({network}, cbk) => {
-          return getRecentChainTip({network}, err => cbk(null, !err));
-        };
-
-        asyncTimeout(getChainTip, timeout)({network}, (err, isOn) => {
-          if (!!err) {
-            return;
-          }
-
-          active[network] = isOn;
-
-          return !hasCheckedActive ? cbk(null, isOn) : null;
-        });
-
+        // Exit early when there has already been an active check
         if (!!hasCheckedActive) {
-          return cbk(null, false);
+          // Refresh the active state of a network behind the scenes
+          getRecentChainTip({network}, err => active[network] = !err);
+
+          return cbk(null, active[network]);
         }
+
+        return getRecentChainTip({network}, err => {
+          active[network] = !err;
+
+          return cbk(null, active[network]);
+        });
       },
       cbk);
     }],

@@ -16,6 +16,7 @@ const {returnResult} = require('./../async-util');
 
   @returns via cbk
   {
+    converted_fee: <Converted Fee Tokens Number>
     fee: <Fee Tokens Number>
     tokens: <Total Tokens With Fee Number>
   }
@@ -104,8 +105,11 @@ module.exports = ({cache, network, to, tokens}, cbk) => {
           send_tokens: tokens,
           swap_rate: rates.swap_rate,
         });
-        console.log("returning successfully")
-        return cbk(null, {fee: fees.fee, tokens: fees.tokens});
+        return cbk(null, {
+          converted_fee: fees.converted_fee,
+          fee: fees.fee,
+          tokens: fees.tokens,
+        });
       } catch (err) {
         console.log(err);
         return cbk([500, 'FailedToCalculateFeeForSwap', err]);

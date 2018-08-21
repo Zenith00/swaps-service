@@ -38,15 +38,21 @@ with KEY=VALUE instead.
     export SSS_CLAIM_LTCTESTNET_ADDRESS="ltctestnet addr" // Claim to address
     export SSS_CLAIM_TESTNET_ADDRESS="testnet addr" // Override LND claiming
     export SSS_FEE_BASE_BCH_BITCOIN="flat tokens number fee"
+    export SSS_FEE_BASE_BCH_LTC="flat tokens number fee"
     export SSS_FEE_BASE_BCHTESTNET_TESTNET="flat tokens number fee"
     export SSS_FEE_BASE_BITCOIN_BITCOIN="flat tokens number fee"
+    export SSS_FEE_BASE_BITCOIN_LTC="flat tokens number fee"
     export SSS_FEE_BASE_LTC_BITCOIN="flat tokens number fee"
+    export SSS_FEE_BASE_LTC_LTC="flat tokens number fee"
     export SSS_FEE_BASE_LTCTESTNET_TESTNET="flat tokens number fee"
     export SSS_FEE_BASE_TESTNET_TESTNET="flat tokens number fee"
     export SSS_FEE_RATE_BCH_BITCOIN="fee rate in parts per million"
+    export SSS_FEE_RATE_BCH_LTC="fee rate in parts per million"
     export SSS_FEE_RATE_BCHTESTNET_TESTNET="fee rate in parts per million"
     export SSS_FEE_RATE_BITCOIN_BITCOIN="fee rate in parts per million"
+    export SSS_FEE_RATE_BITCOIN_LTC="fee rate in parts per million"
     export SSS_FEE_RATE_LTC_BITCOIN="fee rate in parts per million"
+    export SSS_FEE_RATE_LTC_LTC="fee rate in parts per million"
     export SSS_FEE_RATE_LTCTESTNET_TESTNET="fee rate in parts per million"
     export SSS_FEE_RATE_TESTNET_TESTNET="fee rate in parts per million"
     export SSS_FUNDING_BCH_CONFS="number of confs required"
@@ -58,6 +64,9 @@ with KEY=VALUE instead.
     export SSS_LND_BITCOIN_GRPC_HOST="host:port" // LND GRPC API
     export SSS_LND_BITCOIN_MACAROON="base64 exported lnd macaroon file"
     export SSS_LND_BITCOIN_TLS_CERT="base64 exported TLS cert" // LND TLS cert
+    export SSS_LND_LTC_GRPC_HOST="host:port" // LND GRPC API
+    export SSS_LND_LTC_MACAROON="base64 exported lnd macaroon file"
+    export SSS_LND_LTC_TLS_CERT="base64 exported TLS cert" // LND TLS cert
     export SSS_LND_TESTNET_GRPC_HOST="host:port" // LND GRPC API
     export SSS_LND_TESTNET_MACAROON="base64 exported lnd macaroon file"
     export SSS_LND_TESTNET_TLS_CERT="base64 exported TLS cert" // LND TLS cert
@@ -66,6 +75,13 @@ with KEY=VALUE instead.
 ## Testing
 
     npm t // Unit tests
+
+A [btcd installation](https://github.com/btcsuite/btcd#installation) is
+required to run all regtest tests and is the main regtest suite.
+
+    npm run btcd_regtest // regtest tests
+
+### Other Tests
 
 A [bcash installation](https://github.com/bcoin-org/bcash#install) is
 required to run bcash bcashregtest tests.
@@ -81,11 +97,6 @@ A [bitcoind installation](https://bitcoin.org/en/full-node#what-is-a-full-node) 
 required to run bitcoind_regtest tests.
 
     npm run bitcoind_regtest // bitcoind_regtest tests
-
-A [btcd installation](https://github.com/btcsuite/btcd#installation) is
-required to run btcd regtest tests.
-
-    npm run btcd_regtest // regtest tests
 
 A [ltcd installation](https://github.com/ltcsuite/ltcd#installation) is
 required to run ltcd ltcregtest tests.
