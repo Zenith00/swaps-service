@@ -30,6 +30,8 @@ module.exports = ({blocks, network, priority}, cbk) => {
     return cbk(null, {fee_tokens_per_vbyte: defaultFee});
   }
 
+  console.log("g'etting chain feer ate")
+
   console.log(cmd);
   console.log(network);
   console.log(params);
